@@ -1,1 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario · Estadística Inferencial</title>
+    <!-- MathJax para notación matemática -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #f4f6f9;
+            color: #1e2a3a;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 880px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* --- PALETA: guinda #8B0000, dorado #D4AF37, verde oscuro #1a6e4a --- */
+        header {
+            background: #8B0000; /* guinda */
+            color: white;
+            padding: 24px 30px;
+            border-bottom: 4px solid #D4AF37; /* dorado */
+        }
+        header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        header h2 {
+            font-weight: 400;
+            font-size: 1.05rem;
+            opacity: 0.9;
+            margin-top: 6px;
+        }
+
+        .content {
+            padding: 28px 30px 32px;
+        }
+
+        /* Registro */
+        .registro-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #dfe6ed;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1e2a3a;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #d0d9e4;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #8B0000;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.12);
+        }
+
+        /* Botones */
+        .btn {
+            background: #8B0000; /* guinda */
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+        .btn:hover {
+            background: #6d0000;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: #D4AF37; /* dorado */
+            color: #1e2a3a;
+        }
+        .btn-secondary:hover {
+            background: #bf9d2e;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Stats */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f5f9;
+            padding: 12px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-item span {
+            color: #8B0000;
+            min-width: 24px;
+        }
+
+        .progress-container {
+            background: #dfe6ed;
+            border-radius: 40px;
+            height: 8px;
+            margin: 18px 0 24px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #1a6e4a; /* verde oscuro */
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 40px;
+        }
+
+        /* Preguntas */
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: #f8fafc;
+            padding: 18px 22px;
+            border-radius: 14px;
+            border-left: 5px solid #D4AF37; /* dorado */
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .option-btn {
+            background: white;
+            border: 2px solid #dde4ec;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 1.02rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 450;
+            line-height: 1.4;
+        }
+        .option-btn:hover:not(.disabled) {
+            border-color: #D4AF37;
+            background: #fef9e7;
+        }
+        .option-btn.selected {
+            border-color: #D4AF37;
+            background: #fcf3cf;
+            font-weight: 600;
+        }
+        .option-btn.correct {
+            border-color: #1a6e4a; /* verde oscuro */
+            background: #e2f3ea;
+        }
+        .option-btn.incorrect {
+            border-color: #8B0000; /* guinda */
+            background: #f8e2df;
+        }
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin: 12px 0 18px;
+            display: none;
+            font-size: 0.98rem;
+            border-left: 5px solid;
+        }
+        .feedback.correct {
+            background: #e2f3ea;
+            border-color: #1a6e4a;
+            color: #0f402c;
+            display: block;
+        }
+        .feedback.incorrect {
+            background: #f8e2df;
+            border-color: #8B0000;
+            color: #6b2c24;
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Resultados */
+        .results-box {
+            text-align: center;
+            padding: 18px 0 8px;
+        }
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            background: #8B0000; /* guinda */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 24px auto;
+            box-shadow: 0 6px 14px rgba(139, 0, 0, 0.2);
+            border: 3px solid #D4AF37; /* dorado */
+        }
+        .personal-msg {
+            background: #f1f5f9;
+            padding: 18px 22px;
+            border-radius: 16px;
+            margin: 22px 0 30px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .btn-reiniciar {
+            background: #1a6e4a; /* verde oscuro */
+            color: white;
+            max-width: 240px;
+            margin: 0 auto;
+        }
+        .btn-reiniciar:hover {
+            background: #135a3b;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 18px 16px;
+            }
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📊 Cuestionario · Estadística</h1>
+        <h2>Distribución muestral · Teorema del Límite Central · t-Student · Error estándar</h2>
+    </header>
+
+    <div class="content">
+        <!-- REGISTRO -->
+        <div id="registro">
+            <div class="registro-box">
+                <div class="form-group">
+                    <label for="nombre">👤 Nombre completo</label>
+                    <input type="text" id="nombre" placeholder="Ej. Ana Martínez">
+                </div>
+                <div class="form-group">
+                    <label for="fecha">📅 Fecha</label>
+                    <input type="date" id="fecha">
+                </div>
+                <button class="btn" id="btn-iniciar">Comenzar cuestionario</button>
+            </div>
+        </div>
+
+        <!-- ACTIVIDAD -->
+        <div id="actividad" class="hidden">
+            <div class="stats-bar">
+                <div class="stat-item">✅ <span id="correct-count">0</span></div>
+                <div class="stat-item">❌ <span id="error-count">0</span>/3</div>
+                <div class="stat-item">📈 <span id="progress-pct">0%</span></div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div id="question-container">
+                <div class="question-text" id="q-text"></div>
+                <div class="options-grid" id="options-container"></div>
+                <div id="feedback" class="feedback"></div>
+                <button class="btn btn-secondary" id="btn-next" disabled>Siguiente</button>
+            </div>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div id="resultados" class="hidden">
+            <div class="results-box">
+                <h2 style="font-weight: 500;">Resultado de <span id="student-name-display" style="font-weight: 700;"></span></h2>
+                <div class="score-circle" id="final-score">0%</div>
+                <div class="personal-msg" id="personal-message"></div>
+                <button class="btn btn-reiniciar" onclick="location.reload()">🔄 Reiniciar actividad</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    //  PREGUNTAS (20) basadas en el contenido del primer archivo
+    // --------------------------------------------------------------
+    const questions = [
+        {
+            q: "¿Qué es la distribución muestral de la media?",
+            options: [
+                "La distribución de probabilidad de todas las posibles medias de muestras de un tamaño n dado.",
+                "La distribución de los datos individuales dentro de una sola muestra.",
+                "La diferencia entre la media poblacional y la media muestral.",
+                "El promedio de las desviaciones estándar de varias muestras."
+            ],
+            correct: 0,
+            explanation: "La distribución muestral de la media es la distribución de probabilidad de todas las medias muestrales posibles para un tamaño n fijo."
+        },
+        {
+            q: "¿Cuál es el valor esperado de la media de la distribución muestral de la media (μ<sub>x̄</sub>)?",
+            options: [
+                "Es igual a cero.",
+                "Es igual a la desviación estándar poblacional dividida por n.",
+                "Es igual a la media de la población original (μ).",
+                "Es igual a la varianza poblacional."
+            ],
+            correct: 2,
+            explanation: "El valor esperado de la media muestral es la media poblacional μ: E[x̄] = μ."
+        },
+        {
+            q: "¿Cuál es la fórmula para calcular el error estándar de la media cuando se conoce la desviación estándar poblacional (σ)?",
+            options: [
+                "σ<sub>x̄</sub> = σ / √n",
+                "σ<sub>x̄</sub> = σ · √n",
+                "σ<sub>x̄</sub> = s / (n - 1)",
+                "σ<sub>x̄</sub> = σ² / n"
+            ],
+            correct: 0,
+            explanation: "El error estándar de la media es σ<sub>x̄</sub> = σ / √n cuando σ es conocida."
+        },
+        {
+            q: "De acuerdo con el Teorema Central del Límite, ¿qué sucede con la forma de la distribución muestral de la media a medida que aumenta n?",
+            options: [
+                "Se vuelve cada vez más sesgada.",
+                "Se aproxima a una distribución normal.",
+                "Se transforma en una distribución uniforme.",
+                "Su varianza se vuelve infinita."
+            ],
+            correct: 1,
+            explanation: "El TCL establece que la distribución muestral de la media se aproxima a una normal a medida que n crece, independientemente de la forma de la población original."
+        },
+        {
+            q: "¿Cuándo es obligatorio utilizar la distribución t de Student en lugar de la normal estándar z?",
+            options: [
+                "Cuando el tamaño de la muestra es mayor a 100.",
+                "Cuando se conoce la desviación estándar poblacional (σ).",
+                "Cuando se desconoce σ y la muestra se extrae de una población normal.",
+                "Siempre que la población no sea normal."
+            ],
+            correct: 2,
+            explanation: "Se usa t cuando σ es desconocida y la población es normal (o muestra grande)."
+        },
+        {
+            q: "¿En qué situación se debe aplicar el Factor de Corrección de Población Finita (FPC) al calcular el error estándar?",
+            options: [
+                "Cuando la muestra (n) representa más del 5% de la población finita (N).",
+                "Cuando la población es infinita o muy grande.",
+                "Cuando el tamaño de la muestra es n < 30.",
+                "Cuando la varianza de la población es desconocida."
+            ],
+            correct: 0,
+            explanation: "Se aplica FPC cuando n/N > 0.05 (muestra mayor al 5% de la población finita)."
+        },
+        {
+            q: "¿Cuál de las siguientes expresiones representa el Factor de Corrección de Población Finita (FPC)?",
+            options: [
+                "√((N - 1) / (N - n))",
+                "√((N - n) / (N - 1))",
+                "(N - n) / n",
+                "(n - 1) / N"
+            ],
+            correct: 1,
+            explanation: "FPC = √((N - n) / (N - 1)). Se utiliza para ajustar el error estándar en poblaciones finitas."
+        },
+        {
+            q: "Si n = 16 de una población normal para estimar la media con t, ¿cuántos grados de libertad (gl) tiene la distribución?",
+            options: ["16", "15", "14", "8"],
+            correct: 1,
+            explanation: "Los grados de libertad para la distribución t son gl = n - 1 = 15."
+        },
+        {
+            q: "Si una población tiene σ = 10 y se extrae una muestra de n = 25, ¿cuál es el error estándar de la media?",
+            options: ["0.4", "2.0", "2.5", "10.0"],
+            correct: 1,
+            explanation: "σ<sub>x̄</sub> = 10 / √25 = 10 / 5 = 2.0."
+        },
+        {
+            q: "¿Qué efecto tiene aumentar el tamaño de la muestra (n) sobre el error estándar de la media?",
+            options: [
+                "Lo aumenta proporcionalmente.",
+                "Lo disminuye.",
+                "Lo mantiene constante.",
+                "Lo hace igual a la media poblacional."
+            ],
+            correct: 1,
+            explanation: "A mayor n, menor error estándar (σ / √n), lo que da estimaciones más precisas."
+        },
+        {
+            q: "Si N = 400 y n = 100, ¿por qué debe aplicarse el factor de corrección de población finita (FPC)?",
+            options: [
+                "Porque n/N = 0.25 (25%), mayor al 5%.",
+                "Porque el tamaño de la muestra es exactamente 100.",
+                "Porque la población es menor a 1,000 elementos.",
+                "Porque la muestra es un número par."
+            ],
+            correct: 0,
+            explanation: "n/N = 100/400 = 0.25 > 0.05, por lo que se recomienda usar FPC."
+        },
+        {
+            q: "¿Cómo se define el Error de Muestreo en la estimación de la media poblacional?",
+            options: [
+                "La suma de la media poblacional y la muestra.",
+                "El cociente entre la varianza y el tamaño de muestra.",
+                "La diferencia absoluta entre la media muestral y la media poblacional (|x̄ - μ|).",
+                "La desviación estándar dividida entre los grados de libertad."
+            ],
+            correct: 2,
+            explanation: "El error de muestreo es la diferencia entre el estadístico muestral y el parámetro poblacional: |x̄ - μ|."
+        },
+        {
+            q: "¿Cuál es la característica principal de la distribución t en comparación con la normal estándar (z)?",
+            options: [
+                "Tiene colas más anchas y es más plana en el centro.",
+                "Siempre es asimétrica con sesgo positivo.",
+                "Tiene una media mayor a cero.",
+                "Su forma no cambia con el tamaño de la muestra."
+            ],
+            correct: 0,
+            explanation: "La t tiene colas más pesadas (más anchas) y es más aplanada en el centro que la normal estándar, especialmente para gl pequeños."
+        },
+        {
+            q: "En el cálculo del valor z para una media muestral, ¿qué representa el denominador de la fórmula z = (x̄ - μ) / (σ / √n)?",
+            options: [
+                "La varianza de la población.",
+                "El factor de corrección de continuidad.",
+                "El error de muestreo individual.",
+                "El error estándar de la media."
+            ],
+            correct: 3,
+            explanation: "El denominador σ/√n es el error estándar de la media."
+        },
+        {
+            q: "Si la población original sigue una distribución normal, ¿qué tamaño de muestra se requiere para que la distribución muestral de la media sea normal?",
+            options: [
+                "Solo muestras grandes (n > 100).",
+                "Un tamaño de al menos n = 30.",
+                "Cualquier tamaño de muestra es suficiente.",
+                "Un tamaño que represente al menos el 10% de la población."
+            ],
+            correct: 2,
+            explanation: "Si la población es normal, la distribución muestral de la media es normal para cualquier n."
+        },
+        {
+            q: "¿Qué ocurre con el error estándar de la media si se multiplica el tamaño de la muestra por 4?",
+            options: [
+                "No cambia, solo cambia la media.",
+                "Se duplica.",
+                "Se reduce a la mitad.",
+                "Se reduce a la cuarta parte."
+            ],
+            correct: 2,
+            explanation: "σ<sub>x̄</sub> = σ / √n. Si n se multiplica por 4, √n se duplica, por lo que el error estándar se reduce a la mitad."
+        },
+        {
+            q: "Al realizar una prueba de hipótesis para la media con varianza desconocida y muestra pequeña, ¿qué supuesto sobre la población es generalmente necesario?",
+            options: [
+                "Que la media poblacional es igual a cero.",
+                "Que la población es infinita.",
+                "Que la desviación estándar muestral es igual a la poblacional.",
+                "Que la población se rige por una distribución normal."
+            ],
+            correct: 3,
+            explanation: "Para usar la t de Student con muestras pequeñas, se requiere que la población sea normal (o aproximadamente normal)."
+        },
+        {
+            q: "¿Cuál es el efecto principal de aplicar el factor de corrección de población finita (FPC) sobre un intervalo de confianza?",
+            options: [
+                "Amplía el intervalo para dar más beneficio de duda.",
+                "Elimina la necesidad de calcular la desviación estándar.",
+                "Cambia el nivel de confianza del 95% al 99%.",
+                "Resulta en un intervalo de valores más pequeño (más preciso)."
+            ],
+            correct: 3,
+            explanation: "El FPC reduce el error estándar, lo que produce intervalos de confianza más estrechos (más precisos)."
+        },
+        {
+            q: "En la fórmula del error estándar para poblaciones finitas σ<sub>x̄</sub> = (σ/√n)·√((N-n)/(N-1)), ¿qué sucede si n = 1?",
+            options: [
+                "El error estándar se vuelve cero.",
+                "El valor resultante es indefinido.",
+                "El factor de corrección es igual a 1.",
+                "Se debe usar la distribución t obligatoriamente."
+            ],
+            correct: 2,
+            explanation: "Si n = 1, √((N-1)/(N-1)) = 1, por lo que el FPC no modifica el error estándar."
+        },
+        {
+            q: "¿Cuál es la relación entre la dispersión de la distribución de la población y la dispersión de la distribución muestral de la media?",
+            options: [
+                "La dispersión de las medias muestrales es menor que la de la población.",
+                "Son idénticas si la muestra es aleatoria.",
+                "No existe una relación matemática predecible entre ambas.",
+                "La dispersión de las medias es mayor para compensar el error de muestreo."
+            ],
+            correct: 0,
+            explanation: "La distribución muestral de la media tiene menor dispersión (varianza σ²/n) que la población (σ²)."
+        }
+    ];
+
+    // --------------------------------------------------------------
+    //  LÓGICA DEL CUESTIONARIO
+    // --------------------------------------------------------------
+    let currentQ = 0;
+    let correctCount = 0;
+    let errorCount = 0;
+    let studentName = "";
+    let answered = false;
+
+    // DOM elements
+    const registro = document.getElementById('registro');
+    const actividad = document.getElementById('actividad');
+    const resultados = document.getElementById('resultados');
+    const nombreInput = document.getElementById('nombre');
+    const fechaInput = document.getElementById('fecha');
+    const btnIniciar = document.getElementById('btn-iniciar');
+
+    const qText = document.getElementById('q-text');
+    const optionsContainer = document.getElementById('options-container');
+    const feedbackDiv = document.getElementById('feedback');
+    const btnNext = document.getElementById('btn-next');
+
+    const correctSpan = document.getElementById('correct-count');
+    const errorSpan = document.getElementById('error-count');
+    const progressPct = document.getElementById('progress-pct');
+    const progressBar = document.getElementById('progress-bar');
+
+    const studentNameDisplay = document.getElementById('student-name-display');
+    const finalScore = document.getElementById('final-score');
+    const personalMsg = document.getElementById('personal-message');
+
+    // fecha por defecto
+    fechaInput.valueAsDate = new Date();
+
+    // Iniciar
+    btnIniciar.addEventListener('click', function() {
+        const name = nombreInput.value.trim();
+        if (!name) {
+            alert('Por favor, ingresa tu nombre completo.');
+            return;
+        }
+        if (!fechaInput.value) {
+            alert('Selecciona la fecha de realización.');
+            return;
+        }
+        studentName = name;
+        registro.classList.add('hidden');
+        actividad.classList.remove('hidden');
+        loadQuestion();
+    });
+
+    function loadQuestion() {
+        answered = false;
+        const q = questions[currentQ];
+        qText.innerHTML = `<strong>Pregunta ${currentQ + 1}:</strong><br>${q.q}`;
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = opt;
+            btn.dataset.idx = idx;
+            btn.addEventListener('click', function() {
+                if (answered) return;
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                btnNext.disabled = false;
+            });
+            optionsContainer.appendChild(btn);
+        });
+
+        feedbackDiv.className = 'feedback';
+        feedbackDiv.style.display = 'none';
+        btnNext.disabled = true;
+        btnNext.textContent = currentQ === questions.length - 1 ? 'Finalizar' : 'Siguiente';
+        updateStats();
+        MathJax.typesetPromise().catch(() => {});
+    }
+
+    function updateStats() {
+        correctSpan.textContent = correctCount;
+        errorSpan.textContent = errorCount;
+        const prog = Math.round((currentQ / questions.length) * 100);
+        progressPct.textContent = prog + '%';
+        progressBar.style.width = prog + '%';
+    }
+
+    // Siguiente / Comprobar
+    btnNext.addEventListener('click', function() {
+        if (!answered) {
+            // verificar si hay opción seleccionada
+            const selected = document.querySelector('.option-btn.selected');
+            if (!selected) return;
+            const idx = parseInt(selected.dataset.idx);
+            checkAnswer(idx);
+            answered = true;
+            btnNext.disabled = false;
+            btnNext.textContent = currentQ === questions.length - 1 ? 'Ver resultados' : 'Siguiente';
+        } else {
+            // avanzar o finalizar
+            if (currentQ === questions.length - 1) {
+                showResults();
+            } else {
+                currentQ++;
+                loadQuestion();
+            }
+        }
+    });
+
+    function checkAnswer(selectedIdx) {
+        const q = questions[currentQ];
+        const isCorrect = (selectedIdx === q.correct);
+        const btns = document.querySelectorAll('.option-btn');
+
+        btns.forEach(b => b.classList.add('disabled'));
+        btns[q.correct].classList.add('correct');
+
+        if (isCorrect) {
+            correctCount++;
+            feedbackDiv.className = 'feedback correct';
+            feedbackDiv.innerHTML = `<strong>✅ Correcto.</strong> ${q.explanation}`;
+        } else {
+            errorCount++;
+            btns[selectedIdx].classList.add('incorrect');
+            feedbackDiv.className = 'feedback incorrect';
+            feedbackDiv.innerHTML = `<strong>❌ Incorrecto.</strong> ${q.explanation}`;
+
+            if (errorCount >= 3) {
+                setTimeout(() => {
+                    alert('Has acumulado 3 errores. Te recomendamos repasar los conceptos de distribución muestral, error estándar, Teorema Central del Límite y uso de t-Student antes de continuar.');
+                    location.reload();
+                }, 1800);
+            }
+        }
+        feedbackDiv.style.display = 'block';
+        updateStats();
+    }
+
+    function showResults() {
+        actividad.classList.add('hidden');
+        resultados.classList.remove('hidden');
+        studentNameDisplay.textContent = studentName;
+        const score = Math.round((correctCount / questions.length) * 100);
+        finalScore.textContent = score + '%';
+
+        let msg = '';
+        if (score >= 80) {
+            msg = '¡Excelente trabajo! Demuestras un sólido entendimiento de la distribución muestral, el Teorema Central del Límite, el uso de t-Student y el error estándar. Sigue así.';
+        } else if (score >= 50) {
+            msg = 'Buen esfuerzo. Te sugerimos repasar los conceptos de error estándar, factor de corrección para poblaciones finitas y las condiciones para usar t en lugar de z.';
+        } else {
+            msg = 'Es importante reforzar los fundamentos. Revisa la definición de distribución muestral, el Teorema Central del Límite, y las fórmulas del error estándar. ¡Vuelve a intentarlo!';
+        }
+        personalMsg.textContent = msg;
+    }
+</script>
+
+</body>
+</html>
