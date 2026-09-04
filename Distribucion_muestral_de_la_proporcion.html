@@ -468,6 +468,37 @@
     .dialog-btn:hover {
       color: var(--up-burgundy);
     }
+
+    /* ===== NOMBRE DEL ALUMNO ===== */
+    .student-name-field {
+      margin-bottom: 1.2rem;
+      padding: 0.8rem 1rem;
+      background: #f0f4ff;
+      border-radius: 8px;
+      border-left: 4px solid var(--up-gold);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem 1rem;
+    }
+    .student-name-field label {
+      font-weight: 600;
+      color: var(--up-blue);
+    }
+    .student-name-field input {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      flex: 1 1 200px;
+      min-width: 150px;
+      background: white;
+    }
+    .student-name-field input:focus {
+      border-color: var(--up-gold);
+      outline: none;
+      box-shadow: 0 0 0 2px var(--up-gold-light);
+    }
   </style>
 </head>
 <body>
@@ -611,6 +642,13 @@
   <section id="fill">
     <div class="card">
       <h2>✏️ Ejercicios de completar palabras clave</h2>
+      
+      <!-- Campo para el nombre del alumno -->
+      <div class="student-name-field">
+        <label for="fill-name">👤 Nombre del alumno:</label>
+        <input type="text" id="fill-name" placeholder="Escribe tu nombre completo">
+      </div>
+
       <p>Rellena cada espacio con el término correcto y pulsa <b>Verificar</b>.</p>
 
       <div id="fill-container">
@@ -656,6 +694,13 @@
   <section id="mc">
     <div class="card">
       <h2>✔️ Ejercicios de opción múltiple</h2>
+      
+      <!-- Campo para el nombre del alumno -->
+      <div class="student-name-field">
+        <label for="mc-name">👤 Nombre del alumno:</label>
+        <input type="text" id="mc-name" placeholder="Escribe tu nombre completo">
+      </div>
+
       <div class="progress"><div class="progress-bar" id="mc-progress"></div></div>
       <div id="mc-container"></div>
       <button class="btn" onclick="checkMC()">Calificar</button>
@@ -663,11 +708,17 @@
       <div id="mc-feedback" class="feedback"></div>
     </div>
   </section>
-
-  <!-- ============ ENSAYO ============ -->
+    <!-- ============ ENSAYO ============ -->
   <section id="essay">
     <div class="card">
       <h2>📝 Ejercicios tipo ensayo</h2>
+      
+      <!-- Campo para el nombre del alumno -->
+      <div class="student-name-field">
+        <label for="essay-name">👤 Nombre del alumno:</label>
+        <input type="text" id="essay-name" placeholder="Escribe tu nombre completo">
+      </div>
+
       <p>Responde con tus propias palabras. Puedes usar notación matemática. Al finalizar puedes guardar tus respuestas.</p>
 
       <h3>Pregunta 1</h3>
@@ -843,6 +894,8 @@
   function checkFill() {
     let ok = 0,
       total = 0;
+    const nombre = document.getElementById('fill-name').value.trim() || 'Alumno';
+    
     document.querySelectorAll('.fill-item').forEach(item => {
       total++;
       const input = item.querySelector('input');
@@ -861,7 +914,7 @@
     });
     const fb = document.getElementById('fill-feedback');
     fb.className = 'feedback ' + (ok === total ? 'ok' : 'err');
-    fb.textContent = `Obtuviste ${ok} de ${total} correctas.` + (ok === total ? ' ¡Excelente! 🎉' : ' Revisa las marcadas en rojo.');
+    fb.textContent = `${nombre}: Obtuviste ${ok} de ${total} correctas.` + (ok === total ? ' ¡Excelente! 🎉' : ' Revisa las marcadas en rojo.');
   }
 
   function resetFill() {
@@ -925,6 +978,8 @@
 
   function checkMC() {
     let ok = 0;
+    const nombre = document.getElementById('mc-name').value.trim() || 'Alumno';
+    
     document.querySelectorAll('#mc-container .options').forEach((opts, i) => {
       const correct = parseInt(opts.dataset.correct);
       const sel = opts.querySelector('input:checked');
@@ -949,26 +1004,28 @@
     document.getElementById('mc-progress').style.width = pct + '%';
     const f = document.getElementById('mc-feedback');
     f.className = 'feedback ' + (pct >= 70 ? 'ok' : 'err');
-    f.textContent = `Resultado: ${ok}/${total} (${pct}%). ` + (pct === 100 ? '¡Perfecto! 🏆' : pct >= 70 ? '¡Buen trabajo!' :
+    f.textContent = `${nombre}: Resultado: ${ok}/${total} (${pct}%). ` + (pct === 100 ? '¡Perfecto! 🏆' : pct >= 70 ? '¡Buen trabajo!' :
       'Repasa los conceptos.');
     renderMath();
   }
 
   /* ===== ENSAYO ===== */
   function saveEssay() {
+    const nombre = document.getElementById('essay-name').value.trim() || 'Alumno';
     const areas = document.querySelectorAll('#essay textarea');
-    let txt = '=== Respuestas tipo ensayo — Distribución Muestral de la Proporción ===\n\n';
+    let txt = `=== Respuestas tipo ensayo — Distribución Muestral de la Proporción ===\n`;
+    txt += `Alumno: ${nombre}\n\n`;
     areas.forEach((a, i) => { txt += `Pregunta ${i + 1}:\n${a.value}\n\n`; });
     const blob = new Blob([txt], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'respuestas_proporcion.txt';
+    a.download = `respuestas_proporcion_${nombre}.txt`;
     a.click();
     URL.revokeObjectURL(url);
     const f = document.getElementById('essay-feedback');
     f.className = 'feedback ok';
-    f.textContent = '✅ Respuestas guardadas como archivo de texto.';
+    f.textContent = `✅ ${nombre}, tus respuestas han sido guardadas como archivo de texto.`;
   }
 
   /* Inicializar */
