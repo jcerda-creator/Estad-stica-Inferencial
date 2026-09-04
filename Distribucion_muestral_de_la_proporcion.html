@@ -473,8 +473,8 @@
 <body>
 
 <header>
-  <h1>📊 Distribución Muestral de la <span>Proporción</span></h1>
-  <p>Universidad Panamericana · Campus Bonaterra · Clase interactiva · 4 de septiembre de 2026</p>
+  <h1>📊 Distribución Muestral de la Proporción</h1>
+  <p>Universidad Panamericana · Campus Bonaterra · Clase invertida por entrega de calificaciones del Primer Parcial· 3 de septiembre de 2026</p>
 </header>
 
 <nav class="tabs">
@@ -492,12 +492,12 @@
   <!-- ============ INTRODUCCIÓN ============ -->
   <section id="intro" class="active">
     <div class="card">
-      <h2>1. Motivación y conexión con lo aprendido</h2>
-      <p>En clases anteriores estudiamos la <span class="glossary-term" data-term="distribucion-muestral-media">distribución muestral de la media muestral</span> $\bar{X}$ y el poder del <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>. Ahora daremos un paso análogo pero en el mundo de las <b>variables cualitativas</b> (sí/no, éxito/fracaso, defectuoso/no defectuoso).</p>
+      <h2>1. Motivación </h2>
+      <p>En clases anteriores estudiamos la <span class="glossary-term" data-term="distribucion-muestral-media">distribución muestral de la media muestral</span> $\bar{X}$ y el poder que tiene el <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>. Ahora daremos un paso análogo pero en el mundo de las <b>variables cualitativas</b> (sí/no, éxito/fracaso, defectuoso/no defectuoso).</p>
       <p>Cuando en lugar de medir una cantidad numérica clasificamos a los individuos en dos categorías, el parámetro de interés es la <span class="keyword" data-tip="Fracción de la población que posee una característica dada. Se denota p.">proporción poblacional $p$</span>, y su estimador natural es la <span class="keyword" data-tip="Fracción de la muestra que posee la característica. Se denota p̂ = X/n.">proporción muestral $\hat{p}$</span>.</p>
       <button class="dialog-btn" data-dialog="intro-detail">↪ Ver más sobre la conexión con la media</button>
       <div id="intro-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
-        <p>La proporción muestral $\hat{p}$ es exactamente la media muestral de variables Bernoulli (0/1). Por lo tanto, todos los resultados sobre $\bar{X}$ (media, varianza, TCL) se aplican directamente a $\hat{p}$. Esta conexión es clave para entender su comportamiento.</p>
+        <p>La proporción muestral $\hat{p}$ es exactamente la media muestral de variables Bernoulli cuyos valores solo son 0 y 1. Por lo tanto, todos los resultados sobre $\bar{X}$ (media, varianza, TCL) se aplican directamente a $\hat{p}$. Esta conexión es clave para entender su comportamiento.</p>
       </div>
     </div>
 
@@ -507,8 +507,8 @@
       <div class="formula">
         $$X_i = \begin{cases} 1 & \text{si el individuo } i \text{ tiene la característica} \\ 0 & \text{en caso contrario} \end{cases}$$
       </div>
-      <p>Cada $X_i \sim \text{Bernoulli}(p)$, con $E[X_i]=p$ y $\text{Var}(X_i)=p(1-p)$.</p>
-      <p>El número total de éxitos en la muestra es $X=\sum_{i=1}^n X_i \sim \text{Binomial}(n,p)$ y la <b>proporción muestral</b> se define como:</p>
+      <p>Cada $X_i$ sigue una distribución de Bernoulli, lo que escribimos como $X_i \sim \text{Bernoulli}(p)$, con valor esperado o media $E[X_i]=p$ y varianza $\text{Var}(X_i)=p(1-p)$.</p>
+      <p>El número total de éxitos en la muestra es $X=\sum_{i=1}^n X_i$ de modo que $X$ sigue una distribución binomial, esto es $X=\sum_{i=1}^n X_i \sim \text{Binomial}(n,p)$ y la <b>proporción muestral</b> se define como:</p>
       <div class="formula">
         $$\hat{p} = \frac{X}{n} = \frac{1}{n}\sum_{i=1}^n X_i = \bar{X}$$
       </div>
@@ -517,7 +517,7 @@
 
     <div class="card success">
       <h3>💡 Idea clave</h3>
-      <p>Todo lo que aprendiste sobre la distribución muestral de $\bar{X}$ se traslada directamente a $\hat{p}$, porque $\hat{p}$ <b>es</b> una media muestral de variables 0/1.</p>
+      <p>Todo lo que aprendiste sobre la distribución muestral de $\bar{X}$ se traslada directamente a $\hat{p}$, porque $\hat{p}$ <b>es</b> una media muestral de variables Bernoulli 0, 1.</p>
     </div>
   </section>
 
@@ -528,7 +528,7 @@
       <p>Aplicando las propiedades de la esperanza y varianza de una suma de variables i.i.d.:</p>
       <div class="formula">$$\mu_{\hat{p}} = E[\hat{p}] = p$$</div>
       <div class="formula">$$\sigma_{\hat{p}}^2 = \text{Var}(\hat{p}) = \frac{p(1-p)}{n} \qquad \Rightarrow \qquad \sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}$$</div>
-      <p>Estas fórmulas son <b>análogas</b> a las de $\bar{X}$, donde $\mu_{\bar{X}}=\mu$ y $\sigma_{\bar{X}}^2=\sigma^2/n$, con la particularidad de que en Bernoulli $\sigma^2 = p(1-p)$.</p>
+      <p>Estas fórmulas son <b>análogas</b> a las de $\bar{X}$, donde $\mu_{\bar{X}}=\mu$ y $\sigma_{\bar{X}}^2=\sigma^2/n$, con la particularidad de que en Bernoulli la varianza es $\sigma^2 = p(1-p)$.</p>
       <button class="dialog-btn" data-dialog="dist-detail">↪ Derivación paso a paso</button>
       <div id="dist-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
         <p>$E[\hat{p}] = E\left[\frac{1}{n}\sum X_i\right] = \frac{1}{n}\sum E[X_i] = \frac{1}{n} n p = p$.</p>
@@ -538,13 +538,16 @@
 
     <div class="card accent">
       <h2>4. Forma de la distribución: aproximación normal</h2>
-      <p>Por el <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>, cuando $n$ es suficientemente grande:</p>
-      <div class="formula">$$\hat{p} \;\dot{\sim}\; \mathcal{N}\!\left(p,\;\frac{p(1-p)}{n}\right)$$</div>
+      <p>Por el <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>, cuando $n$ es suficientemente grande la distribución muestral de la proporción sigue una distribución normal:</p>
+      <div class="formula">$$\hat{p} \;{\sim}\; \mathcal{N}\!\left(p,\;\frac{p(1-p)}{n}\right)$$</div>
       <p>La <b>regla práctica</b> para considerar $n$ grande en el caso de proporciones es:</p>
       <div class="formula">$$np \geq 5 \quad \text{y} \quad n(1-p) \geq 5$$</div>
-      <p>(Algunos textos usan $np\geq 10$ y $n(1-p)\geq 10$.)</p>
+      <p>(Algunos textos usan $np\geq 10$ y $n(1-p)\geq 10$. Nosotros utilizaremos 5.)</p>
       <p>La <span class="glossary-term" data-term="variable-estandarizada">variable estandarizada</span> es:</p>
-      <div class="formula">$$Z = \frac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}} \;\;\dot{\sim}\;\; \mathcal{N}(0,1)$$</div>
+      <div class="formula">$$\hat{p}\mapsto Z\quadd Z = \frac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}} \;\;{\sim}\;\; \mathcal{N}(0,1)$$</div>
+      <p>El regreso de <span class="glossary-term" data-term="variable-estandarizada">variable estandarizada</span> es:</p>
+      <div class="formula">$$Z\mapsto \hat{p}\quadd \hat{p}=p+Z\cdot \sigma_{\hat{p}}$$</div>
+       <p>Útil para calcular los valores críticos.<p>
     </div>
 
     <div class="card warn">
@@ -552,7 +555,7 @@
       <p>En la distribución muestral de $\bar{X}$ podíamos usar $t$ de Student cuando $\sigma$ era desconocida. Para $\hat{p}$ <b>no existe análogo $t$</b>: la varianza $p(1-p)$ depende del mismo parámetro $p$ que estamos estimando, por lo que se trabaja siempre con la aproximación normal.</p>
       <button class="dialog-btn" data-dialog="t-detail">↪ Explicación detallada</button>
       <div id="t-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
-        <p>La distribución $t$ surge cuando se estima la varianza poblacional $\sigma^2$ con la varianza muestral $S^2$, y el cociente $(\bar{X}-\mu)/(S/\sqrt{n})$ sigue $t_{n-1}$ porque $S^2$ es independiente de $\bar{X}$ y sigue una chi-cuadrado. Para Bernoulli, la varianza $p(1-p)$ es función de $p$, y el error estándar estimado $\sqrt{\hat{p}(1-\hat{p})/n}$ no tiene una distribución chi-cuadrado independiente, por lo que no se puede usar $t$.</p>
+        <p>La distribución $t$ surge cuando se estima la varianza poblacional $\sigma^2$ con la varianza muestral $S^2$, y el cociente $(\bar{X}-\mu)/(S/\sqrt{n})$ sigue $t_{n-1}$ porque $S^2$ es independiente de $\bar{X}$ y sigue una chi-cuadrado. Para Bernoulli, la varianza $p(1-p)$ es función de $p$, y el error estándar estimado $\sqrt{\hat{p}(1-\hat{p})/n}$ no tiene una distribución chi-cuadrado independiente, entonces no te preocupes no se puede usar $t$-Student.</p>
       </div>
     </div>
   </section>
@@ -561,7 +564,7 @@
   <section id="casos">
     <div class="card">
       <h2>5. Distintos casos según el muestreo</h2>
-      <p>Al igual que con $\bar{X}$, la expresión de $\sigma_{\hat{p}}$ varía según el tipo de población y muestreo. Haz clic en cada caso para expandirlo.</p>
+      <p>Al igual que con $\bar{X}$, la expresión de $\sigma_{\hat{p}}$ varía según el tipo de población y muestreo. Por lo tanto, se tienen varios casos. Haz clic en cada caso para expandirlo.</p>
     </div>
 
     <!-- Caso A -->
