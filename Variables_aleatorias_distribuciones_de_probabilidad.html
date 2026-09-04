@@ -503,13 +503,13 @@
         <p>En el estudio de la estadística, realizamos experimentos cuyos resultados están sujetos al azar. Para analizar estos resultados de manera matemática, a menudo es conveniente asignarles una descripción numérica. La definición formal es la siguiente:</p>
         
         <div class="formula">
-          <b>Definición 3.1:</b> Una <b>variable aleatoria</b> es una función que asocia un número real con cada elemento del espacio muestral.
+          <b>Definición:</b> Una <b>variable aleatoria</b> es una función que asocia un número real con cada elemento del espacio muestral.
         </div>
         
         <p>Utilizamos una letra mayúscula (por ejemplo, \(X\)) para denotar la variable aleatoria, y su correspondiente letra minúscula (\(x\)) para uno de sus valores específicos.</p>
         
         <div class="case-box">
-          <h4>💡 Ejemplo 3.1: Extracción de bolas de una urna</h4>
+          <h4>💡 Ejemplo 1: Extracción de bolas de una urna</h4>
           <p>De una urna que contiene <b>4 bolas rojas</b> y <b>3 negras</b> se extraen 2 bolas de manera sucesiva, sin reemplazo. Si definimos la variable aleatoria \(Y\) como el <b>número de bolas rojas</b>, los posibles resultados y sus valores correspondientes son:</p>
           <table>
             <tr><th>Punto Muestral (Espacio Muestral)</th><th>Valor \(y\) de la Variable Aleatoria \(Y\)</th></tr>
@@ -521,7 +521,7 @@
         </div>
 
         <div class="case-box">
-          <h4>💡 Ejemplo 3.2: Devolución de cascos</h4>
+          <h4>💡 Ejemplo 2: Devolución de cascos</h4>
           <p>Un empleado regresa 3 cascos de seguridad al azar a 3 obreros (Smith, Jones y Brown) que ya los habían probado. Si definimos la variable aleatoria \(M\) como el <b>número de emparejamientos correctos</b> (recibir el propio casco), los valores posibles para \(M\) son <b>0, 1 y 3</b>.</p>
           <p><i>Nota interesante:</i> ¡El valor \(M = 2\) es imposible! Si dos obreros reciben su casco correcto, el tercero necesariamente también debe recibir el suyo.</p>
         </div>
@@ -542,7 +542,7 @@
         <p>Una variable aleatoria discreta toma cada uno de sus valores con cierta probabilidad. La distribución de estas probabilidades se describe mediante una función:</p>
         
         <div class="formula">
-          <b>Definición 3.4:</b> El conjunto de pares ordenados \((x, f(x))\) es una función de probabilidad o <b>distribución de probabilidad</b> de la variable aleatoria discreta \(X\) si, para cada resultado \(x\) posible:
+          <b>Definición:</b> El conjunto de pares ordenados \((x, f(x))\) es una función de probabilidad o <b>distribución de probabilidad</b> de la variable aleatoria discreta \(X\) si, para cada resultado \(x\) posible:
           <br><br>
           1. \(f(x) \geq 0\)
           <br>
@@ -552,7 +552,7 @@
         </div>
 
         <div class="case-box">
-          <h4>💡 Ejemplo 3.8: Computadoras portátiles</h4>
+          <h4>💡 Ejemplo 3: Computadoras portátiles</h4>
           <p>Un embarque de 20 computadoras portátiles contiene 3 que están defectuosas. Si una escuela compra al azar 2 de estas computadoras, la distribución de probabilidad para el número \(X\) de computadoras defectuosas se calcula mediante combinaciones:</p>
           <div class="formula">
             \(f(0) = P(X=0) = \frac{\binom{3}{0}\binom{17}{2}}{\binom{20}{2}} = \frac{68}{95}\) &nbsp;&nbsp;&nbsp;&nbsp;
@@ -564,7 +564,7 @@
         <h3>Función de Distribución Acumulativa (FDA)</h3>
         <p>A menudo deseamos calcular la probabilidad de que el valor observado de una variable \(X\) sea menor o igual que algún número real \(x\):</p>
         <div class="formula">
-          <b>Definición 3.5:</b> La función de distribución acumulativa \(F(x)\) de una variable aleatoria discreta \(X\) con distribución de probabilidad \(f(x)\) es:
+          <b>Definición:</b> La función de distribución acumulativa \(F(x)\) de una variable aleatoria discreta \(X\) con distribución de probabilidad \(f(x)\) es:
           <br><br>
           \(F(x) = P(X \leq x) = \sum_{t \leq x} f(t)\) , para \(-\infty < x < \infty\)
         </div>
@@ -575,7 +575,7 @@
         <p>A diferencia de las variables discretas, una variable aleatoria continua tiene una <b>probabilidad de exactamente cero</b> de adoptar cualquiera de sus valores individuales específicos (es decir, \(P(X = x) = 0\)). Por ello, sus probabilidades se definen sobre intervalos y se representan como el área bajo una curva:</p>
 
         <div class="formula">
-          <b>Definición 3.6:</b> La función \(f(x)\) es una <b>función de densidad de probabilidad (fdp)</b> para la variable aleatoria continua \(X\) si:
+          <b>Definición:</b> La función \(f(x)\) es una <b>función de densidad de probabilidad (fdp)</b> para la variable aleatoria continua \(X\) si:
           <br><br>
           1. \(f(x) \geq 0\) , para toda \(x \in \mathbb{R}\)
           <br>
@@ -585,7 +585,7 @@
         </div>
 
         <div class="case-box">
-          <h4>💡 Ejemplo 3.11: Error en temperatura de reacción</h4>
+          <h4>💡 Ejemplo 4: Error en temperatura de reacción</h4>
           <p>Suponga que el error en la temperatura de reacción en °C es una variable aleatoria continua con la fdp:</p>
           <div class="formula">
             \(f(x) = \begin{cases} \frac{x^2}{3} & -1 < x < 2 \\ 0 & \text{en otro caso} \end{cases}\)
@@ -606,7 +606,7 @@
         <p>En muchas situaciones prácticas, un experimento se modela a través de dos o más variables aleatorias de forma simultánea. Registramos sus probabilidades utilizando distribuciones conjuntas:</p>
 
         <div class="formula">
-          <b>Definición 3.8 (Caso Discreto):</b> La función \(f(x,y)\) es una distribución de probabilidad conjunta de las variables discretas \(X\) y \(Y\) si:
+          <b>Definición (Caso Discreto):</b> La función \(f(x,y)\) es una distribución de probabilidad conjunta de las variables discretas \(X\) y \(Y\) si:
           <br><br>
           1. \(f(x,y) \geq 0\) para todo \((x,y)\)
           <br>
@@ -632,7 +632,7 @@
         <div class="accordion-content" id="independencia-detalles" style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">
           <p>Se dice que dos variables aleatorias \(X\) y \(Y\) son estadísticamente independientes si y solo si su probabilidad conjunta es exactamente igual al producto de sus distribuciones marginales individuales:</p>
           <div class="formula">
-            <b>Definición 3.12:</b> \(f(x,y) = g(x)h(y)\) para todo \((x,y)\) en sus rangos.
+            <b>Definición:</b> \(f(x,y) = g(x)h(y)\) para todo \((x,y)\) en sus rangos.
           </div>
           <p>Si existe al menos un punto \((x,y)\) donde esta igualdad no se cumple, las variables se consideran dependientes.</p>
         </div>
@@ -746,7 +746,7 @@
 
         <div class="case-box">
           <h3>Pregunta 2: Análisis del Experimento de Componentes</h3>
-          <p>En el Ejemplo 3.4, un plan de muestreo implica obtener una muestra de 10 artículos de un lote de 100, en el que 12 están defectuosos. Si \(X\) representa el número de artículos defectuosos en la muestra, ¿qué tipo de variable aleatoria es \(X\), qué valores puede asumir y bajo qué modelo (hipergeométrico o binomial) calcularías sus probabilidades?</p>
+          <p>Un plan de muestreo implica obtener una muestra de 10 artículos de un lote de 100, en el que 12 están defectuosos. Si \(X\) representa el número de artículos defectuosos en la muestra, ¿qué tipo de variable aleatoria es \(X\), qué valores puede asumir y bajo qué modelo (hipergeométrico o binomial) calcularías sus probabilidades?</p>
           <textarea class="essay" id="essay-q2" placeholder="Desarrolla tu justificación estadística aquí..."></textarea>
         </div>
 
@@ -758,7 +758,7 @@
 
         <div class="case-box">
           <h3>Pregunta 4: FDA de Variable Continua</h3>
-          <p>Para la variable aleatoria continua del Ejemplo 3.11 con fdp \(f(x) = \frac{x^2}{3}\) para \(-1 < x < 2\) y 0 en otro caso, describe paso a paso cómo calcularías la función de distribución acumulativa \(F(x)\) para el intervalo principal \(-1 \leq x < 2\), mostrando la integral correspondiente.</p>
+          <p>Para una variable aleatoria continua \(X\) con fdp \(f(x) = \frac{x^2}{3}\) para \(-1 < x < 2\) y 0 en otro caso, describe paso a paso cómo calcularías la función de distribución acumulativa \(F(x)\) para el intervalo principal \(-1 \leq x < 2\), mostrando la integral correspondiente.</p>
           <textarea class="essay" id="essay-q4" placeholder="Desarrolla el cálculo de la integral acumulada aquí..."></textarea>
         </div>
 
@@ -898,7 +898,7 @@
     // --- SECCIÓN OPCIÓN MÚLTIPLE ---
     const mcQuestions = [
       {
-        question: "1. ¿Cuál es la definición formal de una variable aleatoria según el libro de Walpole?",
+        question: "1. ¿Cuál es la definición formal de una variable aleatoria?",
         options: [
           "Una variable matemática cuyo valor se calcula resolviendo un sistema de ecuaciones lineales.",
           "Una función que asocia un número real con cada elemento del espacio muestral.",
@@ -938,7 +938,7 @@
         answer: 2
       },
       {
-        question: "5. En el Ejemplo 3.8, un embarque contiene 20 computadoras portátiles, de las cuales 3 están defectuosas. Si una escuela compra al azar 2 de estas computadoras, ¿cuál es la probabilidad f(2) de que ambas computadoras compradas estén defectuosas?",
+        question: "5. Un embarque contiene 20 computadoras portátiles, de las cuales 3 están defectuosas. Si una escuela compra al azar 2 de estas computadoras, ¿cuál es la probabilidad f(2) de que ambas computadoras compradas estén defectuosas?",
         options: [
           "51/190",
           "3/190",
@@ -968,7 +968,7 @@
         answer: 0
       },
       {
-        question: "8. En el Ejemplo 3.15, con una densidad conjunta f(x,y) = 2/5 * (2x + 3y) para 0 < x < 1, 0 < y < 1, ¿cuál es la probabilidad P(0 < X < 1/2, 1/4 < Y < 3/4) asociada al cilindro recto sobre dicha región?",
+        question: "8. Una empresa privada opera un local que da servicio a clientes que llegan en automovil y otro que da servicio a clientes que llegan caminando. En un día elegido al azar, sean $X$ e $Y$, respectivamente, las proporciones de tiempo que ambos locales estan en servicio y supongamos que la función de densidad conjunta está dada por f(x,y) = 2/5 * (2x + 3y) para 0 < x < 1, 0 < y < 1, ¿cuál es la probabilidad P(0 < X < 1/2, 1/4 < Y < 2/4) asociada al cilindro recto sobre dicha región?",
         options: [
           "1/4",
           "13/160",
