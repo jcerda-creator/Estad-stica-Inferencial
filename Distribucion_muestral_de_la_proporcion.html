@@ -1,169 +1,480 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Distribución Muestral de la Proporción — Clase Interactiva</title>
-<script>
-  MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
-    svg: { fontCache: 'global' }
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-<style>
-  :root{
-    --bg:#0f172a; --bg2:#1e293b; --card:#ffffff; --muted:#64748b;
-    --primary:#4f46e5; --primary2:#7c3aed; --accent:#06b6d4;
-    --success:#10b981; --danger:#ef4444; --warn:#f59e0b;
-    --text:#0f172a; --text-soft:#334155;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;font-family:'Segoe UI',Roboto,system-ui,sans-serif;
-    background:linear-gradient(135deg,#eef2ff 0%,#f0f9ff 100%);
-    color:var(--text);line-height:1.65;
-  }
-  header{
-    background:linear-gradient(120deg,var(--primary) 0%,var(--primary2) 100%);
-    color:#fff;padding:2.5rem 1.5rem;box-shadow:0 8px 24px rgba(0,0,0,.15);
-  }
-  header h1{margin:0 0 .4rem;font-size:2.2rem;letter-spacing:-.5px}
-  header p{margin:0;opacity:.92;font-size:1.05rem}
-  nav.tabs{
-    display:flex;flex-wrap:wrap;gap:.4rem;background:var(--bg2);
-    padding:.6rem;position:sticky;top:0;z-index:50;
-    box-shadow:0 2px 8px rgba(0,0,0,.2);
-  }
-  nav.tabs button{
-    background:transparent;color:#cbd5e1;border:none;padding:.6rem 1rem;
-    border-radius:8px;cursor:pointer;font-weight:600;font-size:.92rem;
-    transition:all .2s;
-  }
-  nav.tabs button:hover{background:#334155;color:#fff}
-  nav.tabs button.active{background:var(--primary);color:#fff}
-  main{max-width:1100px;margin:0 auto;padding:1.5rem}
-  section{display:none;animation:fade .4s ease}
-  section.active{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .card{
-    background:var(--card);border-radius:14px;padding:1.6rem 1.8rem;
-    margin-bottom:1.2rem;box-shadow:0 4px 14px rgba(15,23,42,.07);
-    border-left:5px solid var(--primary);
-  }
-  .card.accent{border-left-color:var(--accent)}
-  .card.warn{border-left-color:var(--warn)}
-  .card.success{border-left-color:var(--success)}
-  h2{color:var(--primary);margin-top:0;font-size:1.6rem}
-  h3{color:var(--primary2);margin-top:1.2rem}
-  .formula{
-    background:#f1f5f9;border-radius:10px;padding:1rem 1.2rem;
-    margin:1rem 0;text-align:center;border:1px dashed #cbd5e1;
-    font-size:1.1rem;
-  }
-  .keyword{
-    background:linear-gradient(transparent 60%,#fde68a 60%);
-    font-weight:700;cursor:help;position:relative;
-    border-bottom:2px dotted var(--warn);
-  }
-  .glossary-term{
-    color:var(--primary2);font-weight:600;cursor:pointer;
-    border-bottom:1px dashed var(--primary2);
-  }
-  .glossary-term:hover{background:#ede9fe}
-  .blank{
-    display:inline-block;min-width:120px;border-bottom:2px solid var(--primary);
-    padding:2px 8px;margin:0 4px;background:#f8fafc;font-family:monospace;
-  }
-  .blank.correct{background:#d1fae5;border-color:var(--success);color:#065f46}
-  .blank.wrong{background:#fee2e2;border-color:var(--danger);color:#991b1b}
-  input.fill{
-    border:none;border-bottom:2px solid var(--primary);background:transparent;
-    font-family:monospace;font-size:1rem;padding:2px 6px;width:130px;
-    outline:none;transition:all .2s;
-  }
-  input.fill:focus{border-color:var(--primary2);background:#fff}
-  .btn{
-    background:linear-gradient(120deg,var(--primary),var(--primary2));
-    color:#fff;border:none;padding:.6rem 1.3rem;border-radius:8px;
-    cursor:pointer;font-weight:600;margin:.4rem .3rem;transition:transform .15s;
-    box-shadow:0 3px 8px rgba(79,70,229,.3);
-  }
-  .btn:hover{transform:translateY(-2px)}
-  .btn.secondary{background:#64748b;box-shadow:none}
-  .btn.success{background:var(--success)}
-  .feedback{
-    margin-top:.8rem;padding:.8rem 1rem;border-radius:8px;
-    font-weight:600;display:none;
-  }
-  .feedback.ok{background:#d1fae5;color:#065f46;display:block}
-  .feedback.err{background:#fee2e2;color:#991b1b;display:block}
-  .options label{
-    display:block;padding:.7rem 1rem;margin:.4rem 0;background:#f8fafc;
-    border:2px solid transparent;border-radius:8px;cursor:pointer;
-    transition:all .2s;
-  }
-  .options label:hover{background:#eef2ff;border-color:#c7d2fe}
-  .options input{margin-right:.6rem}
-  .options label.selected{background:#ede9fe;border-color:var(--primary2)}
-  .options label.correct{background:#d1fae5;border-color:var(--success)}
-  .options label.wrong{background:#fee2e2;border-color:var(--danger)}
-  textarea.essay{
-    width:100%;min-height:120px;padding:.8rem;border:2px solid #cbd5e1;
-    border-radius:8px;font-family:inherit;font-size:1rem;resize:vertical;
-  }
-  textarea.essay:focus{border-color:var(--primary);outline:none}
-  .tooltip{
-    position:fixed;background:var(--bg);color:#fff;padding:.8rem 1rem;
-    border-radius:8px;max-width:320px;font-size:.9rem;z-index:100;
-    box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none;
-    opacity:0;transition:opacity .2s;
-  }
-  .tooltip.show{opacity:1}
-  .modal{
-    display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);
-    z-index:200;align-items:center;justify-content:center;padding:1rem;
-  }
-  .modal.show{display:flex}
-  .modal-content{
-    background:#fff;border-radius:14px;padding:1.8rem;max-width:600px;
-    width:100%;max-height:85vh;overflow-y:auto;position:relative;
-  }
-  .modal-close{
-    position:absolute;top:.6rem;right:.8rem;background:none;border:none;
-    font-size:1.5rem;cursor:pointer;color:var(--muted);
-  }
-  table{width:100%;border-collapse:collapse;margin:1rem 0}
-  th,td{padding:.6rem .8rem;border:1px solid #cbd5e1;text-align:left}
-  th{background:#eef2ff;color:var(--primary)}
-  .progress{
-    height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin:1rem 0;
-  }
-  .progress-bar{
-    height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));
-    width:0;transition:width .4s;
-  }
-  .case-box{
-    background:linear-gradient(135deg,#fef3c7,#fde68a);
-    border-radius:12px;padding:1.2rem;margin:1rem 0;
-    border-left:5px solid var(--warn);
-  }
-  .case-box h4{margin-top:0;color:#92400e}
-  footer{
-    background:var(--bg);color:#cbd5e1;text-align:center;padding:1.5rem;
-    margin-top:2rem;
-  }
-  @media(max-width:640px){
-    header h1{font-size:1.6rem}
-    .card{padding:1.2rem}
-    nav.tabs button{font-size:.82rem;padding:.5rem .7rem}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribución Muestral de la Proporción · UP Bonaterra</title>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <style>
+    /* ===== PALETA INSTITUCIONAL CAMPUS BONATERRA ===== */
+    :root {
+      --up-blue: #0A1C3A;       /* azul marino */
+      --up-gold: #C9A84C;       /* dorado */
+      --up-gold-light: #E8D5A3;
+      --up-green: #007B5D;      /* verde Metrópolis */
+      --up-green-light: #D4EDDA;
+      --up-burgundy: #8B1A3A;   /* guinda */
+      --up-burgundy-light: #F2D7DE;
+      --up-white: #FFFFFF;
+      --up-gray: #F5F5F5;
+      --up-gray-dark: #D0D0D0;
+      --up-text: #1E2A44;
+      --up-shadow: rgba(10, 28, 58, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--up-gray);
+      color: var(--up-text);
+      line-height: 1.65;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--up-blue) 0%, var(--up-burgundy) 100%);
+      color: var(--up-white);
+      padding: 2rem 1.5rem;
+      box-shadow: 0 6px 20px var(--up-shadow);
+      border-bottom: 4px solid var(--up-gold);
+    }
+    header h1 {
+      margin: 0 0 0.3rem;
+      font-size: 2.2rem;
+      letter-spacing: -0.5px;
+    }
+    header h1 span {
+      color: var(--up-gold);
+    }
+    header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1.05rem;
+    }
+
+    /* ===== TABS ===== */
+    nav.tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      background: var(--up-blue);
+      padding: 0.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    nav.tabs button {
+      background: transparent;
+      color: #cbd5e1;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    nav.tabs button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    nav.tabs button.active {
+      background: var(--up-gold);
+      color: var(--up-blue);
+    }
+
+    /* ===== MAIN ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    section {
+      display: none;
+      animation: fade 0.4s ease;
+    }
+    section.active {
+      display: block;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--up-white);
+      border-radius: 12px;
+      padding: 1.6rem 1.8rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 4px 16px var(--up-shadow);
+      border-left: 6px solid var(--up-gold);
+      transition: box-shadow 0.2s;
+    }
+    .card.accent {
+      border-left-color: var(--up-green);
+    }
+    .card.warn {
+      border-left-color: var(--up-burgundy);
+    }
+    .card.success {
+      border-left-color: var(--up-green);
+    }
+    .card.burgundy {
+      border-left-color: var(--up-burgundy);
+      background: var(--up-burgundy-light);
+    }
+
+    h2 {
+      color: var(--up-blue);
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
+    h3 {
+      color: var(--up-burgundy);
+      margin-top: 1.2rem;
+    }
+    .formula {
+      background: #f0f2f5;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      text-align: center;
+      border: 1px dashed var(--up-gold);
+      font-size: 1.1rem;
+      overflow-x: auto;
+    }
+    .keyword {
+      background: linear-gradient(transparent 60%, var(--up-gold-light) 60%);
+      font-weight: 700;
+      cursor: help;
+      border-bottom: 2px dotted var(--up-gold);
+    }
+
+    .glossary-term {
+      color: var(--up-burgundy);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 1px dashed var(--up-gold);
+    }
+    .glossary-term:hover {
+      background: var(--up-gold-light);
+    }
+
+    /* ===== ACORDEÓN ===== */
+    .accordion-toggle {
+      background: var(--up-blue);
+      color: var(--up-white);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin: 0.5rem 0;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      text-align: left;
+    }
+    .accordion-toggle:hover {
+      background: var(--up-burgundy);
+    }
+    .accordion-toggle .arrow {
+      transition: transform 0.3s;
+      margin-left: auto;
+    }
+    .accordion-toggle.open .arrow {
+      transform: rotate(180deg);
+    }
+    .accordion-content {
+      display: none;
+      padding-top: 0.8rem;
+      animation: fade 0.3s ease;
+    }
+    .accordion-content.open {
+      display: block;
+    }
+
+    /* ===== INPUTS ===== */
+    input.fill {
+      border: none;
+      border-bottom: 2px solid var(--up-blue);
+      background: transparent;
+      font-family: monospace;
+      font-size: 1rem;
+      padding: 2px 6px;
+      width: 130px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input.fill:focus {
+      border-color: var(--up-gold);
+      background: #fff;
+    }
+    input.fill.correct {
+      background: var(--up-green-light);
+      border-color: var(--up-green);
+      color: #0b4a2a;
+    }
+    input.fill.wrong {
+      background: #f8d7da;
+      border-color: #b02a37;
+      color: #7a1a1a;
+    }
+
+    .btn {
+      background: var(--up-blue);
+      color: var(--up-white);
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin: 0.3rem 0.2rem;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 3px 8px rgba(10, 28, 58, 0.3);
+    }
+    .btn:hover {
+      background: var(--up-burgundy);
+      transform: translateY(-2px);
+    }
+    .btn.secondary {
+      background: var(--up-gray-dark);
+      color: var(--up-text);
+      box-shadow: none;
+    }
+    .btn.secondary:hover {
+      background: #b0b0b0;
+    }
+    .btn.success {
+      background: var(--up-green);
+    }
+    .btn.success:hover {
+      background: #005f47;
+    }
+    .btn.gold {
+      background: var(--up-gold);
+      color: var(--up-blue);
+    }
+    .btn.gold:hover {
+      background: #b8983f;
+    }
+
+    .feedback {
+      margin-top: 0.8rem;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      display: none;
+    }
+    .feedback.ok {
+      background: var(--up-green-light);
+      color: #0b4a2a;
+      display: block;
+    }
+    .feedback.err {
+      background: #f8d7da;
+      color: #7a1a1a;
+      display: block;
+    }
+
+    /* ===== OPCIONES ===== */
+    .options label {
+      display: block;
+      padding: 0.6rem 1rem;
+      margin: 0.3rem 0;
+      background: #f8fafc;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .options label:hover {
+      background: #ecf3fa;
+      border-color: var(--up-gold-light);
+    }
+    .options input {
+      margin-right: 0.6rem;
+    }
+    .options label.selected {
+      background: var(--up-gold-light);
+      border-color: var(--up-gold);
+    }
+    .options label.correct {
+      background: var(--up-green-light);
+      border-color: var(--up-green);
+    }
+    .options label.wrong {
+      background: #f8d7da;
+      border-color: #b02a37;
+    }
+
+    /* ===== TEXTAREA ===== */
+    textarea.essay {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.8rem;
+      border: 2px solid var(--up-gray-dark);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    textarea.essay:focus {
+      border-color: var(--up-gold);
+      outline: none;
+    }
+
+    /* ===== TOOLTIP ===== */
+    .tooltip {
+      position: fixed;
+      background: var(--up-blue);
+      color: #fff;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      max-width: 320px;
+      font-size: 0.9rem;
+      z-index: 100;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    /* ===== MODAL ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 28, 58, 0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal.show {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.8rem;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      border-top: 6px solid var(--up-gold);
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.8rem;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--up-blue);
+    }
+
+    /* ===== TABLAS ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--up-gray-dark);
+      text-align: left;
+    }
+    th {
+      background: var(--up-blue);
+      color: var(--up-white);
+    }
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .progress {
+      height: 8px;
+      background: var(--up-gray-dark);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--up-green), var(--up-gold));
+      width: 0;
+      transition: width 0.4s;
+    }
+
+    .case-box {
+      background: #fef9e7;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border-left: 6px solid var(--up-gold);
+    }
+    .case-box h4 {
+      margin-top: 0;
+      color: var(--up-blue);
+    }
+
+    footer {
+      background: var(--up-blue);
+      color: var(--up-gold-light);
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 4px solid var(--up-gold);
+    }
+
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.6rem; }
+      .card { padding: 1.2rem; }
+      nav.tabs button { font-size: 0.8rem; padding: 0.4rem 0.7rem; }
+    }
+
+    /* ===== BOTÓN DE DIÁLOGO ADICIONAL ===== */
+    .dialog-btn {
+      background: none;
+      border: none;
+      color: var(--up-green);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline dotted;
+      padding: 0 0.2rem;
+      font-size: 0.95rem;
+    }
+    .dialog-btn:hover {
+      color: var(--up-burgundy);
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  <h1>📊 Distribución Muestral de la Proporción</h1>
-  <p>Clase interactiva · Inferencia estadística · Viernes, 4 de septiembre de 2026</p>
+  <h1>📊 Distribución Muestral de la <span>Proporción</span></h1>
+  <p>Universidad Panamericana · Campus Bonaterra · Clase interactiva · 4 de septiembre de 2026</p>
 </header>
 
 <nav class="tabs">
@@ -178,216 +489,222 @@
 
 <main>
 
-<!-- ============ INTRODUCCIÓN ============ -->
-<section id="intro" class="active">
-  <div class="card">
-    <h2>1. Motivación y conexión con lo aprendido</h2>
-    <p>En clases anteriores estudiamos la <span class="glossary-term" data-term="distribucion-muestral-media">distribución muestral de la media muestral</span> $\bar{X}$ y el poder del <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>. Ahora daremos un paso análogo pero en el mundo de las <b>variables cualitativas</b> (sí/no, éxito/fracaso, defectuoso/no defectuoso).</p>
-    <p>Cuando en lugar de medir una cantidad numérica clasificamos a los individuos en dos categorías, el parámetro de interés es la <span class="keyword" data-tip="Fracción de la población que posee una característica dada. Se denota p.">proporción poblacional $p$</span>, y su estimador natural es la <span class="keyword" data-tip="Fracción de la muestra que posee la característica. Se denota p̂ = X/n.">proporción muestral $\hat{p}$</span>.</p>
-  </div>
-
-  <div class="card accent">
-    <h2>2. Definiciones fundamentales</h2>
-    <p>Sea una población de tamaño $N$ de la cual se extrae una muestra aleatoria de tamaño $n$. Definimos la variable aleatoria indicadora:</p>
-    <div class="formula">
-      $$X_i = \begin{cases} 1 & \text{si el individuo } i \text{ tiene la característica} \\ 0 & \text{en caso contrario} \end{cases}$$
-    </div>
-    <p>Cada $X_i \sim \text{Bernoulli}(p)$, con $E[X_i]=p$ y $\text{Var}(X_i)=p(1-p)$.</p>
-    <p>El número total de éxitos en la muestra es $X=\sum_{i=1}^n X_i \sim \text{Binomial}(n,p)$ y la <b>proporción muestral</b> se define como:</p>
-    <div class="formula">
-      $$\hat{p} = \frac{X}{n} = \frac{1}{n}\sum_{i=1}^n X_i = \bar{X}$$
-    </div>
-    <p>¡Observa que $\hat{p}$ es exactamente la <span class="glossary-term" data-term="media-muestral">media muestral</span> de variables Bernoulli!</p>
-  </div>
-
-  <div class="card success">
-    <h3>💡 Idea clave</h3>
-    <p>Todo lo que aprendiste sobre la distribución muestral de $\bar{X}$ se traslada directamente a $\hat{p}$, porque $\hat{p}$ <b>es</b> una media muestral de variables 0/1.</p>
-  </div>
-</section>
-
-<!-- ============ DISTRIBUCIÓN ============ -->
-<section id="dist">
-  <div class="card">
-    <h2>3. Parámetros de la distribución muestral de $\hat{p}$</h2>
-    <p>Aplicando las propiedades de la esperanza y varianza de una suma de variables i.i.d.:</p>
-    <div class="formula">
-      $$\mu_{\hat{p}} = E[\hat{p}] = p$$
-    </div>
-    <div class="formula">
-      $$\sigma_{\hat{p}}^2 = \text{Var}(\hat{p}) = \frac{p(1-p)}{n} \qquad \Rightarrow \qquad \sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}$$
-    </div>
-    <p>Estas fórmulas son <b>análogas</b> a las de $\bar{X}$, donde $\mu_{\bar{X}}=\mu$ y $\sigma_{\bar{X}}^2=\sigma^2/n$, con la particularidad de que en Bernoulli $\sigma^2 = p(1-p)$.</p>
-  </div>
-
-  <div class="card accent">
-    <h2>4. Forma de la distribución: aproximación normal</h2>
-    <p>Por el <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>, cuando $n$ es suficientemente grande:</p>
-    <div class="formula">
-      $$\hat{p} \;\dot{\sim}\; \mathcal{N}\!\left(p,\;\frac{p(1-p)}{n}\right)$$
-    </div>
-    <p>La <b>regla práctica</b> para considerar $n$ grande en el caso de proporciones es:</p>
-    <div class="formula">
-      $$np \geq 5 \quad \text{y} \quad n(1-p) \geq 5$$
-    </div>
-    <p>(Algunos textos usan $np\geq 10$ y $n(1-p)\geq 10$.)</p>
-    <p>La <span class="glossary-term" data-term="variable-estandarizada">variable estandarizada</span> es:</p>
-    <div class="formula">
-      $$Z = \frac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}} \;\;\dot{\sim}\;\; \mathcal{N}(0,1)$$
-    </div>
-  </div>
-
-  <div class="card warn">
-    <h3>⚠️ Diferencia con el caso de la media</h3>
-    <p>En la distribución muestral de $\bar{X}$ podíamos usar $t$ de Student cuando $\sigma$ era desconocida. Para $\hat{p}$ <b>no existe análogo $t$</b>: la varianza $p(1-p)$ depende del mismo parámetro $p$ que estamos estimando, por lo que se trabaja siempre con la aproximación normal.</p>
-  </div>
-</section>
-
-<!-- ============ CASOS ============ -->
-<section id="casos">
-  <div class="card">
-    <h2>5. Distintos casos según el muestreo</h2>
-    <p>Al igual que con $\bar{X}$, la expresión de $\sigma_{\hat{p}}$ varía según el tipo de población y muestreo.</p>
-  </div>
-
-  <div class="case-box">
-    <h4>Caso A — Población infinita (o muestreo con reemplazo)</h4>
-    <p>Las extracciones son independientes. Se conserva la fórmula básica:</p>
-    <div class="formula">
-      $$\sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}$$
-    </div>
-  </div>
-
-  <div class="case-box">
-    <h4>Caso B — Población finita, muestreo sin reemplazo</h4>
-    <p>Cuando la población tiene tamaño finito $N$ y se muestrea <b>sin reemplazo</b>, aparece el <span class="glossary-term" data-term="fca">Factor de Corrección por Población Finita (FCA)</span>:</p>
-    <div class="formula">
-      $$\sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}\;\cdot\;\sqrt{\frac{N-n}{N-1}}$$
-    </div>
-    <p>Regla práctica: el FCA se aplica cuando $\dfrac{n}{N} > 0.05$ (muestra mayor al 5% de la población).</p>
-  </div>
-
-  <div class="case-box">
-    <h4>Caso C — $p$ desconocida (situación más frecuente en la práctica)</h4>
-    <p>En aplicaciones reales $p$ es desconocida. Se reemplaza por $\hat{p}$ en el cálculo del error estándar:</p>
-    <div class="formula">
-      $$SE(\hat{p}) = \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$
-    </div>
-    <p>Esto se usa para construir <span class="glossary-term" data-term="intervalo-confianza">intervalos de confianza</span> y realizar pruebas de hipótesis.</p>
-  </div>
-
-  <div class="card">
-    <h3>📋 Tabla resumen</h3>
-    <table>
-      <tr><th>Caso</th><th>Media</th><th>Desviación estándar</th></tr>
-      <tr><td>Población infinita</td><td>$\mu_{\hat{p}}=p$</td><td>$\sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}}$</td></tr>
-      <tr><td>Población finita ($n/N>0.05$)</td><td>$\mu_{\hat{p}}=p$</td><td>$\sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}}\sqrt{\frac{N-n}{N-1}}$</td></tr>
-      <tr><td>$p$ desconocida</td><td>se estima con $\hat{p}$</td><td>$SE=\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$</td></tr>
-    </table>
-  </div>
-</section>
-
-<!-- ============ COMPLETAR ============ -->
-<section id="fill">
-  <div class="card">
-    <h2>✏️ Ejercicios de completar palabras clave</h2>
-    <p>Rellena cada espacio con el término correcto y pulsa <b>Verificar</b>.</p>
-
-    <div id="fill-container">
-      <div class="fill-item" data-answer="proporción muestral">
-        <p>1. La fracción de individuos de la muestra que presenta la característica de interés se denomina <input class="fill" type="text" placeholder="...">.</p>
-      </div>
-      <div class="fill-item" data-answer="bernoulli">
-        <p>2. Cada observación individual $X_i$ que vale 1 (éxito) o 0 (fracaso) sigue una distribución <input class="fill" type="text" placeholder="...">.</p>
-      </div>
-      <div class="fill-item" data-answer="binomial">
-        <p>3. La suma $X=\sum X_i$ de $n$ Bernoulli independientes sigue una distribución <input class="fill" type="text" placeholder="...">.</p>
-      </div>
-      <div class="fill-item" data-answer="p(1-p)/n">
-        <p>4. La varianza de $\hat{p}$ en población infinita es $\sigma^2_{\hat{p}} = $ <input class="fill" type="text" placeholder="..."> (escribe la expresión sin espacios).</p>
-      </div>
-      <div class="fill-item" data-answer="normal">
-        <p>5. Para $n$ grande, la distribución de $\hat{p}$ se aproxima a una distribución <input class="fill" type="text" placeholder="...">.</p>
-      </div>
-      <div class="fill-item" data-answer="5">
-        <p>6. La regla práctica exige $np \geq $ <input class="fill" type="text" placeholder="..." style="width:60px"> y $n(1-p)\geq$ el mismo valor.</p>
-      </div>
-      <div class="fill-item" data-answer="finita">
-        <p>7. El factor de corrección $\sqrt{\frac{N-n}{N-1}}$ se usa cuando la población es <input class="fill" type="text" placeholder="...">.</p>
-      </div>
-      <div class="fill-item" data-answer="0.05">
-        <p>8. El FCA se aplica cuando $n/N > $ <input class="fill" type="text" placeholder="..." style="width:80px">.</p>
-      </div>
-      <div class="fill-item" data-answer="central del límite">
-        <p>9. El teorema que justifica la aproximación normal se llama Teorema <input class="fill" type="text" placeholder="..." style="width:200px">.</p>
-      </div>
-      <div class="fill-item" data-answer="p">
-        <p>10. La esperanza de $\hat{p}$ es $E[\hat{p}] = $ <input class="fill" type="text" placeholder="..." style="width:60px">.</p>
+  <!-- ============ INTRODUCCIÓN ============ -->
+  <section id="intro" class="active">
+    <div class="card">
+      <h2>1. Motivación y conexión con lo aprendido</h2>
+      <p>En clases anteriores estudiamos la <span class="glossary-term" data-term="distribucion-muestral-media">distribución muestral de la media muestral</span> $\bar{X}$ y el poder del <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>. Ahora daremos un paso análogo pero en el mundo de las <b>variables cualitativas</b> (sí/no, éxito/fracaso, defectuoso/no defectuoso).</p>
+      <p>Cuando en lugar de medir una cantidad numérica clasificamos a los individuos en dos categorías, el parámetro de interés es la <span class="keyword" data-tip="Fracción de la población que posee una característica dada. Se denota p.">proporción poblacional $p$</span>, y su estimador natural es la <span class="keyword" data-tip="Fracción de la muestra que posee la característica. Se denota p̂ = X/n.">proporción muestral $\hat{p}$</span>.</p>
+      <button class="dialog-btn" data-dialog="intro-detail">↪ Ver más sobre la conexión con la media</button>
+      <div id="intro-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
+        <p>La proporción muestral $\hat{p}$ es exactamente la media muestral de variables Bernoulli (0/1). Por lo tanto, todos los resultados sobre $\bar{X}$ (media, varianza, TCL) se aplican directamente a $\hat{p}$. Esta conexión es clave para entender su comportamiento.</p>
       </div>
     </div>
 
-    <button class="btn" onclick="checkFill()">Verificar respuestas</button>
-    <button class="btn secondary" onclick="resetFill()">Reiniciar</button>
-    <div id="fill-feedback" class="feedback"></div>
-  </div>
-</section>
+    <div class="card accent">
+      <h2>2. Definiciones fundamentales</h2>
+      <p>Sea una población de tamaño $N$ de la cual se extrae una muestra aleatoria de tamaño $n$. Definimos la variable aleatoria indicadora:</p>
+      <div class="formula">
+        $$X_i = \begin{cases} 1 & \text{si el individuo } i \text{ tiene la característica} \\ 0 & \text{en caso contrario} \end{cases}$$
+      </div>
+      <p>Cada $X_i \sim \text{Bernoulli}(p)$, con $E[X_i]=p$ y $\text{Var}(X_i)=p(1-p)$.</p>
+      <p>El número total de éxitos en la muestra es $X=\sum_{i=1}^n X_i \sim \text{Binomial}(n,p)$ y la <b>proporción muestral</b> se define como:</p>
+      <div class="formula">
+        $$\hat{p} = \frac{X}{n} = \frac{1}{n}\sum_{i=1}^n X_i = \bar{X}$$
+      </div>
+      <p>¡Observa que $\hat{p}$ es exactamente la <span class="glossary-term" data-term="media-muestral">media muestral</span> de variables Bernoulli!</p>
+    </div>
 
-<!-- ============ OPCIÓN MÚLTIPLE ============ -->
-<section id="mc">
-  <div class="card">
-    <h2>✔️ Ejercicios de opción múltiple</h2>
-    <div class="progress"><div class="progress-bar" id="mc-progress"></div></div>
-    <div id="mc-container"></div>
-    <button class="btn" onclick="checkMC()">Calificar</button>
-    <button class="btn secondary" onclick="renderMC()">Reiniciar</button>
-    <div id="mc-feedback" class="feedback"></div>
-  </div>
-</section>
+    <div class="card success">
+      <h3>💡 Idea clave</h3>
+      <p>Todo lo que aprendiste sobre la distribución muestral de $\bar{X}$ se traslada directamente a $\hat{p}$, porque $\hat{p}$ <b>es</b> una media muestral de variables 0/1.</p>
+    </div>
+  </section>
 
-<!-- ============ ENSAYO ============ -->
-<section id="essay">
-  <div class="card">
-    <h2>📝 Ejercicios tipo ensayo</h2>
-    <p>Responde con tus propias palabras. Puedes usar notación matemática. Al finalizar puedes guardar tus respuestas.</p>
+  <!-- ============ DISTRIBUCIÓN ============ -->
+  <section id="dist">
+    <div class="card">
+      <h2>3. Parámetros de la distribución muestral de $\hat{p}$</h2>
+      <p>Aplicando las propiedades de la esperanza y varianza de una suma de variables i.i.d.:</p>
+      <div class="formula">$$\mu_{\hat{p}} = E[\hat{p}] = p$$</div>
+      <div class="formula">$$\sigma_{\hat{p}}^2 = \text{Var}(\hat{p}) = \frac{p(1-p)}{n} \qquad \Rightarrow \qquad \sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}$$</div>
+      <p>Estas fórmulas son <b>análogas</b> a las de $\bar{X}$, donde $\mu_{\bar{X}}=\mu$ y $\sigma_{\bar{X}}^2=\sigma^2/n$, con la particularidad de que en Bernoulli $\sigma^2 = p(1-p)$.</p>
+      <button class="dialog-btn" data-dialog="dist-detail">↪ Derivación paso a paso</button>
+      <div id="dist-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
+        <p>$E[\hat{p}] = E\left[\frac{1}{n}\sum X_i\right] = \frac{1}{n}\sum E[X_i] = \frac{1}{n} n p = p$.</p>
+        <p>$\text{Var}(\hat{p}) = \text{Var}\left(\frac{1}{n}\sum X_i\right) = \frac{1}{n^2}\sum \text{Var}(X_i) = \frac{1}{n^2} n p(1-p) = \frac{p(1-p)}{n}$.</p>
+      </div>
+    </div>
 
-    <h3>Pregunta 1</h3>
-    <p>Explica con tus palabras por qué la distribución muestral de $\hat{p}$ puede considerarse un caso particular de la distribución muestral de la media muestral $\bar{X}$. ¿Qué variables se promedian?</p>
-    <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+    <div class="card accent">
+      <h2>4. Forma de la distribución: aproximación normal</h2>
+      <p>Por el <span class="glossary-term" data-term="tcl">Teorema Central del Límite</span>, cuando $n$ es suficientemente grande:</p>
+      <div class="formula">$$\hat{p} \;\dot{\sim}\; \mathcal{N}\!\left(p,\;\frac{p(1-p)}{n}\right)$$</div>
+      <p>La <b>regla práctica</b> para considerar $n$ grande en el caso de proporciones es:</p>
+      <div class="formula">$$np \geq 5 \quad \text{y} \quad n(1-p) \geq 5$$</div>
+      <p>(Algunos textos usan $np\geq 10$ y $n(1-p)\geq 10$.)</p>
+      <p>La <span class="glossary-term" data-term="variable-estandarizada">variable estandarizada</span> es:</p>
+      <div class="formula">$$Z = \frac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}} \;\;\dot{\sim}\;\; \mathcal{N}(0,1)$$</div>
+    </div>
 
-    <h3>Pregunta 2</h3>
-    <p>Una empresa afirma que el 30% de sus clientes está satisfecho. Se toma una muestra de $n=100$ clientes. Describe paso a paso cómo calcularías la probabilidad de que la proporción muestral sea mayor al 35%. Indica las condiciones que debes verificar.</p>
-    <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+    <div class="card warn">
+      <h3>⚠️ Diferencia con el caso de la media</h3>
+      <p>En la distribución muestral de $\bar{X}$ podíamos usar $t$ de Student cuando $\sigma$ era desconocida. Para $\hat{p}$ <b>no existe análogo $t$</b>: la varianza $p(1-p)$ depende del mismo parámetro $p$ que estamos estimando, por lo que se trabaja siempre con la aproximación normal.</p>
+      <button class="dialog-btn" data-dialog="t-detail">↪ Explicación detallada</button>
+      <div id="t-detail" style="display:none; margin-top:0.8rem; padding:0.8rem; background:#f0f2f5; border-radius:6px;">
+        <p>La distribución $t$ surge cuando se estima la varianza poblacional $\sigma^2$ con la varianza muestral $S^2$, y el cociente $(\bar{X}-\mu)/(S/\sqrt{n})$ sigue $t_{n-1}$ porque $S^2$ es independiente de $\bar{X}$ y sigue una chi-cuadrado. Para Bernoulli, la varianza $p(1-p)$ es función de $p$, y el error estándar estimado $\sqrt{\hat{p}(1-\hat{p})/n}$ no tiene una distribución chi-cuadrado independiente, por lo que no se puede usar $t$.</p>
+      </div>
+    </div>
+  </section>
 
-    <h3>Pregunta 3</h3>
-    <p>Compara los tres casos estudiados (población infinita, población finita con $n/N>0.05$, y $p$ desconocida). ¿En qué se diferencian las fórmulas? ¿Cuándo aplica cada uno? Da un ejemplo contextual de cada caso.</p>
-    <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+  <!-- ============ CASOS ============ -->
+  <section id="casos">
+    <div class="card">
+      <h2>5. Distintos casos según el muestreo</h2>
+      <p>Al igual que con $\bar{X}$, la expresión de $\sigma_{\hat{p}}$ varía según el tipo de población y muestreo. Haz clic en cada caso para expandirlo.</p>
+    </div>
 
-    <h3>Pregunta 4</h3>
-    <p>¿Por qué en el caso de la proporción no se utiliza la distribución $t$ de Student cuando $p$ es desconocida, a diferencia de lo que ocurre con la media muestral? Argumenta tu respuesta.</p>
-    <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+    <!-- Caso A -->
+    <div class="case-box">
+      <button class="accordion-toggle open" data-target="casoA">▸ Caso A — Población infinita (o muestreo con reemplazo) <span class="arrow">▼</span></button>
+      <div class="accordion-content open" id="casoA">
+        <p>Las extracciones son independientes. Se conserva la fórmula básica:</p>
+        <div class="formula">$$\sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}$$</div>
+      </div>
+    </div>
 
-    <h3>Pregunta 5 (problema)</h3>
-    <p>En una ciudad de $N=20{,}000$ votantes, se sabe que el 45% apoya al candidato A. Se selecciona una muestra aleatoria sin reemplazo de $n=400$ votantes.</p>
-    <ul>
-      <li>a) ¿Debe aplicarse el factor de corrección por población finita? Justifica.</li>
-      <li>b) Calcula $\mu_{\hat{p}}$ y $\sigma_{\hat{p}}$.</li>
-      <li>c) Calcula $P(\hat{p} > 0.50)$.</li>
-    </ul>
-    <textarea class="essay" placeholder="Desarrolla el problema..."></textarea>
+    <!-- Caso B -->
+    <div class="case-box">
+      <button class="accordion-toggle" data-target="casoB">▸ Caso B — Población finita, muestreo sin reemplazo <span class="arrow">▼</span></button>
+      <div class="accordion-content" id="casoB">
+        <p>Cuando la población tiene tamaño finito $N$ y se muestrea <b>sin reemplazo</b>, aparece el <span class="glossary-term" data-term="fca">Factor de Corrección por Población Finita (FCA)</span>:</p>
+        <div class="formula">$$\sigma_{\hat{p}} = \sqrt{\frac{p(1-p)}{n}}\;\cdot\;\sqrt{\frac{N-n}{N-1}}$$</div>
+        <p>Regla práctica: el FCA se aplica cuando $\dfrac{n}{N} > 0.05$ (muestra mayor al 5% de la población).</p>
+      </div>
+    </div>
 
-    <button class="btn success" onclick="saveEssay()">💾 Guardar mis respuestas</button>
-    <div id="essay-feedback" class="feedback"></div>
-  </div>
-</section>
+    <!-- Caso C -->
+    <div class="case-box">
+      <button class="accordion-toggle" data-target="casoC">▸ Caso C — $p$ desconocida (situación más frecuente) <span class="arrow">▼</span></button>
+      <div class="accordion-content" id="casoC">
+        <p>En aplicaciones reales $p$ es desconocida. Se reemplaza por $\hat{p}$ en el cálculo del error estándar:</p>
+        <div class="formula">$$SE(\hat{p}) = \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$$</div>
+        <p>Esto se usa para construir <span class="glossary-term" data-term="intervalo-confianza">intervalos de confianza</span> y realizar pruebas de hipótesis.</p>
+      </div>
+    </div>
 
-<!-- ============ GLOSARIO ============ -->
-<section id="glossary">
-  <div class="card">
-    <h2>📖 Glosario de términos</h2>
-    <p>Haz clic en cualquier término para ver su definición ampliada.</p>
-    <div id="glossary-list"></div>
-  </div>
-</section>
+    <div class="card">
+      <h3>📋 Tabla resumen</h3>
+      <table>
+        <tr><th>Caso</th><th>Media</th><th>Desviación estándar</th></tr>
+        <tr><td>Población infinita</td><td>$\mu_{\hat{p}}=p$</td><td>$\sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}}$</td></tr>
+        <tr><td>Población finita ($n/N>0.05$)</td><td>$\mu_{\hat{p}}=p$</td><td>$\sigma_{\hat{p}}=\sqrt{\frac{p(1-p)}{n}}\sqrt{\frac{N-n}{N-1}}$</td></tr>
+        <tr><td>$p$ desconocida</td><td>se estima con $\hat{p}$</td><td>$SE=\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}$</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ COMPLETAR ============ -->
+  <section id="fill">
+    <div class="card">
+      <h2>✏️ Ejercicios de completar palabras clave</h2>
+      <p>Rellena cada espacio con el término correcto y pulsa <b>Verificar</b>.</p>
+
+      <div id="fill-container">
+        <div class="fill-item" data-answer="proporción muestral">
+          <p>1. La fracción de individuos de la muestra que presenta la característica de interés se denomina <input class="fill" type="text" placeholder="...">.</p>
+        </div>
+        <div class="fill-item" data-answer="bernoulli">
+          <p>2. Cada observación individual $X_i$ que vale 1 (éxito) o 0 (fracaso) sigue una distribución <input class="fill" type="text" placeholder="...">.</p>
+        </div>
+        <div class="fill-item" data-answer="binomial">
+          <p>3. La suma $X=\sum X_i$ de $n$ Bernoulli independientes sigue una distribución <input class="fill" type="text" placeholder="...">.</p>
+        </div>
+        <div class="fill-item" data-answer="p(1-p)/n">
+          <p>4. La varianza de $\hat{p}$ en población infinita es $\sigma^2_{\hat{p}} = $ <input class="fill" type="text" placeholder="..." style="width:130px"> (escribe la expresión sin espacios).</p>
+        </div>
+        <div class="fill-item" data-answer="normal">
+          <p>5. Para $n$ grande, la distribución de $\hat{p}$ se aproxima a una distribución <input class="fill" type="text" placeholder="...">.</p>
+        </div>
+        <div class="fill-item" data-answer="5">
+          <p>6. La regla práctica exige $np \geq $ <input class="fill" type="text" placeholder="..." style="width:60px"> y $n(1-p)\geq$ el mismo valor.</p>
+        </div>
+        <div class="fill-item" data-answer="finita">
+          <p>7. El factor de corrección $\sqrt{\frac{N-n}{N-1}}$ se usa cuando la población es <input class="fill" type="text" placeholder="...">.</p>
+        </div>
+        <div class="fill-item" data-answer="0.05">
+          <p>8. El FCA se aplica cuando $n/N > $ <input class="fill" type="text" placeholder="..." style="width:80px">.</p>
+        </div>
+        <div class="fill-item" data-answer="central del límite">
+          <p>9. El teorema que justifica la aproximación normal se llama Teorema <input class="fill" type="text" placeholder="..." style="width:200px">.</p>
+        </div>
+        <div class="fill-item" data-answer="p">
+          <p>10. La esperanza de $\hat{p}$ es $E[\hat{p}] = $ <input class="fill" type="text" placeholder="..." style="width:60px">.</p>
+        </div>
+      </div>
+
+      <button class="btn" onclick="checkFill()">Verificar respuestas</button>
+      <button class="btn secondary" onclick="resetFill()">Reiniciar</button>
+      <div id="fill-feedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ============ OPCIÓN MÚLTIPLE ============ -->
+  <section id="mc">
+    <div class="card">
+      <h2>✔️ Ejercicios de opción múltiple</h2>
+      <div class="progress"><div class="progress-bar" id="mc-progress"></div></div>
+      <div id="mc-container"></div>
+      <button class="btn" onclick="checkMC()">Calificar</button>
+      <button class="btn secondary" onclick="renderMC()">Reiniciar</button>
+      <div id="mc-feedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ============ ENSAYO ============ -->
+  <section id="essay">
+    <div class="card">
+      <h2>📝 Ejercicios tipo ensayo</h2>
+      <p>Responde con tus propias palabras. Puedes usar notación matemática. Al finalizar puedes guardar tus respuestas.</p>
+
+      <h3>Pregunta 1</h3>
+      <p>Explica con tus palabras por qué la distribución muestral de $\hat{p}$ puede considerarse un caso particular de la distribución muestral de la media muestral $\bar{X}$. ¿Qué variables se promedian?</p>
+      <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+
+      <h3>Pregunta 2</h3>
+      <p>Una empresa afirma que el 30% de sus clientes está satisfecho. Se toma una muestra de $n=100$ clientes. Describe paso a paso cómo calcularías la probabilidad de que la proporción muestral sea mayor al 35%. Indica las condiciones que debes verificar.</p>
+      <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+
+      <h3>Pregunta 3</h3>
+      <p>Compara los tres casos estudiados (población infinita, población finita con $n/N>0.05$, y $p$ desconocida). ¿En qué se diferencian las fórmulas? ¿Cuándo aplica cada uno? Da un ejemplo contextual de cada caso.</p>
+      <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+
+      <h3>Pregunta 4</h3>
+      <p>¿Por qué en el caso de la proporción no se utiliza la distribución $t$ de Student cuando $p$ es desconocida, a diferencia de lo que ocurre con la media muestral? Argumenta tu respuesta.</p>
+      <textarea class="essay" placeholder="Escribe tu respuesta..."></textarea>
+
+      <h3>Pregunta 5 (problema)</h3>
+      <p>En una ciudad de $N=20{,}000$ votantes, se sabe que el 45% apoya al candidato A. Se selecciona una muestra aleatoria sin reemplazo de $n=400$ votantes.</p>
+      <ul>
+        <li>a) ¿Debe aplicarse el factor de corrección por población finita? Justifica.</li>
+        <li>b) Calcula $\mu_{\hat{p}}$ y $\sigma_{\hat{p}}$.</li>
+        <li>c) Calcula $P(\hat{p} > 0.50)$.</li>
+      </ul>
+      <textarea class="essay" placeholder="Desarrolla el problema..."></textarea>
+
+      <button class="btn success" onclick="saveEssay()">💾 Guardar mis respuestas</button>
+      <div id="essay-feedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <!-- ============ GLOSARIO ============ -->
+  <section id="glossary">
+    <div class="card">
+      <h2>📖 Glosario de términos</h2>
+      <p>Haz clic en cualquier término para ver su definición ampliada.</p>
+      <div id="glossary-list"></div>
+    </div>
+  </section>
 
 </main>
 
@@ -401,190 +718,262 @@
 </div>
 
 <footer>
-  <p>Clase interactiva · Distribución Muestral de la Proporción · 2026</p>
+  <p>Universidad Panamericana · Campus Bonaterra · Distribución Muestral de la Proporción · 2026</p>
 </footer>
 
 <script>
-/* ============ NAVEGACIÓN ============ */
-document.querySelectorAll('nav.tabs button').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-});
-
-/* ============ TOOLTIPS ============ */
-const tip = document.getElementById('tooltip');
-document.querySelectorAll('.keyword').forEach(el=>{
-  el.addEventListener('mouseenter',e=>{
-    tip.textContent = el.dataset.tip;
-    tip.classList.add('show');
-    const r = el.getBoundingClientRect();
-    tip.style.left = Math.min(r.left, window.innerWidth-340)+'px';
-    tip.style.top = (r.bottom+8)+'px';
-  });
-  el.addEventListener('mouseleave',()=>tip.classList.remove('show'));
-});
-
-/* ============ GLOSARIO ============ */
-const glossary = {
-  'distribucion-muestral-media':{t:'Distribución muestral de la media',d:'Distribución de probabilidad de todas las posibles medias muestrales $\bar{X}$ de tamaño $n$ extraídas de una población. Tiene media $\mu$ y varianza $\sigma^2/n$.'},
-  'tcl':{t:'Teorema Central del Límite',d:'Establece que, bajo condiciones generales, la suma (o media) de un número grande de variables aleatorias independientes tiende a distribuirse normalmente, independientemente de la distribución de la población original.'},
-  'media-muestral':{t:'Media muestral',d:'Promedio aritmético de las observaciones de la muestra: $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$. Es un estimador insesgado de la media poblacional $\mu$.'},
-  'variable-estandarizada':{t:'Variable estandarizada',d:'Transformación $Z = \frac{X-\mu}{\sigma}$ que convierte una variable en otra con media 0 y desviación estándar 1, permitiendo usar la tabla $\mathcal{N}(0,1)$.'},
-  'fca':{t:'Factor de Corrección por Población Finita',d:'Factor $\sqrt{\frac{N-n}{N-1}}$ que reduce la varianza del estimador cuando se muestrea sin reemplazo de una población finita y $n/N > 0.05$.'},
-  'intervalo-confianza':{t:'Intervalo de confianza',d:'Rango de valores, calculado a partir de la muestra, que con cierta probabilidad (nivel de confianza) contiene al verdadero parámetro poblacional.'}
-};
-
-document.querySelectorAll('.glossary-term').forEach(el=>{
-  el.addEventListener('click',()=>{
-    const g = glossary[el.dataset.term];
-    if(!g) return;
-    document.getElementById('modal-body').innerHTML = `<h2>${g.t}</h2><p>${g.d}</p>`;
-    document.getElementById('modal').classList.add('show');
-    if(window.MathJax) MathJax.typesetPromise();
-  });
-});
-
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-document.getElementById('modal').addEventListener('click',e=>{
-  if(e.target.id==='modal') closeModal();
-});
-
-/* Renderizar glosario completo */
-const gl = document.getElementById('glossary-list');
-Object.entries(glossary).forEach(([k,v])=>{
-  const d = document.createElement('div');
-  d.className='card accent';
-  d.style.cursor='pointer';
-  d.innerHTML = `<h3>${v.t}</h3><p>${v.d}</p>`;
-  gl.appendChild(d);
-});
-
-/* ============ COMPLETAR ============ */
-function checkFill(){
-  let ok=0, total=0;
-  document.querySelectorAll('.fill-item').forEach(item=>{
-    total++;
-    const input = item.querySelector('input');
-    const ans = item.dataset.answer.toLowerCase().trim();
-    const usr = input.value.toLowerCase().trim()
-      .replace(/\s+/g,' ').replace(/[áéíóú]/g,m=>({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[m]));
-    const ansN = ans.replace(/[áéíóú]/g,m=>({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[m]));
-    input.classList.remove('correct','wrong');
-    if(usr===ansN || (ansN==='p(1-p)/n' && usr==='p(1-p)/n')){
-      input.classList.add('correct'); ok++;
-    } else {
-      input.classList.add('wrong');
+  /* ===== FUNCIÓN PARA FORZAR RENDERIZADO DE MATHJAX ===== */
+  async function renderMath() {
+    if (window.MathJax && MathJax.typesetPromise) {
+      try {
+        await MathJax.typesetPromise();
+      } catch (e) {
+        console.warn('MathJax typeset error:', e);
+      }
     }
-  });
-  const fb = document.getElementById('fill-feedback');
-  fb.className='feedback '+(ok===total?'ok':'err');
-  fb.textContent = `Obtuviste ${ok} de ${total} correctas.`+(ok===total?' ¡Excelente! 🎉':' Revisa las marcadas en rojo.');
-}
-function resetFill(){
-  document.querySelectorAll('#fill-container input').forEach(i=>{i.value='';i.classList.remove('correct','wrong')});
-  document.getElementById('fill-feedback').className='feedback';
-}
+  }
 
-/* ============ OPCIÓN MÚLTIPLE ============ */
-const mcQuestions = [
-  {q:'Si $X\\sim\\text{Bernoulli}(p)$, entonces $\\text{Var}(X)$ es:',
-   o:['$p$','$p(1-p)$','$p^2$','$1-p$'],c:1},
-  {q:'La esperanza de la proporción muestral $\\hat{p}$ es:',
-   o:['$0$','$1$','$p$','$n\\cdot p$'],c:2},
-  {q:'¿Cuál es la condición práctica para aproximar $\\hat{p}$ por una normal?',
-   o:['$n\\geq 30$','$np\\geq 5$ y $n(1-p)\\geq 5$','$n>100$','$p=0.5$'],c:1},
-  {q:'El factor de corrección por población finita se aplica cuando:',
-   o:['La población es infinita','$n/N > 0.05$','$p$ es desconocida','Siempre'],c:1},
-  {q:'La expresión del error estándar de $\\hat{p}$ cuando $p$ es desconocida es:',
-   o:['$\\sqrt{p(1-p)/n}$','$\\sqrt{\\hat{p}(1-\\hat{p})/n}$','$\\hat{p}/n$','$n\\hat{p}(1-\\hat{p})$'],c:1},
-  {q:'Si $n=200$ y $p=0.3$, ¿cuál es $\\sigma_{\\hat{p}}$ (población infinita)?',
-   o:['$0.0324$','$0.0324$','$\\approx 0.0324$','Ninguna es exacta sin calcular'],c:2,
-   note:'$\\sqrt{0.3\\cdot 0.7/200}=\\sqrt{0.00105}\\approx 0.0324$'},
-  {q:'La proporción muestral $\\hat{p}$ puede verse como:',
-   o:['La varianza muestral','La media muestral de variables Bernoulli','La mediana','Un percentil'],c:1},
-  {q:'¿Por qué no se usa la $t$ de Student para proporciones?',
-   o:['Porque la muestra es siempre grande','Porque la varianza depende del mismo parámetro $p$ que se estima','Porque $\\hat{p}$ no es insesgado','Porque la población es finita'],c:1},
-  {q:'Si $N=500$, $n=50$, $p=0.4$, el FCA vale aproximadamente:',
-   o:['$0.949$','$1$','$0.9$','$0.5$'],c:0,
-   note:'$\\sqrt{(500-50)/(500-1)}=\\sqrt{450/499}\\approx 0.949$'},
-  {q:'¿Cuál de las siguientes afirmaciones es FALSA?',
-   o:['$E[\\hat{p}]=p$','$\\hat{p}$ es insesgado','La varianza de $\\hat{p}$ crece con $n$','Para $n$ grande $\\hat{p}$ es aproximadamente normal'],c:2}
-];
-
-function renderMC(){
-  const c = document.getElementById('mc-container');
-  c.innerHTML='';
-  mcQuestions.forEach((q,i)=>{
-    const d = document.createElement('div');
-    d.style.marginBottom='1.2rem';
-    d.innerHTML = `<p><b>${i+1}.</b> ${q.q}</p><div class="options" data-correct="${q.c}">`+
-      q.o.map((op,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${op}</label>`).join('')+
-      `</div><div class="fb-${i}"></div>`;
-    c.appendChild(d);
-  });
-  c.querySelectorAll('input[type=radio]').forEach(r=>{
-    r.addEventListener('change',e=>{
-      const opts = e.target.closest('.options');
-      opts.querySelectorAll('label').forEach(l=>l.classList.remove('selected'));
-      e.target.closest('label').classList.add('selected');
+  /* ===== NAVEGACIÓN ===== */
+  document.querySelectorAll('nav.tabs button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await renderMath();
     });
   });
-  document.getElementById('mc-feedback').className='feedback';
-  document.getElementById('mc-progress').style.width='0%';
-  if(window.MathJax) MathJax.typesetPromise();
-}
 
-function checkMC(){
-  let ok=0;
-  document.querySelectorAll('#mc-container .options').forEach((opts,i)=>{
-    const correct = parseInt(opts.dataset.correct);
-    const sel = opts.querySelector('input:checked');
-    opts.querySelectorAll('label').forEach(l=>l.classList.remove('correct','wrong'));
-    const fb = document.querySelector('.fb-'+i);
-    fb.innerHTML='';
-    if(!sel){fb.innerHTML='<i style="color:#64748b">Sin responder</i>';return}
-    const v = parseInt(sel.value);
-    if(v===correct){
-      sel.closest('label').classList.add('correct'); ok++;
-      if(mcQuestions[i].note) fb.innerHTML=`<div class="feedback ok">✅ Correcto. ${mcQuestions[i].note}</div>`;
-      else fb.innerHTML=`<div class="feedback ok">✅ Correcto.</div>`;
-    } else {
-      sel.closest('label').classList.add('wrong');
-      opts.children[correct].classList.add('correct');
-      fb.innerHTML=`<div class="feedback err">❌ Incorrecto. La respuesta correcta está marcada en verde.</div>`;
-    }
+  /* ===== ACORDEÓN ===== */
+  document.querySelectorAll('.accordion-toggle').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      const targetId = this.dataset.target;
+      const content = document.getElementById(targetId);
+      if (content) {
+        content.classList.toggle('open');
+        this.classList.toggle('open');
+        // Forzar renderizado después de abrir/cerrar
+        await renderMath();
+      }
+    });
   });
-  const total = mcQuestions.length;
-  const pct = Math.round(ok/total*100);
-  document.getElementById('mc-progress').style.width = pct+'%';
-  const f = document.getElementById('mc-feedback');
-  f.className='feedback '+(pct>=70?'ok':'err');
-  f.textContent = `Resultado: ${ok}/${total} (${pct}%). `+(pct===100?'¡Perfecto! 🏆':pct>=70?'¡Buen trabajo!':'Repasa los conceptos.');
-  if(window.MathJax) MathJax.typesetPromise();
-}
 
-/* ============ ENSAYO ============ */
-function saveEssay(){
-  const areas = document.querySelectorAll('#essay textarea');
-  let txt = '=== Respuestas tipo ensayo ===\n\n';
-  areas.forEach((a,i)=>{txt += `Pregunta ${i+1}:\n${a.value}\n\n`});
-  const blob = new Blob([txt],{type:'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download='respuestas_ensayo.txt'; a.click();
-  URL.revokeObjectURL(url);
-  const f = document.getElementById('essay-feedback');
-  f.className='feedback ok';
-  f.textContent='✅ Respuestas guardadas como archivo de texto.';
-}
+  /* ===== DIÁLOGOS (botones "Ver más") ===== */
+  document.querySelectorAll('.dialog-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const targetId = this.dataset.dialog;
+      const detail = document.getElementById(targetId);
+      if (detail) {
+        if (detail.style.display === 'none' || detail.style.display === '') {
+          detail.style.display = 'block';
+          this.textContent = '↪ Ocultar detalle';
+        } else {
+          detail.style.display = 'none';
+          this.textContent = '↪ Ver más sobre la conexión con la media';
+        }
+        await renderMath();
+      }
+    });
+  });
 
-/* Inicializar */
-renderMC();
+  /* ===== TOOLTIPS ===== */
+  const tip = document.getElementById('tooltip');
+  document.querySelectorAll('.keyword').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      tip.textContent = el.dataset.tip;
+      tip.classList.add('show');
+      const r = el.getBoundingClientRect();
+      tip.style.left = Math.min(r.left, window.innerWidth - 340) + 'px';
+      tip.style.top = (r.bottom + 8) + 'px';
+    });
+    el.addEventListener('mouseleave', () => tip.classList.remove('show'));
+  });
+
+  /* ===== GLOSARIO ===== */
+  const glossary = {
+    'distribucion-muestral-media': { t: 'Distribución muestral de la media', d: 'Distribución de probabilidad de todas las posibles medias muestrales $\bar{X}$ de tamaño $n$ extraídas de una población. Tiene media $\mu$ y varianza $\sigma^2/n$.' },
+    'tcl': { t: 'Teorema Central del Límite', d: 'Establece que, bajo condiciones generales, la suma (o media) de un número grande de variables aleatorias independientes tiende a distribuirse normalmente, independientemente de la distribución de la población original.' },
+    'media-muestral': { t: 'Media muestral', d: 'Promedio aritmético de las observaciones de la muestra: $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$. Es un estimador insesgado de la media poblacional $\mu$.' },
+    'variable-estandarizada': { t: 'Variable estandarizada', d: 'Transformación $Z = \frac{X-\mu}{\sigma}$ que convierte una variable en otra con media 0 y desviación estándar 1, permitiendo usar la tabla $\mathcal{N}(0,1)$.' },
+    'fca': { t: 'Factor de Corrección por Población Finita', d: 'Factor $\sqrt{\frac{N-n}{N-1}}$ que reduce la varianza del estimador cuando se muestrea sin reemplazo de una población finita y $n/N > 0.05$.' },
+    'intervalo-confianza': { t: 'Intervalo de confianza', d: 'Rango de valores, calculado a partir de la muestra, que con cierta probabilidad (nivel de confianza) contiene al verdadero parámetro poblacional.' }
+  };
+
+  document.querySelectorAll('.glossary-term').forEach(el => {
+    el.addEventListener('click', async () => {
+      const g = glossary[el.dataset.term];
+      if (!g) return;
+      document.getElementById('modal-body').innerHTML = `<h2>${g.t}</h2><p>${g.d}</p>`;
+      document.getElementById('modal').classList.add('show');
+      await renderMath();
+    });
+  });
+
+  function closeModal() { document.getElementById('modal').classList.remove('show'); }
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  /* Renderizar glosario completo */
+  const gl = document.getElementById('glossary-list');
+  Object.entries(glossary).forEach(([k, v]) => {
+    const d = document.createElement('div');
+    d.className = 'card accent';
+    d.style.cursor = 'pointer';
+    d.innerHTML = `<h3>${v.t}</h3><p>${v.d}</p>`;
+    d.addEventListener('click', async () => {
+      document.getElementById('modal-body').innerHTML = `<h2>${v.t}</h2><p>${v.d}</p>`;
+      document.getElementById('modal').classList.add('show');
+      await renderMath();
+    });
+    gl.appendChild(d);
+  });
+
+  /* ===== COMPLETAR ===== */
+  function normalize(s) {
+    return s.toLowerCase().trim()
+      .replace(/[áéíóú]/g, m => ({ á: 'a', é: 'e', í: 'i', ó: 'o', ú: 'u' }[m]))
+      .replace(/\s+/g, ' ');
+  }
+
+  function checkFill() {
+    let ok = 0,
+      total = 0;
+    document.querySelectorAll('.fill-item').forEach(item => {
+      total++;
+      const input = item.querySelector('input');
+      const ans = normalize(item.dataset.answer);
+      const usr = normalize(input.value);
+      input.classList.remove('correct', 'wrong');
+      let match = false;
+      if (item.dataset.answer === 'p(1-p)/n') {
+        const clean = usr.replace(/[^a-z0-9()/]/g, '');
+        if (clean === 'p(1p)/n' || clean === 'p(1-p)/n') match = true;
+      } else {
+        match = (usr === ans);
+      }
+      if (match) { input.classList.add('correct');
+        ok++; } else { input.classList.add('wrong'); }
+    });
+    const fb = document.getElementById('fill-feedback');
+    fb.className = 'feedback ' + (ok === total ? 'ok' : 'err');
+    fb.textContent = `Obtuviste ${ok} de ${total} correctas.` + (ok === total ? ' ¡Excelente! 🎉' : ' Revisa las marcadas en rojo.');
+  }
+
+  function resetFill() {
+    document.querySelectorAll('#fill-container input').forEach(i => { i.value = '';
+      i.classList.remove('correct', 'wrong'); });
+    document.getElementById('fill-feedback').className = 'feedback';
+  }
+
+  /* ===== OPCIÓN MÚLTIPLE ===== */
+  const mcQuestions = [
+    { q: 'Si $X\\sim\\text{Bernoulli}(p)$, entonces $\\text{Var}(X)$ es:',
+      o: ['$p$', '$p(1-p)$', '$p^2$', '$1-p$'], c: 1 },
+    { q: 'La esperanza de la proporción muestral $\\hat{p}$ es:',
+      o: ['$0$', '$1$', '$p$', '$n\\cdot p$'], c: 2 },
+    { q: '¿Cuál es la condición práctica para aproximar $\\hat{p}$ por una normal?',
+      o: ['$n\\geq 30$', '$np\\geq 5$ y $n(1-p)\\geq 5$', '$n>100$', '$p=0.5$'], c: 1 },
+    { q: 'El factor de corrección por población finita se aplica cuando:',
+      o: ['La población es infinita', '$n/N > 0.05$', '$p$ es desconocida', 'Siempre'], c: 1 },
+    { q: 'La expresión del error estándar de $\\hat{p}$ cuando $p$ es desconocida es:',
+      o: ['$\\sqrt{p(1-p)/n}$', '$\\sqrt{\\hat{p}(1-\\hat{p})/n}$', '$\\hat{p}/n$', '$n\\hat{p}(1-\\hat{p})$'], c: 1 },
+    { q: 'Si $n=200$ y $p=0.3$, ¿cuál es $\\sigma_{\\hat{p}}$ (población infinita)?',
+      o: ['$0.0324$', '$0.0324$', '$\\approx 0.0324$', 'Ninguna es exacta sin calcular'], c: 2,
+      note: '$\\sqrt{0.3\\cdot 0.7/200}=\\sqrt{0.00105}\\approx 0.0324$' },
+    { q: 'La proporción muestral $\\hat{p}$ puede verse como:',
+      o: ['La varianza muestral', 'La media muestral de variables Bernoulli', 'La mediana', 'Un percentil'], c: 1 },
+    { q: '¿Por qué no se usa la $t$ de Student para proporciones?',
+      o: ['Porque la muestra es siempre grande', 'Porque la varianza depende del mismo parámetro $p$ que se estima',
+        'Porque $\\hat{p}$ no es insesgado', 'Porque la población es finita'
+      ], c: 1 },
+    { q: 'Si $N=500$, $n=50$, $p=0.4$, el FCA vale aproximadamente:',
+      o: ['$0.949$', '$1$', '$0.9$', '$0.5$'], c: 0,
+      note: '$\\sqrt{(500-50)/(500-1)}=\\sqrt{450/499}\\approx 0.949$' },
+    { q: '¿Cuál de las siguientes afirmaciones es FALSA?',
+      o: ['$E[\\hat{p}]=p$', '$\\hat{p}$ es insesgado', 'La varianza de $\\hat{p}$ crece con $n$',
+        'Para $n$ grande $\\hat{p}$ es aproximadamente normal'
+      ], c: 2 }
+  ];
+
+  function renderMC() {
+    const c = document.getElementById('mc-container');
+    c.innerHTML = '';
+    mcQuestions.forEach((q, i) => {
+      const d = document.createElement('div');
+      d.style.marginBottom = '1.2rem';
+      d.innerHTML = `<p><b>${i + 1}.</b> ${q.q}</p><div class="options" data-correct="${q.c}">` +
+        q.o.map((op, j) => `<label><input type="radio" name="q${i}" value="${j}"> ${op}</label>`).join('') +
+        `</div><div class="fb-${i}"></div>`;
+      c.appendChild(d);
+    });
+    c.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', e => {
+        const opts = e.target.closest('.options');
+        opts.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+        e.target.closest('label').classList.add('selected');
+      });
+    });
+    document.getElementById('mc-feedback').className = 'feedback';
+    document.getElementById('mc-progress').style.width = '0%';
+    renderMath();
+  }
+
+  function checkMC() {
+    let ok = 0;
+    document.querySelectorAll('#mc-container .options').forEach((opts, i) => {
+      const correct = parseInt(opts.dataset.correct);
+      const sel = opts.querySelector('input:checked');
+      opts.querySelectorAll('label').forEach(l => l.classList.remove('correct', 'wrong'));
+      const fb = document.querySelector('.fb-' + i);
+      fb.innerHTML = '';
+      if (!sel) { fb.innerHTML = '<i style="color:#64748b">Sin responder</i>'; return; }
+      const v = parseInt(sel.value);
+      if (v === correct) {
+        sel.closest('label').classList.add('correct');
+        ok++;
+        if (mcQuestions[i].note) fb.innerHTML = `<div class="feedback ok">✅ Correcto. ${mcQuestions[i].note}</div>`;
+        else fb.innerHTML = `<div class="feedback ok">✅ Correcto.</div>`;
+      } else {
+        sel.closest('label').classList.add('wrong');
+        opts.children[correct].classList.add('correct');
+        fb.innerHTML = `<div class="feedback err">❌ Incorrecto. La respuesta correcta está marcada en verde.</div>`;
+      }
+    });
+    const total = mcQuestions.length;
+    const pct = Math.round(ok / total * 100);
+    document.getElementById('mc-progress').style.width = pct + '%';
+    const f = document.getElementById('mc-feedback');
+    f.className = 'feedback ' + (pct >= 70 ? 'ok' : 'err');
+    f.textContent = `Resultado: ${ok}/${total} (${pct}%). ` + (pct === 100 ? '¡Perfecto! 🏆' : pct >= 70 ? '¡Buen trabajo!' :
+      'Repasa los conceptos.');
+    renderMath();
+  }
+
+  /* ===== ENSAYO ===== */
+  function saveEssay() {
+    const areas = document.querySelectorAll('#essay textarea');
+    let txt = '=== Respuestas tipo ensayo — Distribución Muestral de la Proporción ===\n\n';
+    areas.forEach((a, i) => { txt += `Pregunta ${i + 1}:\n${a.value}\n\n`; });
+    const blob = new Blob([txt], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'respuestas_proporcion.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    const f = document.getElementById('essay-feedback');
+    f.className = 'feedback ok';
+    f.textContent = '✅ Respuestas guardadas como archivo de texto.';
+  }
+
+  /* Inicializar */
+  renderMC();
+  // Forzar renderizado inicial después de cargar todo
+  window.addEventListener('load', () => {
+    renderMath();
+  });
 </script>
 </body>
 </html>
