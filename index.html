@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal del curso — Aula Interactiva · Dr. Adrián Cerda</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   VARIABLES Y BASE (misma identidad visual del aula)
+============================================================ */
+:root{
+  --paper:#f7f3eb;
+  --card:#fffdf8;
+  --ink:#1c2b25;
+  --pine:#1e4636;
+  --pine-soft:#2c5e49;
+  --terra:#c2542f;
+  --terra-soft:#f3e0d6;
+  --gold:#c9a227;
+  --line:rgba(28,43,37,.16);
+  --line-strong:rgba(28,43,37,.4);
+  --muted:rgba(28,43,37,.62);
+  --ok-bg:#e7efe6;
+  --err-bg:#f7e6dd;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[hidden]{display:none!important}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  background-image:radial-gradient(rgba(30,70,54,.075) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+.overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+.mono{font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--pine)}
+svg.lucide{width:16px;height:16px;stroke-width:2}
+
+/* ============================================================
+   HEADER
+============================================================ */
+header.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(247,243,235,.93);
+  backdrop-filter:blur(10px);
+  border-bottom:1.5px solid var(--ink);
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
+.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
+.brand .brand-ico svg{width:17px;height:17px}
+.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.topbar-side{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero{padding:56px 0 40px;border-bottom:2px solid var(--ink);margin-bottom:40px}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(2.1rem,4.4vw,3.4rem);margin:12px 0 16px}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero .lead{font-size:1.05rem;color:var(--muted);max-width:540px}
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px}
+.stat .num{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:600;line-height:1}
+.stat .lbl{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* Saludo del alumno registrado */
+.hello{display:flex;align-items:center;gap:14px;border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);padding:14px 18px;box-shadow:5px 5px 0 rgba(28,43,37,.1);margin-top:6px}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none;border:1.5px solid var(--ink)}
+.hello .h-name{font-family:'Fraunces',serif;font-weight:700;font-size:1.1rem;line-height:1.2}
+.hello .h-meta{font-size:12px;color:var(--muted)}
+
+/* ============================================================
+   FICHA DE REGISTRO (si no hay registro)
+============================================================ */
+.reg-card{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:5px 5px 0 rgba(28,43,37,.1);margin-top:10px}
+.reg-head{display:flex;align-items:center;gap:9px;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;background:#ecf1ea}
+.reg-body{padding:16px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.field input{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line-strong);
+  border-radius:8px;padding:9px 12px;width:100%;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.hint{font-size:11.5px;color:var(--muted)}
+
+/* ============================================================
+   BOTONES
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);border-radius:10px;
+  padding:10px 16px;font-weight:600;font-size:14px;
+  transition:all .18s ease;text-decoration:none;
+}
+.btn:hover{background:var(--pine);border-color:var(--pine);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:rgba(28,43,37,.06);transform:translateY(-1px)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
+.del-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;transition:all .15s}
+.del-btn:hover{border-color:var(--terra);color:var(--terra)}
+.del-btn.confirm{background:var(--terra);border-color:var(--terra);color:#fff}
+
+/* ============================================================
+   TARJETAS DE UNIDADES
+============================================================ */
+.sect-title{font-size:1.6rem;margin:0 0 6px}
+.sect-sub{color:var(--muted);max-width:70ch;margin-bottom:26px}
+.units-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:22px;margin-bottom:56px}
+.unit-card{
+  display:flex;flex-direction:column;gap:12px;
+  border:1.5px solid var(--ink);border-radius:var(--radius);
+  background:var(--card);overflow:hidden;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.unit-card:hover{transform:translateY(-3px);box-shadow:7px 7px 0 rgba(28,43,37,.12)}
+.u-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);background:#ecf1ea}
+.u-materia{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--pine)}
+.u-num{font-family:'Fraunces',serif;font-weight:700;font-size:.95rem;color:var(--terra);border:1.5px solid var(--terra);border-radius:8px;padding:2px 10px}
+.u-body{padding:4px 18px 0;flex:1}
+.u-body h3{font-size:1.25rem;margin-bottom:6px}
+.u-body .u-desc{font-size:13.5px;color:var(--muted)}
+.u-body .u-libro{font-size:11.5px;color:var(--muted);margin-top:8px;display:inline-flex;align-items:center;gap:6px}
+.u-body .u-libro svg{width:13px;height:13px}
+.u-nota{display:flex;align-items:baseline;gap:7px;padding:0 18px}
+.u-nota .big{font-family:'Fraunces',serif;font-size:2.3rem;font-weight:700;color:var(--pine);line-height:1}
+.u-nota .den{font-family:'Fraunces',serif;color:var(--muted)}
+.u-nota .u-estado{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1px solid}
+.u-nota .u-estado.sin{color:var(--muted);border-color:var(--line-strong)}
+.u-nota .u-estado.proceso{color:#8a6d10;border-color:rgba(201,162,39,.5);background:#f6eecf}
+.u-nota .u-estado.ok{color:var(--pine);border-color:rgba(30,70,54,.45);background:#ecf1ea}
+.u-bars{padding:10px 18px 0;display:grid;gap:6px}
+.mini-row{display:grid;grid-template-columns:82px 1fr 38px;align-items:center;gap:8px;font-size:11px}
+.mini-row .mr-lbl{font-weight:600;color:var(--muted);letter-spacing:.03em}
+.mini-bar{height:7px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper)}
+.mini-bar>div{height:100%;background:var(--pine);transition:width .4s ease}
+.mini-row .mr-val{text-align:right;font-weight:600;color:var(--ink)}
+.u-foot{padding:12px 18px 16px}
+.u-foot .btn{width:100%;justify-content:center}
+
+/* Tarjeta de recurso simple (sin nota) */
+.extra-card{display:flex;flex-direction:column;border:1.5px dashed var(--line-strong);border-radius:var(--radius);background:var(--card);overflow:hidden;transition:transform .18s ease, box-shadow .18s ease}
+.extra-card:hover{transform:translateY(-3px);box-shadow:5px 5px 0 rgba(28,43,37,.1)}
+.x-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px dashed var(--line-strong);background:var(--terra-soft)}
+.x-materia{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:#8a3d1e}
+.x-body{padding:14px 18px;flex:1}
+.x-body h3{font-size:1.15rem;margin-bottom:6px}
+.x-body p{font-size:13px;color:var(--muted)}
+.x-foot{padding:12px 18px 16px}
+.x-foot .btn{width:100%;justify-content:center}
+
+/* ============================================================
+   RESUMEN / CONSTANCIA
+============================================================ */
+.resumen-wrap{display:grid;grid-template-columns:1fr;gap:26px;margin-bottom:56px}
+.constancia{max-width:720px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 rgba(28,43,37,.12);overflow:hidden}
+.c-head{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1.5px solid var(--ink)}
+.c-head .avatar{width:52px;height:52px;font-size:17px}
+.c-head>div{flex:1;min-width:0}
+.c-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--terra);margin-bottom:3px}
+.c-name{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;line-height:1.15}
+.c-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.c-seal{flex:none;width:76px;height:76px;border:2px solid var(--terra);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.85;line-height:1.25}
+.c-seal span{font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.c-seal strong{font-family:'Fraunces',serif;font-size:1rem}
+.c-body{padding:10px 24px 16px}
+.tbl{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+.tbl th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1.5px solid var(--ink)}
+.tbl td{padding:8px;border-bottom:1px solid var(--line)}
+.tbl td.center,.tbl th.center{text-align:center}
+.tbl .mat-row td{background:#ecf1ea;font-weight:700}
+.c-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#ecf1ea;padding:14px 24px}
+.c-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1rem}
+.c-total-det{font-size:11px;color:var(--muted);margin-top:2px}
+.c-score{display:flex;align-items:baseline;gap:6px}
+.c-score .big{font-family:'Fraunces',serif;font-size:2.7rem;font-weight:700;color:var(--pine);line-height:1}
+.c-score .den{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--muted)}
+.c-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line-strong);padding:10px 24px;font-size:11px;color:var(--muted)}
+.resumen-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ============================================================
+   NOTA DE USO / FOOTER / TOASTS
+============================================================ */
+.uso{border:1px dashed var(--line-strong);border-radius:10px;background:var(--terra-soft);padding:14px 18px;margin-bottom:56px;font-size:13px;color:var(--ink)}
+.uso strong{color:var(--terra)}
+.uso code{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px}
+footer{border-top:2px solid var(--ink);padding:28px 0 40px;margin-top:20px}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.foot-row strong{color:var(--ink)}
+#toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(28,43,37,.28);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
+.toast svg{flex:none;width:17px;height:17px}
+.toast.ok svg{color:#8fd0a5}
+.toast.err svg{color:#f0a284}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:34px}
+}
+@media (max-width:640px){
+  .stat-row{grid-template-columns:1fr 1fr}
+  .c-seal{display:none}
+  .c-total{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <div class="brand">
+      <span class="brand-ico"><i data-lucide="sigma"></i></span>
+      <span>Aula Interactiva · Portal<small>Probabilidad y Estadística · Estadística Inferencial</small></span>
+    </div>
+    <div class="topbar-side">Universidad Panamericana<br>Ciencias Empresariales</div>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== HERO ==================== -->
+<section class="wrap hero">
+  <div class="hero-grid">
+    <div>
+      <p class="overline">Portal del curso · Dr. Adrián Cerda</p>
+      <h1>Tus aulas, tu <em>avance</em>, en un solo lugar</h1>
+      <p class="lead">Cinco aulas interactivas que cubren el programa completo: desde las variables aleatorias hasta la regresión y la correlación. Tu registro y tu avance se comparten entre aulas en este navegador.</p>
+
+      <!-- Saludo si hay registro -->
+      <div class="hello" id="helloCard" hidden>
+        <span class="avatar" id="helloAvatar">··</span>
+        <div>
+          <div class="h-name" id="helloName">—</div>
+          <div class="h-meta" id="helloMeta">—</div>
+        </div>
+      </div>
+
+      <!-- Ficha de registro si no hay registro -->
+      <div class="reg-card" id="regCard" style="max-width:480px">
+        <div class="reg-head"><i data-lucide="user-plus"></i>Regístrate una sola vez</div>
+        <div class="reg-body">
+          <form id="formEst" novalidate>
+            <div class="field">
+              <label for="alNombre">Nombre completo</label>
+              <input id="alNombre" type="text" placeholder="Ej. Ana Sofía Delgado Ruiz" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="alMat">Matrícula</label>
+              <input id="alMat" type="text" placeholder="Ej. 20240315" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="alMail">Correo electrónico</label>
+              <input id="alMail" type="email" placeholder="nombre@universidad.edu.mx" autocomplete="off">
+            </div>
+            <button class="btn" type="submit" style="width:100%;justify-content:center"><i data-lucide="user-plus"></i>Registrarme</button>
+          </form>
+          <p class="hint" style="margin-top:10px">Tu registro quedará disponible automáticamente en todas las aulas y en la constancia consolidada. Los datos nunca salen de este navegador.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">5</div><div class="lbl">Aulas con evaluación</div></div>
+      <div class="stat"><div class="num" id="statGlobal">—</div><div class="lbl">Nota global (sobre 10)</div></div>
+      <div class="stat"><div class="num" id="statInfer">—</div><div class="lbl">Prom. Estadística Inferencial</div></div>
+      <div class="stat"><div class="num" id="statCompletas">—</div><div class="lbl">Unidades con nota ≥ 6</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== UNIDADES ==================== -->
+<section class="wrap">
+  <h2 class="sect-title">Ruta del curso</h2>
+  <p class="sect-sub">Cada aula incluye teoría con ejemplos de finanzas, administración y marketing, laboratorio de simulación, calculadora, ejercicios con solución, redacción de procedimientos en LaTeX, quiz y tarea — con tu nota calculada automáticamente.</p>
+  <div class="units-grid" id="unitsGrid"></div>
+</section>
+
+<!-- ==================== RECURSOS COMPLEMENTARIOS ==================== -->
+<section class="wrap">
+  <h2 class="sect-title">Recursos complementarios</h2>
+  <p class="sect-sub">Materiales de apoyo y práctica adicional. Su avance no se consolida en la constancia (se acceden de forma independiente).</p>
+  <div class="units-grid" id="extrasGrid"></div>
+</section>
+
+<!-- ==================== RESUMEN / CONSTANCIA ==================== -->
+<section class="wrap">
+  <h2 class="sect-title">Constancia de avance</h2>
+  <p class="sect-sub">El consolidado de tus cinco unidades evaluadas por rubro, con los promedios por materia. Descárgala como imagen para compartirla o enviarla.</p>
+
+  <div class="resumen-wrap">
+    <div class="constancia" id="constanciaCard">
+      <div class="c-head">
+        <span class="avatar" id="cAvatar">··</span>
+        <div>
+          <div class="c-title">Constancia de avance · Aula Interactiva</div>
+          <div class="c-name" id="cName">—</div>
+          <div class="c-meta" id="cMeta">—</div>
+        </div>
+        <div class="c-seal"><span>Aula<br>Interactiva</span><strong>UP</strong></div>
+      </div>
+      <div class="c-body" id="cBody"></div>
+      <div class="c-total">
+        <div>
+          <div class="c-total-lbl">Nota global del curso</div>
+          <div class="c-total-det">Promedio de las 5 unidades evaluadas · Simulador 15% · Ejercicios 25% · Quiz 30% · Tarea 30% en cada una</div>
+        </div>
+        <div class="c-score"><span class="big" id="cNota">—</span><span class="den">/ 10</span></div>
+      </div>
+      <div class="c-foot">
+        <span>Emitida: <strong id="cEmit">—</strong></span>
+        <span>Universidad Panamericana · Escuela de Ciencias Empresariales</span>
+        <span>Dr. Adrián Cerda</span>
+      </div>
+    </div>
+
+    <div class="resumen-actions">
+      <button class="btn" id="btnConstPng"><i data-lucide="download"></i>Descargar constancia (PNG)</button>
+      <button class="btn ghost" id="btnRefresh"><i data-lucide="refresh-cw"></i>Actualizar avance</button>
+      <button class="del-btn" id="btnDelAll"><i data-lucide="trash-2"></i><span>Borrar todos los datos</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NOTA DE USO ==================== -->
+<section class="wrap">
+  <div class="uso">
+    <strong>Nota de uso:</strong> guarda este archivo (<code>index.html</code>) en la <strong>misma carpeta</strong> que las aulas
+    (<code>Variables_aleatorias_distribuciones_de_probabilidad.html</code>, <code>Estimacion.html</code>,
+    <code>Pruebas_de_hipotesis.html</code>, <code>Pruebas_de_hipotesis_especiales.html</code>,
+    <code>Regresion_simple_y_correlacion.html</code>, y los recursos complementarios). El registro y el avance se comparten
+    entre aulas abiertas en <strong>este mismo navegador</strong>: si cambias de dispositivo o borras los datos de navegación, se pierden.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div><strong>Referencias:</strong> Walpole et al., <em>Probabilidad y Estadística para Ingeniería y Ciencias</em>, 9.ª ed. · Larsen &amp; Marx, <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed.</div>
+    <div>Portal del curso · uso educativo · los datos se guardan solo en este navegador.</div>
+  </div>
+</footer>
+
+<div id="toasts"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const $  = s => document.querySelector(s);
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg, type='ok'){
+  const box=$('#toasts'), t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML = `<i data-lucide="${type==='ok'?'check-circle-2':'alert-circle'}"></i><span>${msg}</span>`;
+  box.appendChild(t); lucide.createIcons();
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ============================================================
+   CATÁLOGO DE UNIDADES — nombres reales de tus archivos
+============================================================ */
+const UNIDADES=[
+  {
+    curso:'cap3', archivo:'Variables_aleatorias_distribuciones_de_probabilidad.html',
+    materia:'Probabilidad y Estadística', num:'Cap. 3',
+    titulo:'Variables aleatorias y distribuciones de probabilidad',
+    desc:'Variable aleatoria, fmp y fda, densidad, catálogo de distribuciones, simulador de dados y calculadora.',
+    libro:'Walpole et al. · 9.ª ed.',
+    ejKeys:['e1','e2','e3','e4'], quizTotal:6
+  },
+  {
+    curso:'inf5', archivo:'Estimacion.html',
+    materia:'Estadística Inferencial', num:'Tema 2',
+    titulo:'Estimación',
+    desc:'Tipos y propiedades de estimadores, máxima verosimilitud, IC de una y dos muestras, tamaño de muestra.',
+    libro:'Larsen & Marx · Cap. 5',
+    ejKeys:['e1','e2','e3','e4','e5'], quizTotal:7
+  },
+  {
+    curso:'inf6', archivo:'Pruebas_de_hipotesis.html',
+    materia:'Estadística Inferencial', num:'Tema 3',
+    titulo:'Pruebas de hipótesis — Parte 1',
+    desc:'Formulación de hipótesis, pruebas una y dos muestras, valores P y los dos tipos de error.',
+    libro:'Larsen & Marx · Caps. 6 y 9',
+    ejKeys:['e1','e2','e3','e4'], quizTotal:6
+  },
+  {
+    curso:'inf7', archivo:'Pruebas_de_hipotesis_especiales.html',
+    materia:'Estadística Inferencial', num:'Tema 4',
+    titulo:'Pruebas de hipótesis especiales — Parte 2',
+    desc:'Distribuciones χ² y F de Snedecor, tablas de contingencia y ANOVA de un factor.',
+    libro:'Larsen & Marx · Cap. 10',
+    ejKeys:['e1','e2','e3','e4'], quizTotal:7
+  },
+  {
+    curso:'inf8', archivo:'Regresion_simple_y_correlacion.html',
+    materia:'Estadística Inferencial', num:'Tema 5',
+    titulo:'Regresión simple y correlación',
+    desc:'Mínimos cuadrados, correlación y r², pruebas sobre los coeficientes, IC de media y predicción.',
+    libro:'Larsen & Marx · Cap. 11',
+    ejKeys:['e1','e2','e3','e4'], quizTotal:7
+  }
+];
+
+/* ============================================================
+   RECURSOS COMPLEMENTARIOS (enlace directo, sin nota)
+   Para conectar su avance al portal: dime el valor de
+   const CURSO='...' dentro de cada archivo y se promueven
+   a unidades evaluadas.
+============================================================ */
+const EXTRAS=[
+  {
+    archivo:'Distribucion_muestral_de_la_proporcion.html',
+    materia:'Estadística Inferencial',
+    etiqueta:'Complemento',
+    titulo:'Distribución muestral de la proporción',
+    desc:'Material de apoyo sobre el comportamiento muestral de p̂: base conceptual para los intervalos y pruebas sobre proporciones.',
+    icono:'percent'
+  },
+  {
+    archivo:'cuestionario-distribucion-muestral-de-la-media-muestral.html',
+    materia:'Estadística Inferencial',
+    etiqueta:'Cuestionario',
+    titulo:'Cuestionario: distribución muestral de la media',
+    desc:'Práctica de autoevaluación sobre el teorema del límite central y la distribución de X̄.',
+    icono:'clipboard-check'
+  }
+];
+
+/* ============================================================
+   PERSISTENCIA (claves compartidas con las aulas)
+============================================================ */
+const LS_EST='aula_estudiante';
+const LS_ACT='aula_actividades';
+function loadEst(){ try{ return JSON.parse(localStorage.getItem(LS_EST)); }catch(e){ return null; } }
+function loadAct(){ try{ return JSON.parse(localStorage.getItem(LS_ACT)||'{}'); }catch(e){ return {}; } }
+
+/* ============================================================
+   CÁLCULO DE NOTAS (misma lógica que las aulas)
+============================================================ */
+function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1?20 : 0; }
+function rubrosDe(u){
+  const c=loadAct()[u.curso]||{};
+  const rolls=(c.sim&&c.sim.rolls)||0;
+  const ejOk=u.ejKeys.filter(k=>c.ej&&c.ej[k]).length;
+  const tOk=Math.min(8, Object.values(c.tarea||{}).filter(Boolean).length);
+  const qTot=(c.quiz&&c.quiz.total)||u.quizTotal;
+  const quiz=(c.quiz&&c.quiz.score!=null)? c.quiz.score/qTot*100 : 0;
+  return {
+    rolls,
+    sim: simPct(rolls),
+    ej: ejOk/u.ejKeys.length*100, ejOk, ejTot:u.ejKeys.length,
+    quiz, quizScore: (c.quiz&&c.quiz.score!=null)? c.quiz.score : null, quizTot:qTot,
+    tarea: tOk/8*100, tOk
+  };
+}
+function notaDe(u){
+  const r=rubrosDe(u);
+  return (r.sim*0.15 + r.ej*0.25 + r.quiz*0.30 + r.tarea*0.30)/10;
+}
+function promedioDe(cursoIds){
+  const ds=UNIDADES.filter(u=>cursoIds.includes(u.curso)).map(notaDe);
+  return ds.reduce((a,b)=>a+b,0)/ds.length;
+}
+
+/* ============================================================
+   RENDER
+============================================================ */
+const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
+                 ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
+function initials(name){
+  const p=name.trim().split(/\s+/);
+  return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
+}
+function avColor(name){ return AV_COLORS[[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COLORS.length]; }
+function fmtNota(n){ return n.toFixed(1); }
+function estadoClase(n){
+  if(n<=0.05) return ['sin','Sin actividad'];
+  if(n<6) return ['proceso','En proceso'];
+  return ['ok','Aprobada'];
+}
+
+function renderUnits(){
+  $('#unitsGrid').innerHTML = UNIDADES.map(u=>{
+    const r=rubrosDe(u), n=notaDe(u);
+    const [cls,lbl]=estadoClase(n);
+    return `
+    <article class="unit-card">
+      <div class="u-head">
+        <span class="u-materia">${esc(u.materia)}</span>
+        <span class="u-num">${esc(u.num)}</span>
+      </div>
+      <div class="u-body">
+        <h3>${esc(u.titulo)}</h3>
+        <p class="u-desc">${esc(u.desc)}</p>
+        <span class="u-libro"><i data-lucide="book-open"></i>${esc(u.libro)}</span>
+      </div>
+      <div class="u-nota">
+        <span class="big mono">${fmtNota(n)}</span><span class="den">/ 10</span>
+        <span class="u-estado ${cls}">${lbl}</span>
+      </div>
+      <div class="u-bars">
+        <div class="mini-row"><span class="mr-lbl">Simulador</span><span class="mini-bar"><div style="width:${r.sim.toFixed(0)}%"></div></span><span class="mr-val mono">${r.sim.toFixed(0)}%</span></div>
+        <div class="mini-row"><span class="mr-lbl">Ejercicios</span><span class="mini-bar"><div style="width:${r.ej.toFixed(0)}%"></div></span><span class="mr-val mono">${r.ejOk}/${r.ejTot}</span></div>
+        <div class="mini-row"><span class="mr-lbl">Quiz</span><span class="mini-bar"><div style="width:${r.quiz.toFixed(0)}%"></div></span><span class="mr-val mono">${r.quizScore==null? '—' : r.quizScore+'/'+r.quizTot}</span></div>
+        <div class="mini-row"><span class="mr-lbl">Tarea</span><span class="mini-bar"><div style="width:${r.tarea.toFixed(0)}%"></div></span><span class="mr-val mono">${r.tOk}/8</span></div>
+      </div>
+      <div class="u-foot">
+        <a class="btn" href="${u.archivo}"><i data-lucide="arrow-right"></i>Entrar al aula</a>
+      </div>
+    </article>`;
+  }).join('');
+  refreshIcons();
+}
+
+function renderExtras(){
+  $('#extrasGrid').innerHTML = EXTRAS.map(x=>`
+    <article class="extra-card">
+      <div class="x-head">
+        <span class="x-materia">${esc(x.materia)}</span>
+        <span class="u-num">${esc(x.etiqueta)}</span>
+      </div>
+      <div class="x-body">
+        <h3>${esc(x.titulo)}</h3>
+        <p>${esc(x.desc)}</p>
+      </div>
+      <div class="x-foot">
+        <a class="btn ghost" href="${x.archivo}"><i data-lucide="${x.icono}"></i>Abrir recurso</a>
+      </div>
+    </article>`).join('');
+  refreshIcons();
+}
+
+function renderResumen(){
+  const est=loadEst();
+  const registrado=!!est;
+
+  // hero: saludo o ficha
+  $('#helloCard').hidden = !registrado;
+  $('#regCard').hidden = registrado;
+  if(registrado){
+    const [bg,fg]=avColor(est.nombre);
+    const av=$('#helloAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
+    $('#helloName').textContent=est.nombre;
+    $('#helloMeta').textContent=`Matrícula ${est.matricula} · registrado desde ${new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}`;
+  }
+
+  // stats del hero
+  const g=promedioDe(UNIDADES.map(u=>u.curso));
+  const inf=promedioDe(['inf5','inf6','inf7','inf8']);
+  const completas=UNIDADES.filter(u=>notaDe(u)>=6).length;
+  $('#statGlobal').textContent = registrado? fmtNota(g) : '—';
+  $('#statInfer').textContent  = registrado? fmtNota(inf) : '—';
+  $('#statCompletas').textContent = registrado? completas : '—';
+
+  // constancia
+  if(!registrado){
+    $('#cName').textContent='Sin registro';
+    $('#cMeta').textContent='Regístrate arriba para generar tu constancia de avance.';
+    $('#cBody').innerHTML='<p class="hint" style="padding:8px 0">La constancia se genera con tu nombre, matrícula y el avance consolidado de las cinco unidades evaluadas. Tu registro se guarda solo en este navegador.</p>';
+    $('#cNota').textContent='—';
+    $('#cEmit').textContent='—';
+    refreshIcons();
+    return;
+  }
+  const [bg,fg]=avColor(est.nombre);
+  const av=$('#cAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
+  $('#cName').textContent=est.nombre;
+  $('#cMeta').textContent=`Matrícula ${est.matricula} · ${est.correo}`;
+
+  const filas=u=>{
+    const r=rubrosDe(u), n=notaDe(u);
+    return `<tr>
+      <td>${esc(u.titulo)} <small style="color:var(--muted)">· ${esc(u.num)}</small></td>
+      <td class="center mono">${r.sim.toFixed(0)}%</td>
+      <td class="center mono">${r.ejOk}/${r.ejTot}</td>
+      <td class="center mono">${r.quizScore==null? '—' : r.quizScore+'/'+r.quizTot}</td>
+      <td class="center mono">${r.tOk}/8</td>
+      <td class="center mono"><strong>${fmtNota(n)}</strong></td>
+    </tr>`;
+  };
+  const infAvg=promedioDe(['inf5','inf6','inf7','inf8']);
+  const gAvg=promedioDe(UNIDADES.map(u=>u.curso));
+  $('#cBody').innerHTML=`
+    <table class="tbl">
+      <thead><tr><th>Unidad</th><th class="center">Simulador</th><th class="center">Ejerc.</th><th class="center">Quiz</th><th class="center">Tarea</th><th class="center">Nota</th></tr></thead>
+      <tbody>
+        ${UNIDADES.map(filas).join('')}
+        <tr class="mat-row"><td colspan="5">Probabilidad y Estadística — promedio de unidad</td><td class="center mono">${fmtNota(notaDe(UNIDADES[0]))}</td></tr>
+        <tr class="mat-row"><td colspan="5">Estadística Inferencial — promedio de las 4 unidades</td><td class="center mono">${fmtNota(infAvg)}</td></tr>
+      </tbody>
+    </table>`;
+  $('#cNota').textContent=fmtNota(gAvg);
+  $('#cEmit').textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+  refreshIcons();
+}
+
+function renderAll(){ renderUnits(); renderExtras(); renderResumen(); }
+
+/* ============================================================
+   REGISTRO DESDE EL PORTAL
+============================================================ */
+ $('#formEst').addEventListener('submit', e=>{
+  e.preventDefault();
+  const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
+  if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
+  if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
+  if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
+  const prev=loadEst();
+  localStorage.setItem(LS_EST, JSON.stringify({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()}));
+  e.target.reset();
+  renderAll();
+  toast(prev? 'Datos actualizados en todas las aulas.' : `¡Listo, ${nombre.split(' ')[0]}! Tu registro se comparte con las cinco aulas.`);
+});
+
+/* ============================================================
+   ACCIONES DE LA CONSTANCIA
+============================================================ */
+ $('#btnConstPng').addEventListener('click', ()=>{
+  if(!loadEst()){ toast('Regístrate primero para generar tu constancia.','err'); return; }
+  if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
+  toast('Generando imagen de tu constancia…');
+  html2canvas($('#constanciaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
+    const est=loadEst();
+    const a=document.createElement('a');
+    a.download=`constancia-curso-${est? est.matricula : 'alumno'}.png`;
+    a.href=cv.toDataURL('image/png'); a.click();
+    toast('Constancia descargada como PNG.');
+  }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+});
+ $('#btnRefresh').addEventListener('click', ()=>{ renderAll(); toast('Avance actualizado desde las aulas.'); });
+
+ $('#btnDelAll').addEventListener('click', ()=>{
+  const b=$('#btnDelAll');
+  if(!b.classList.contains('confirm')){
+    b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar TODO el avance?</span>'; refreshIcons();
+    setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
+      b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar todos los datos</span>'; refreshIcons(); } },3200);
+    return;
+  }
+  localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
+  renderAll();
+  toast('Registro y avance borrados de todas las unidades.');
+});
+
+/* ============================================================
+   ARRANQUE
+============================================================ */
+refreshIcons();
+renderAll();
+</script>
+</body>
+</html>
