@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tema 5 · Regresión simple y correlación — Estadística Inferencial</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+/* ============================================================
+   VARIABLES Y BASE
+============================================================ */
+:root{
+  --paper:#f7f3eb;
+  --card:#fffdf8;
+  --ink:#1c2b25;
+  --pine:#1e4636;
+  --pine-soft:#2c5e49;
+  --terra:#c2542f;
+  --terra-soft:#f3e0d6;
+  --gold:#c9a227;
+  --line:rgba(28,43,37,.16);
+  --line-strong:rgba(28,43,37,.4);
+  --muted:rgba(28,43,37,.62);
+  --ok-bg:#e7efe6;
+  --err-bg:#f7e6dd;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:150px}
+[hidden]{display:none!important}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  background-image:radial-gradient(rgba(30,70,54,.075) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+.overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+.mono{font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--pine)}
+svg.lucide{width:16px;height:16px;stroke-width:2}
+
+/* ============================================================
+   HEADER / NAV
+============================================================ */
+header.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(247,243,235,.93);
+  backdrop-filter:blur(10px);
+  border-bottom:1.5px solid var(--ink);
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
+.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
+.brand .brand-ico svg{width:17px;height:17px}
+.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:6px;border-top:1px solid var(--line);padding:10px 0;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  border:1px solid transparent;background:transparent;color:var(--pine);
+  font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;
+  transition:all .18s ease;
+}
+.nav-btn svg{width:15px;height:15px}
+.nav-btn:hover{border-color:var(--line-strong)}
+.nav-btn.active{background:var(--ink);color:var(--paper)}
+
+/* ============================================================
+   VISTAS
+============================================================ */
+.view{padding:0 0 80px}
+.view-head{border-bottom:2px solid var(--ink);padding:52px 0 26px;margin-bottom:36px}
+.view-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:8px 0 10px}
+.view-head p.sub{max-width:680px;color:var(--muted)}
+
+/* ============================================================
+   BOTONES / FORMULARIOS
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);border-radius:10px;
+  padding:11px 18px;font-weight:600;font-size:14px;
+  transition:all .18s ease;
+}
+.btn:hover{background:var(--pine);border-color:var(--pine);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:rgba(28,43,37,.06);transform:translateY(-1px)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field textarea{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;resize:vertical;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.hint{font-size:12px;color:var(--muted)}
+.mode-row{display:flex;gap:8px;margin-bottom:16px}
+.mode-row .btn{flex:1;justify-content:center}
+
+/* ============================================================
+   INICIO / HERO
+============================================================ */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:64px 0 56px}
+.hero h1{font-size:clamp(2.3rem,4.6vw,3.7rem);margin:14px 0 18px}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero .lead{font-size:1.05rem;color:var(--muted);max-width:520px}
+.hero-actions{display:flex;gap:12px;margin:26px 0 30px;flex-wrap:wrap}
+.meta-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line-strong);max-width:520px}
+.meta-grid>div{padding:12px 14px 12px 0;border-bottom:1px solid var(--line)}
+.meta-grid dt{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.meta-grid dd{font-weight:600;font-size:14.5px}
+.hero-fig{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:6px 6px 0 rgba(28,43,37,.12)}
+.hero-fig canvas{display:block;width:100%;height:320px}
+.hero-fig figcaption{padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.home-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:44px;border-top:1.5px solid var(--ink);padding-top:38px}
+.route-item{display:grid;grid-template-columns:86px 1fr auto;gap:18px;align-items:center;border-top:1px solid var(--line);padding:22px 4px;cursor:pointer;transition:background .15s}
+.route-item:first-child{border-top:none}
+.route-item:hover{background:rgba(28,43,37,.045)}
+.route-no{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:400;color:rgba(30,70,54,.28)}
+.route-item h3{font-size:1.2rem;margin-bottom:4px}
+.route-item p{font-size:13.5px;color:var(--muted)}
+.route-go{width:38px;height:38px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--ink);transition:all .18s}
+.route-item:hover .route-go{background:var(--ink);color:var(--paper)}
+.side-stats{display:flex;flex-direction:column;gap:12px}
+.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px}
+.stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1}
+.stat .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ============================================================
+   TEORÍA
+============================================================ */
+.theory{display:grid;grid-template-columns:250px 1fr;gap:52px;align-items:start}
+.toc{position:sticky;top:150px;border-left:1.5px solid var(--ink);display:flex;flex-direction:column}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 0 10px 16px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink);padding:9px 16px;font-size:13.5px;font-weight:500;border-left:3px solid transparent;margin-left:-1.5px;transition:all .15s}
+.toc a span{font-family:'Fraunces',serif;color:var(--terra);font-weight:600;min-width:30px}
+.toc a:hover{border-left-color:var(--pine);background:rgba(28,43,37,.05)}
+.sec{border-top:1px solid var(--line);padding:44px 0}
+.sec:first-child{border-top:none;padding-top:0}
+.sec-no{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:rgba(30,70,54,.22);line-height:1}
+.sec h3{font-size:1.55rem;margin:6px 0 16px}
+.prose p{margin:0 0 14px;max-width:70ch}
+.prose ul,.prose ol{margin:0 0 14px 22px;max-width:70ch}
+.prose li{margin-bottom:6px}
+.def{background:#ecf1ea;border:1px solid rgba(30,70,54,.28);border-radius:0 10px 10px 0;border-left:4px solid var(--pine);padding:18px 22px;margin:20px 0}
+.def .def-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--pine)}
+.def p{margin:6px 0 0}
+.ex{background:var(--card);border:1px solid var(--line-strong);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin:20px 0}
+.ex .ex-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a6d10}
+.formula-hero{display:flex;justify-content:center;padding:16px 0;font-size:1.15rem}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.tbl th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line)}
+.tbl tbody tr:hover{background:rgba(28,43,37,.04)}
+.tbl td.center,.tbl th.center{text-align:center}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+.tag.d{color:var(--pine);border-color:rgba(30,70,54,.45);background:#ecf1ea}
+.tag.c{color:var(--terra);border-color:rgba(194,84,47,.45);background:var(--terra-soft)}
+.tag.g{color:#8a6d10;border-color:rgba(201,162,39,.5);background:#f6eecf}
+.spec-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:18px;align-items:center;border-top:1px solid var(--line);padding:18px 6px;transition:background .15s}
+.spec-row:hover{background:rgba(28,43,37,.04)}
+.spec-row:last-child{border-bottom:1px solid var(--line)}
+.spec-id{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.spec-id .no{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--muted)}
+.spec-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600}
+.spec-use{font-size:13px;color:var(--muted);margin-top:2px}
+.spec-math{text-align:right;font-size:1rem;overflow-x:auto}
+
+/* ============================================================
+   PANELES / LABORATORIOS
+============================================================ */
+.panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.panel-body{padding:20px 18px}
+.lab-grid{display:grid;grid-template-columns:350px 1fr;gap:28px;align-items:start}
+.sim-controls{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-2 .stat{padding:11px 14px}
+.stat-2 .num{font-size:1.35rem}
+.conv{margin-top:18px}
+.conv-bar{height:8px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper);margin-top:6px}
+.conv-bar>div{height:100%;background:var(--terra);width:0%;transition:width .4s ease}
+.note{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line-strong);margin-top:18px;padding-top:12px}
+.graph-frame canvas{display:block;width:100%;height:340px}
+.graph-cap{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+
+/* Resultados calculadora */
+.res-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding:10px 2px}
+.res-row:last-child{border-bottom:none}
+.res-label{font-size:13.5px;font-weight:600}
+.res-val{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--pine)}
+.res-val.dec-ok{color:var(--pine)}
+.res-val.dec-no{color:var(--terra)}
+.calc-formula{border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;margin-bottom:14px;text-align:center;overflow-x:auto}
+.calc-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:46px 20px;color:var(--muted);text-align:center}
+.calc-empty svg{width:30px;height:30px;stroke-width:1.5}
+.warn-box{border:1px solid rgba(194,84,47,.5);background:var(--terra-soft);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--terra);margin-bottom:12px}
+
+/* ============================================================
+   ACTIVIDADES
+============================================================ */
+.act-block{margin-bottom:52px}
+.act-block>h3{font-size:1.45rem;margin:8px 0 6px}
+.act-block>.act-desc{color:var(--muted);max-width:70ch;margin-bottom:20px}
+.rub-row{display:grid;grid-template-columns:280px 1fr 60px;gap:16px;align-items:center;border-top:1px solid var(--line);padding:14px 4px}
+.rub-row:last-child{border-bottom:1px solid var(--line)}
+.rub-row .rub-name{font-weight:600;font-size:14.5px}
+.rub-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+.rub-bar>div{height:100%;background:var(--pine)}
+.rub-pct{text-align:right;font-family:'Fraunces',serif;font-weight:600}
+details.sol{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);margin-bottom:14px;overflow:hidden}
+details.sol summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;font-weight:600;transition:background .15s}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary:hover{background:rgba(28,43,37,.04)}
+.sol-marker{flex:none;width:24px;height:24px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;transition:transform .2s;margin-top:1px}
+details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);color:var(--paper)}
+.sol-body{border-top:1px dashed var(--line-strong);padding:16px 20px;font-size:14.5px}
+.sol-body p{margin-bottom:10px;max-width:75ch}
+.prob-tag{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:4px}
+.quiz-q{border-top:1px solid var(--line);padding:24px 4px}
+.quiz-q header{display:flex;gap:14px;margin-bottom:14px}
+.qnum{flex:none;font-family:'Fraunces',serif;font-weight:700;color:var(--terra);border:1.5px solid var(--terra);border-radius:8px;padding:2px 9px;height:fit-content}
+.quiz-q .q-text{font-weight:600;font-size:15.5px;padding-top:4px}
+.opts{display:grid;gap:9px;margin-left:56px}
+.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--card);transition:all .15s;font-size:14.5px}
+.opt:hover{border-color:var(--pine)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt-key{flex:none;width:26px;height:26px;border:1.5px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .15s}
+.opt.is-correct{border-color:var(--pine);background:var(--ok-bg)}
+.opt.is-correct .opt-key{background:var(--pine);border-color:var(--pine);color:var(--paper)}
+.opt.is-wrong{border-color:var(--terra);background:var(--err-bg)}
+.opt.is-wrong .opt-key{background:var(--terra);border-color:var(--terra);color:var(--paper)}
+.opt.locked{cursor:default}
+.explain{margin:12px 0 0 56px;font-size:13.5px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 14px;background:var(--card)}
+.quiz-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;border-top:1.5px solid var(--ink);padding-top:20px}
+.quiz-result{font-size:15px}
+.quiz-result strong{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--pine);margin-right:8px}
+.task-panel{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.chk{display:flex;align-items:center;gap:11px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card);padding:10px 14px;margin-bottom:9px;cursor:pointer;transition:all .15s;font-size:14.5px}
+.chk:hover{border-color:var(--pine)}
+.chk input{width:16px;height:16px;accent-color:var(--pine)}
+.chk.done{background:var(--ok-bg);border-color:var(--pine)}
+
+/* ============================================================
+   EDITOR DE REDACCIÓN
+============================================================ */
+.ed-box{border:1.5px solid var(--ink);border-radius:10px;margin-top:18px;overflow:hidden;background:var(--card)}
+.ed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);background:#ecf1ea;flex-wrap:wrap}
+.ed-title{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--pine)}
+.ed-title svg{width:13px;height:13px}
+.ed-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.ed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ed-status.saved{color:var(--pine);font-weight:600}
+.ed-status.saved .dot{background:#4a8a5c}
+.ed-grid{display:grid;grid-template-columns:1fr 330px}
+.ed-main{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ed-ta{width:100%;min-height:200px;resize:vertical;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink)}
+.ed-ta:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.ed-preview-wrap{border:1px dashed var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper)}
+.ed-preview-head{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 12px;background:rgba(28,43,37,.04);border-bottom:1px dashed var(--line)}
+.ed-preview{padding:12px 14px;font-size:14.5px;min-height:56px;overflow-x:auto}
+.ed-preview .katex-display{margin:6px 0}
+.ed-ph{color:var(--muted);font-size:13px}
+.ed-manual{border-left:1px solid var(--line);padding:12px 14px;background:rgba(28,43,37,.03);max-height:460px;overflow:auto}
+.ed-note{font-size:12px;color:var(--muted);margin-bottom:10px}
+.ed-note code{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px}
+.ed-cmd-title{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);margin:12px 0 4px}
+.cmd-row{display:grid;grid-template-columns:minmax(0,1fr) auto 26px;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.cmd-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--ink);overflow-x:auto;white-space:nowrap;display:block}
+.cmd-help{display:block;font-size:10.5px;color:var(--muted);font-family:'Instrument Sans'}
+.cmd-view{font-size:13px;text-align:right;max-width:130px;overflow-x:auto;padding:2px 0}
+.cmd-add{width:26px;height:26px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);display:grid;place-items:center;font-weight:700;color:var(--pine);transition:all .15s;font-size:14px;flex:none}
+.cmd-add:hover{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+.ed-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px dashed var(--line-strong);flex-wrap:wrap}
+.ed-count{font-size:12px;color:var(--muted)}
+details.mini-check{border:1px dashed var(--line-strong);border-radius:8px;background:var(--terra-soft);margin-top:14px}
+details.mini-check summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;list-style:none}
+details.mini-check summary::-webkit-details-marker{display:none}
+details.mini-check summary:hover{color:var(--terra)}
+details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-top:8px;font-size:13.5px}
+
+/* ============================================================
+   REGISTRO Y BOLETA
+============================================================ */
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.del-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;transition:all .15s}
+.del-btn:hover{border-color:var(--terra);color:var(--terra)}
+.del-btn.confirm{background:var(--terra);border-color:var(--terra);color:#fff}
+.boleta-card{position:relative;max-width:700px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 rgba(28,43,37,.12);overflow:hidden}
+.b-head{display:flex;align-items:center;gap:16px;padding:22px 24px;border-bottom:1.5px solid var(--ink)}
+.b-head .avatar{width:52px;height:52px;font-size:17px;border:1.5px solid var(--ink)}
+.b-head>div{flex:1;min-width:0}
+.b-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--terra);margin-bottom:3px}
+.b-name{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;line-height:1.15}
+.b-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.b-seal{flex:none;width:76px;height:76px;border:2px solid var(--terra);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.85;line-height:1.25}
+.b-seal span{font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.b-seal strong{font-family:'Fraunces',serif;font-size:1.05rem}
+.b-body{padding:8px 24px 18px}
+.b-row{display:grid;grid-template-columns:1fr 150px 92px;gap:14px;align-items:center;border-top:1px solid var(--line);padding:13px 0}
+.b-row:first-child{border-top:none}
+.b-rubname{font-weight:600;font-size:14.5px}
+.b-rubdet{font-size:12px;color:var(--muted);margin-top:1px}
+.b-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper)}
+.b-bar>div{height:100%;background:var(--pine);transition:width .4s ease}
+.b-pts{text-align:right;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+.b-pts small{font-weight:400;color:var(--muted);font-size:.75em}
+.b-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#ecf1ea;padding:16px 24px}
+.b-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem}
+.b-total-det{font-size:11.5px;color:var(--muted);margin-top:2px}
+.b-score{display:flex;align-items:baseline;gap:6px}
+.b-score .big{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;color:var(--pine);line-height:1}
+.b-score .den{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--muted)}
+.b-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line-strong);padding:11px 24px;font-size:11.5px;color:var(--muted)}
+.boleta-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:700px}
+
+/* ============================================================
+   TOASTS / FOOTER
+============================================================ */
+#toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(28,43,37,.28);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
+.toast svg{flex:none;width:17px;height:17px}
+.toast.ok svg{color:#8fd0a5}
+.toast.err svg{color:#f0a284}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.foot-row strong{color:var(--ink)}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:34px}
+  .home-grid{grid-template-columns:1fr}
+  .theory{grid-template-columns:1fr}
+  .toc{position:static;flex-direction:row;overflow-x:auto;border-left:none;border-bottom:1.5px solid var(--ink);gap:2px}
+  .toc-title{display:none}
+  .toc a{white-space:nowrap;border-left:none;border-bottom:3px solid transparent}
+  .toc a:hover{border-bottom-color:var(--pine)}
+  .lab-grid,.task-panel{grid-template-columns:1fr}
+  .spec-row{grid-template-columns:1fr;gap:8px}
+  .spec-math{text-align:left}
+  .rub-row{grid-template-columns:1fr;gap:8px}
+  .rub-pct{text-align:left}
+  .meta-grid{max-width:none}
+  .ed-grid{grid-template-columns:1fr}
+  .ed-manual{border-left:none;border-top:1px solid var(--line);max-height:none}
+}
+@media (max-width:640px){
+  .b-row{grid-template-columns:1fr 86px}
+  .b-bar{display:none}
+  .b-seal{display:none}
+  .b-total{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <div class="brand">
+      <span class="brand-ico"><i data-lucide="sigma"></i></span>
+      <span>Estadística Inferencial<small>Aula interactiva — Dr. Adrián Cerda</small></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" id="mainNav">
+      <button class="nav-btn active" data-view="inicio"><i data-lucide="home"></i>Inicio</button>
+      <button class="nav-btn" data-view="teoria"><i data-lucide="book-open"></i>Teoría</button>
+      <button class="nav-btn" data-view="simulador"><i data-lucide="line-chart"></i>Simulador</button>
+      <button class="nav-btn" data-view="calculadora"><i data-lucide="calculator"></i>Calculadora</button>
+      <button class="nav-btn" data-view="actividades"><i data-lucide="clipboard-list"></i>Actividades</button>
+      <button class="nav-btn" data-view="boleta"><i data-lucide="badge-check"></i>Mi boleta</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== INICIO ==================== -->
+<section class="view" id="v-inicio">
+  <div class="wrap hero">
+    <div>
+      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, cap. 11 · Tema 5 del programa</p>
+      <h1>Regresión simple y <em>correlación</em></h1>
+      <p class="lead">El cierre del curso: cómo una recta resume la relación entre dos variables de negocio, qué tan fuerte es el vínculo (r, r²), cómo se ponen a prueba los coeficientes y cómo se estima la respuesta —para la media y para un caso individual— con sus bandas de incertidumbre.</p>
+      <div class="hero-actions">
+        <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
+        <button class="btn ghost" data-view="simulador"><i data-lucide="line-chart"></i>Probar el simulador</button>
+      </div>
+      <dl class="meta-grid">
+        <div><dt>Unidad</dt><dd>Tema 5 — Regresión y correlación</dd></div>
+        <div><dt>Sesiones</dt><dd>4 · teórico-prácticas</dd></div>
+        <div><dt>Evaluación</dt><dd>Quiz + tareas + laboratorio</dd></div>
+        <div><dt>Requisitos</dt><dd>Estimación y pruebas de hipótesis</dd></div>
+      </dl>
+    </div>
+    <figure class="hero-fig">
+      <canvas id="heroCanvas"></canvas>
+      <figcaption><strong>La idea de la regresión.</strong> La nube de puntos, la recta de mínimos cuadrados que la resume y la recta verdadera del modelo: el ajuste aprende de los datos y se le acerca conforme crecen.</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap home-grid">
+    <div>
+      <p class="overline" style="margin-bottom:14px">Ruta de la unidad</p>
+      <div class="route-item" data-view="teoria">
+        <span class="route-no">01</span>
+        <div><h3>Desarrollo de la teoría</h3><p>Correlación y regresión, pruebas sobre los coeficientes y estimación de la respuesta, puntual y por intervalo.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="simulador">
+        <span class="route-no">02</span>
+        <div><h3>Laboratorio de simulación</h3><p>Ajusta rectas en vivo sobre nubes de datos y observa cómo la pendiente muestral se distribuye alrededor de la verdadera.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="actividades">
+        <span class="route-no">03</span>
+        <div><h3>Evaluación y tareas</h3><p>Ejercicios guiados, redacción de soluciones en LaTeX, quiz de autoevaluación y la tarea de problemas del Larsen &amp; Marx.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="boleta">
+        <span class="route-no">04</span>
+        <div><h3>Mi boleta</h3><p>Regístrate una sola vez y sigue tu nota: tu avance y tu calificación final, con descarga en imagen para compartir.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+    </div>
+    <aside>
+      <p class="overline" style="margin-bottom:14px">En un vistazo</p>
+      <div class="side-stats">
+        <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
+        <div class="stat"><div class="num">12</div><div class="lbl">Fórmulas en catálogo</div></div>
+        <div class="stat"><div class="num">7</div><div class="lbl">Preguntas del quiz</div></div>
+        <div class="stat"><div class="num">16</div><div class="lbl">Ejercicios y problemas</div></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TEORÍA ==================== -->
+<section class="view" id="v-teoria" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Desarrollo de la teoría</p>
+      <h2>Regresión lineal simple y correlación</h2>
+      <p class="sub">Síntesis del capítulo de regresión simple de Larsen, R. J. &amp; Marx, M. L., <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. Cubre el programa: análisis de correlación y regresión (5.1), pruebas de hipótesis sobre los coeficientes (5.2) y estimación sobre los coeficientes de regresión (5.3).</p>
+    </div>
+
+    <div class="theory">
+      <aside class="toc">
+        <p class="toc-title">Contenido</p>
+        <a href="#t51"><span>5.1</span>Correlación y regresión</a>
+        <a href="#t52"><span>5.2</span>Pruebas sobre coeficientes</a>
+        <a href="#t53"><span>5.3</span>Estimación de la respuesta</a>
+        <a href="#t54"><span>5.4</span>Catálogo de fórmulas</a>
+      </aside>
+
+      <div class="prose">
+
+        <div class="def" style="border-left-color:var(--gold)">
+          <span class="def-tag" style="color:#8a6d10">Correspondencia con el programa</span>
+          <p><strong>5.1 Análisis de correlación y regresión</strong> → sección 5.1 · <strong>5.2 Pruebas de hipótesis sobre los coeficientes</strong> → sección 5.2 · <strong>5.3 Estimación sobre los coeficientes de regresión</strong> → sección 5.3 (ajuste de los coeficientes por mínimos cuadrados, IC de los coeficientes y de la respuesta). Esta unidad integra todo el curso: medias, varianzas, t, F y la lógica de las pruebas.</p>
+        </div>
+
+        <!-- 5.1 -->
+        <article class="sec" id="t51">
+          <div class="sec-no">5.1</div>
+          <h3>Análisis de correlación y regresión</h3>
+          <p>Quando dos variables de negocio se mueven juntas —gasto publicitario y ventas, horas de capacitación y productividad— el análisis de regresión <em>cuantifica</em> esa relación con una recta, y el análisis de correlación mide <em>qué tan fuerte</em> es. Los papeles son asimétricos: la <strong>variable respuesta</strong> \(Y\) (lo que se quiere explicar o predecir) y la <strong>variable explicativa</strong> \(X\) (la que se usa para explicarla).</p>
+          <div class="def">
+            <span class="def-tag">Modelo de regresión lineal simple</span>
+            <p>\( \;Y = \beta_0 + \beta_1 x + \varepsilon\; \) donde \( \beta_0 \) es la intersección, \( \beta_1 \) la pendiente —el cambio esperado en \(Y\) por cada unidad de \(X\)— y \( \varepsilon \) el error aleatorio. Supuestos: los errores tienen media 0, varianza constante \( \sigma^2 \) (<strong>homocedasticidad</strong>), son <strong>independientes</strong> entre sí y siguen una distribución <strong>normal</strong>.</p>
+          </div>
+          <p><strong>Método de mínimos cuadrados.</strong> Dados los datos \( (x_i, y_i) \), se elige la recta que minimiza la suma de los cuadrados de las distancias <em>verticales</em> (los residuos \( e_i = y_i - \hat y_i \)):</p>
+          <div class="formula-hero">\( \displaystyle \min_{b_0,\,b_1} \sum_{i=1}^{n} e_i^2 \;\;\Longrightarrow\;\; b_1 = \frac{S_{xy}}{S_{xx}} = \frac{\sum (x_i-\bar x)(y_i-\bar y)}{\sum (x_i-\bar x)^2}, \qquad b_0 = \bar y - b_1\,\bar x. \)</div>
+          <p>Derivar e igualar a cero las dos derivadas parciales produce las <strong>ecuaciones normales</strong>, cuya solución son estas fórmulas. Las cantidades auxiliares se calculan con las mismas sumas de cuadrados del curso:</p>
+          <p style="text-align:center">\( S_{xy} = \sum xy - n\bar x \bar y, \qquad S_{xx} = \sum x^2 - n\bar x^2, \qquad S_{yy} = \sum y^2 - n\bar y^2. \)</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo desarrollado — publicidad y ventas (marketing)</span>
+            <p>Cinco semanas de gasto publicitario \(x\) (miles de \$) y ventas \(y\) (decenas de miles de \$): \( (1,3), (2,5), (3,6), (4,8), (5,8) \). Sumas: \( \sum x = 15 \), \( \sum y = 30 \), \( \sum xy = 103 \), \( \sum x^2 = 55 \), \( \sum y^2 = 198 \); \( n = 5 \).</p>
+            <p>\( S_{xy} = 103 - \tfrac{15\cdot 30}{5} = 13, \qquad S_{xx} = 55 - \tfrac{15^2}{5} = 10, \qquad S_{yy} = 198 - \tfrac{30^2}{5} = 18. \)</p>
+            <p>\( b_1 = 13/10 = 1.3 \) — cada mil dólares extra de publicidad se asocian con \( +1.3 \) (≈ \$13,000) en ventas— y \( b_0 = 6 - 1.3\cdot 3 = 2.1 \): ventas base sin publicidad. Recta ajustada: \( \hat y = 2.1 + 1.3\,x \). Residuos: \( (0.6, -0.4, -0.8, 0.5, -0.2) \), con \( \text{SCE} = \sum e^2 = 1.61 \)… verificación: \( \text{SCE} = S_{yy} - b_1 S_{xy} = 18 - 16.9 = 1.1 \) (la diferencia 0.51 viene del redondeo de \( \hat y_i \): usa siempre la fórmula con \(S_{xy}\), es exacta).</p>
+          </div>
+          <p><strong>Correlación y determinación.</strong> El coeficiente de correlación de Pearson mide la fuerza y dirección de la relación <em>lineal</em>:</p>
+          <div class="formula-hero">\( \displaystyle r = \frac{S_{xy}}{\sqrt{S_{xx}\,S_{yy}}}, \qquad -1 \le r \le 1, \qquad r^2 = \frac{\text{SCR}}{S_{yy}}. \)</div>
+          <p>El <strong>coeficiente de determinación</strong> \( r^2 \) es la proporción de la variabilidad de \(Y\) explicada por \(X\) a través de la recta — la medida más interpretable del ajuste. La descomposición es el ANOVA de regresión anticipado:</p>
+          <table class="tbl">
+            <thead><tr><th>Fuente</th><th>Suma de cuadrados</th><th>Lectura</th></tr></thead>
+            <tbody>
+              <tr><td>Regresión (explicada)</td><td>\( \text{SCR} = b_1 S_{xy} \)</td><td>Lo que la recta «captura» de la variación de \(Y\)</td></tr>
+              <tr><td>Error (residual)</td><td>\( \text{SCE} = S_{yy} - \text{SCR} \)</td><td>Lo que la recta no alcanza a explicar</td></tr>
+              <tr><td>Total</td><td>\( S_{yy} = \text{SCR} + \text{SCE} \)</td><td>Variabilidad total de \(Y\) alrededor de \( \bar y \)</td></tr>
+            </tbody>
+          </table>
+          <p>En el ejemplo: \( \text{SCR} = 1.3 \times 13 = 16.9 \), \( \text{SCE} = 1.1 \), y \( r^2 = 16.9/18 = 0.939 \): el gasto publicitario explica el 93.9% de la variación de las ventas; \( r = \sqrt{0.939} \approx 0.97 \). Advertencias de lectura: (i) correlación alta <em>no</em> implica causalidad; (ii) \(r\) solo mide relación <em>lineal</em> — dos variables con relación curva perfecta pueden dar \( r \approx 0 \); (iii) \(r\) y \(b_1\) comparten el signo pero no la escala: \(b_1\) depende de las unidades, \(r\) no.</p>
+        </article>
+
+        <!-- 5.2 -->
+        <article class="sec" id="t52">
+          <div class="sec-no">5.2</div>
+          <h3>Pruebas de hipótesis sobre los coeficientes</h3>
+          <p>La recta ajustada es un <em>estimador</em>: con otra muestra daría otra recta. Bajo los supuestos del modelo, la pendiente muestral es una variable aleatoria con distribución conocida — y sobre esa distribución se construyen las pruebas y los intervalos.</p>
+          <div class="def">
+            <span class="def-tag">Distribución de la pendiente</span>
+            <p>\( \;\hat\beta_1 = b_1 \sim N\!\left(\beta_1,\ \dfrac{\sigma^2}{S_{xx}}\right) \;\) y, sustituyendo \( \sigma \) por su estimado \( s = \sqrt{\text{MSE}} \) con \( \text{MSE} = \dfrac{\text{SCE}}{n-2} \), el pivote</p>
+            <p style="display:flex;justify-content:center;padding:6px 0">\( \displaystyle T = \frac{b_1 - \beta_1}{s/\sqrt{S_{xx}}} \sim t(n-2) \)</p>
+            <p>sigue una t de Student con \( n-2 \) grados de libertad — dos de ellos «gastados» al estimar \( \beta_0 \) y \( \beta_1 \).</p>
+          </div>
+          <p><strong>La prueba clave: ¿hay relación lineal?</strong> Si \( \beta_1 = 0 \), la recta es plana y \(X\) no aporta nada para explicar \(Y\). Por eso la hipótesis estándar es</p>
+          <div class="formula-hero">\( H_0\!: \beta_1 = 0 \qquad \text{vs.} \qquad H_1\!: \beta_1 \ne 0, \qquad t = \frac{b_1}{S_{b_1}}, \quad S_{b_1} = \sqrt{\frac{\text{MSE}}{S_{xx}}}. \)</div>
+          <p>Se rechaza \(H_0\) cuando \( |t| \ge t_{\alpha/2,\,n-2} \), o cuando el valor P es menor que \( \alpha \). La prueba para la intersección es idéntica con \( S_{b_0} = s\sqrt{\tfrac{1}{n} + \tfrac{\bar x^2}{S_{xx}} } \), aunque suele interesar menos: rara vez el «nivel base» \(x = 0\) tiene sentido práctico.</p>
+          <p><strong>Tabla ANOVA de regresión.</strong> La misma información en formato F — la equivalencia \( F = T^2 \) con \( \nu_1 = 1 \) conecta con la unidad anterior:</p>
+          <table class="tbl">
+            <thead><tr><th>Fuente</th><th class="center">SC</th><th class="center">gl</th><th class="center">CM</th><th class="center">F</th></tr></thead>
+            <tbody>
+              <tr><td>Regresión</td><td class="center">\( \text{SCR} \)</td><td class="center">1</td><td class="center">\( \text{MSR} = \text{SCR} \)</td><td class="center">\( F = \dfrac{\text{MSR}}{\text{MSE}} = t^2 \)</td></tr>
+              <tr><td>Error</td><td class="center">\( \text{SCE} \)</td><td class="center">\( n-2 \)</td><td class="center">\( \text{MSE} \)</td><td class="center"></td></tr>
+              <tr><td>Total</td><td class="center">\( S_{yy} \)</td><td class="center">\( n-1 \)</td><td colspan="2" style="color:var(--muted)">con \( \text{SCR} = S_{yy} - \text{SCE} = r^2 S_{yy} \)</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Prueba sobre la correlación.</strong> Si el interés es el vínculo en sí —no la recta—, el pivote para \( H_0\!: \rho = 0 \) es \( t = \dfrac{r\sqrt{n-2}}{\sqrt{1-r^2}} \) con \( n-2 \) gl, algebraicamente idéntico a la prueba sobre la pendiente: con los mismos datos, ambas pruebas siempre coinciden.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — capacitación y productividad (administración)</span>
+            <p>Un ajuste con \( n = 18 \) empleados arroja \( b_1 = 1.8 \) puntos de productividad por hora de capacitación, con error estándar \( S_{b_1} = 0.4 \). Prueba bilateral al 5%: \( t = 1.8/0.4 = 4.5 \) con \( \nu = 16 \); el crítico es \( t_{0.025,16} = 2.120 \) y el valor P ≈ 0.0003. Se rechaza \(H_0\): la capacitación sí se asocia con mayor productividad. El IC del 95% para la pendiente: \( 1.8 \pm 2.120(0.4) = (0.95,\ 2.65) \) — el efecto está, con 95% de confianza, entre ~1 y ~2.6 puntos por hora.</p>
+          </div>
+        </article>
+
+        <!-- 5.3 -->
+        <article class="sec" id="t53">
+          <div class="sec-no">5.3</div>
+          <h3>Estimación de la respuesta: media y predicción</h3>
+          <p><strong>Estimación puntual.</strong> Para un valor \( x_0 \) de la variable explicativa, la respuesta se estima con la recta: \( \hat y_0 = b_0 + b_1 x_0 \). La pregunta de negocio —«¿cuánto venderíamos con \$6,000 de publicidad?»— se responde evaluando la recta en \( x_0 = 6 \).</p>
+          <p>Pero hay <strong>dos preguntas distintas</strong> que conviene no confundir: el promedio de \(Y\) entre todas las unidades con \( x = x_0 \) (la <em>media</em> \( E(Y\mid x_0) \)), y el valor de <em>una unidad concreta</em> todavía no observada (una <em>predicción</em>). La segunda es más incierta: además de la duda sobre dónde está la recta, está el azar individual \( \varepsilon \). Los dos intervalos al \(100(1-\alpha)\%\):</p>
+          <div class="formula-hero">\( \displaystyle \hat y_0 \pm t_{\alpha/2,\,n-2}\; s\sqrt{\frac{1}{n} + \frac{(x_0-\bar x)^2}{S_{xx}}} \qquad \text{(media)} \)</div>
+          <div class="formula-hero">\( \displaystyle \hat y_0 \pm t_{\alpha/2,\,n-2}\; s\sqrt{1 + \frac{1}{n} + \frac{(x_0-\bar x)^2}{S_{xx}}} \qquad \text{(predicción)} \)</div>
+          <p>Tres lecturas esenciales de las fórmulas:</p>
+          <ul>
+            <li><strong>El intervalo de predicción siempre es más ancho</strong> — lleva el término extra «1» bajo la raíz: la variabilidad del error individual se suma a la de la recta. Es la diferencia más examinada en examen.</li>
+            <li><strong>Ambos se estrechan cerca de \( \bar x \)</strong> y se abren hacia los extremos: la recta está mejor sostenida donde hay datos. Por eso las bandas dibujadas tienen forma de reloj de arena.</li>
+            <li><strong>Extrapolación peligrosa:</strong> estimar en \( x_0 \) lejos del rango observado de \(X\) asume que la relación lineal sigue allí — una afirmación que los datos no respaldan. Ningún intervalo corrige un modelo equivocado.</li>
+          </ul>
+          <p>Los IC para los propios coeficientes completan el panorama de estimación: \( b_1 \pm t_{\alpha/2,\,n-2}\, S_{b_1} \) y \( b_0 \pm t_{\alpha/2,\,n-2}\, S_{b_0} \). Nótese la equivalencia: el IC para \( \beta_1 \) contiene al 0 exactamente cuando la prueba bilateral no rechaza — el intervalo <em>es</em> la prueba, como en la unidad de estimación.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — las dos bandas en acción (marketing)</span>
+            <p>Con los datos de publicidad de 5.1 (\( \hat y = 2.1 + 1.3x \), \( s = \sqrt{1.1/3} = 0.606 \), \( \bar x = 3 \), \( S_{xx} = 10 \)), estima las ventas con un gasto de \( x_0 = 6 \): \( \hat y_0 = 2.1 + 7.8 = 9.9 \) (≈ \$99,000). Con \( t_{0.025,3} = 3.182 \):</p>
+            <p><strong>Media:</strong> \( SE = 0.606\sqrt{\tfrac15 + \tfrac{(6-3)^2}{10}} = 0.606(1.049) = 0.635 \Rightarrow \text{IC} = 9.9 \pm 2.02 = (7.88,\ 11.92) \).</p>
+            <p><strong>Predicción:</strong> \( SE = 0.606\sqrt{1 + \tfrac15 + \tfrac{9}{10}} = 0.606(1.449) = 0.878 \Rightarrow \text{IC} = 9.9 \pm 2.79 = (7.11,\ 12.69) \).</p>
+            <p>Lectura correcta: el gasto de \$6 mil produce, <em>en promedio</em> a lo largo de muchas semanas, ventas entre 78.8 y 119.2 mil; para <em>una semana concreta</em>, entre 71.1 y 126.9 mil. La <a href="#" data-view="calculadora">calculadora</a> dibuja ambas bandas para todo el rango de \(x\).</p>
+          </div>
+        </article>
+
+        <!-- 5.4 -->
+        <article class="sec" id="t54">
+          <div class="sec-no">5.4</div>
+          <h3>Catálogo de fórmulas de la unidad</h3>
+          <p>Las doce fórmulas del tema en una sola vista: <span class="tag d">ajuste</span>, <span class="tag c">medición</span> y <span class="tag g">inferencia</span>. Todas operan en la <a href="#" data-view="calculadora">calculadora de la unidad</a>, que admite datos crudos o resúmenes.</p>
+
+          <div style="margin-top:22px">
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Ajuste</span><span class="no">F1</span></div>
+              <div><div class="spec-name">Pendiente de mínimos cuadrados</div><div class="spec-use">Cambio esperado en \(Y\) por unidad de \(X\).</div></div>
+              <div class="spec-math">\( b_1 = \dfrac{S_{xy}}{S_{xx}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Ajuste</span><span class="no">F2</span></div>
+              <div><div class="spec-name">Intersección</div><div class="spec-use">Nivel de \(Y\) cuando \(x = 0\) (si tiene sentido).</div></div>
+              <div class="spec-math">\( b_0 = \bar y - b_1 \bar x \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Ajuste</span><span class="no">F3</span></div>
+              <div><div class="spec-name">Recta ajustada</div><div class="spec-use">Estimación puntual de la respuesta en \(x_0\).</div></div>
+              <div class="spec-math">\( \hat y = b_0 + b_1 x_0 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Medición</span><span class="no">F4</span></div>
+              <div><div class="spec-name">Correlación de Pearson</div><div class="spec-use">Fuerza y signo de la relación lineal; sin unidades.</div></div>
+              <div class="spec-math">\( r = \dfrac{S_{xy}}{\sqrt{S_{xx}\,S_{yy}}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Medición</span><span class="no">F5</span></div>
+              <div><div class="spec-name">Coeficiente de determinación</div><div class="spec-use">Proporción de la variabilidad de \(Y\) explicada por la recta.</div></div>
+              <div class="spec-math">\( r^2 = \dfrac{\text{SCR}}{S_{yy}} = 1 - \dfrac{\text{SCE}}{S_{yy}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Medición</span><span class="no">F6</span></div>
+              <div><div class="spec-name">Varianza del error</div><div class="spec-use">Dispersión de los puntos alrededor de la recta; \( \nu = n-2 \).</div></div>
+              <div class="spec-math">\( \text{MSE} = \dfrac{\text{SCE}}{n-2}, \quad s=\sqrt{\text{MSE}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F7</span></div>
+              <div><div class="spec-name">Error estándar de la pendiente</div><div class="spec-use">Precisión del estimador de \( \beta_1 \).</div></div>
+              <div class="spec-math">\( S_{b_1} = \sqrt{\dfrac{\text{MSE}}{S_{xx}}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F8</span></div>
+              <div><div class="spec-name">Prueba t sobre \( \beta_1 \)</div><div class="spec-use">\( H_0\!: \beta_1 = 0 \) — ¿hay relación lineal? \( \nu = n-2 \).</div></div>
+              <div class="spec-math">\( t = \dfrac{b_1}{S_{b_1}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F9</span></div>
+              <div><div class="spec-name">ANOVA de regresión (F = t²)</div><div class="spec-use">\( F(1, n-2) \); equivale a la prueba t bilateral.</div></div>
+              <div class="spec-math">\( F = \dfrac{\text{MSR}}{\text{MSE}} = \dfrac{\text{SCR}}{\text{MSE}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F10</span></div>
+              <div><div class="spec-name">Prueba sobre la correlación</div><div class="spec-use">\( H_0\!: \rho = 0 \); coincide con la prueba de la pendiente.</div></div>
+              <div class="spec-math">\( t = \dfrac{r\sqrt{n-2}}{\sqrt{1-r^2}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F11</span></div>
+              <div><div class="spec-name">IC para \( \beta_1 \)</div><div class="spec-use">Contiene al 0 ⟺ la prueba t no rechaza.</div></div>
+              <div class="spec-math">\( b_1 \pm t_{\alpha/2,\,n-2}\, S_{b_1} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Inferencia</span><span class="no">F12</span></div>
+              <div><div class="spec-name">IC de media y de predicción</div><div class="spec-use">La predicción añade el «1»: es siempre más ancha.</div></div>
+              <div class="spec-math">\( \hat y_0 \pm t\,s\sqrt{\tfrac{1}{n}+\tfrac{(x_0-\bar x)^2}{S_{xx}}(+1)} \)</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SIMULADOR ==================== -->
+<section class="view" id="v-simulador" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de simulación · Actividad práctica</p>
+      <h2>Rectas que aprenden de los datos</h2>
+      <p class="sub">Dos experimentos: <strong>① el ajuste en vivo</strong> —una nube que crece y una recta que se estabiliza alrededor de la verdadera— y <strong>② la variabilidad de la pendiente</strong> —miles de muestras, histograma de \(b_1\) y la prueba t sobre \( \beta_1 \) decidida miles de veces.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="line-chart"></i>Controles del experimento</div>
+        <div class="panel-body">
+          <div class="mode-row">
+            <button class="btn sm" id="mFit"><i data-lucide="chart-scatter"></i>Ajuste en vivo</button>
+            <button class="btn sm ghost" id="mSlope"><i data-lucide="shuffle"></i>Variabilidad de b₁</button>
+          </div>
+
+          <!-- Modo A: ajuste en vivo -->
+          <div id="fitBlock">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simBeta">Pendiente real β₁ (ventas por mil $)</label>
+                <select id="simBeta">
+                  <option value="0">0 — sin relación (H₀ verdadera)</option>
+                  <option value="2">2</option>
+                  <option value="4" selected>4</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simSig">Ruido σ</label>
+                <select id="simSig">
+                  <option value="2">2 — nube ajustada</option>
+                  <option value="5" selected>5 — nube típica</option>
+                  <option value="10">10 — nube dispersa</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnP1"><i data-lucide="play"></i>+1 punto</button>
+              <button class="btn ghost" id="btnP10"><i data-lucide="plus"></i>10</button>
+              <button class="btn ghost" id="btnP100"><i data-lucide="plus"></i>100</button>
+              <button class="btn ghost" id="btnPReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="pN">0</div><div class="lbl">Puntos acumulados</div></div>
+              <div class="stat"><div class="num mono" id="pB1">—</div><div class="lbl">b₁ ajustada (real: —)</div></div>
+              <div class="stat"><div class="num mono" id="pR">—</div><div class="lbl">r (correlación)</div></div>
+              <div class="stat"><div class="num mono" id="pR2">—</div><div class="lbl">r² (var. explicada)</div></div>
+            </div>
+            <p class="note">El modelo verdadero es \( y = 20 + \beta_1 x + \varepsilon \) con \( \varepsilon \sim N(0, \sigma^2) \). La recta <strong>discontinua</strong> es la verdadera; la <strong>naranja</strong>, la de mínimos cuadrados sobre todos los puntos acumulados. Con más datos, \(b_1\), \(r\) y \(r^2\) se estabilizan cerca de la verdad (<strong>consistencia</strong>); con \( \beta_1 = 0 \), \(r\) tiende a 0 y la nube es horizontal.</p>
+          </div>
+
+          <!-- Modo B: variabilidad de b1 -->
+          <div id="slopeBlock" hidden>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simSN">Puntos por muestra</label>
+                <select id="simSN">
+                  <option value="10">n = 10</option>
+                  <option value="20" selected>n = 20</option>
+                  <option value="40">n = 40</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simSB">Pendiente real β₁</label>
+                <select id="simSB">
+                  <option value="0" selected>0 — H₀ verdadera (falsa alarma)</option>
+                  <option value="0.5">0.5 — efecto pequeño</option>
+                  <option value="1">1 — efecto medio</option>
+                  <option value="2">2 — efecto grande</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnS1"><i data-lucide="play"></i>+1 muestra</button>
+              <button class="btn ghost" id="btnS100"><i data-lucide="plus"></i>100</button>
+              <button class="btn ghost" id="btnS500"><i data-lucide="plus"></i>500</button>
+              <button class="btn ghost" id="btnSReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="sN">0</div><div class="lbl">Muestras generadas</div></div>
+              <div class="stat"><div class="num mono" id="sMean">—</div><div class="lbl">Promedio de b₁</div></div>
+              <div class="stat"><div class="num mono" id="sSE">—</div><div class="lbl">SE teórico σ/√Sxx</div></div>
+              <div class="stat"><div class="num mono" id="sRej">—</div><div class="lbl">% rechazo de H₀: β₁=0</div></div>
+            </div>
+            <p class="note" id="sCrit">Críticos ±t·Sb₁: —</p>
+            <p class="note">Cada muestra ajusta su propia recta y su \(b_1\) entra al histograma. Con \( \beta_1 = 0 \) el % de rechazo debe acercarse a \( \alpha = 5\% \): las <strong>falsas alarmas</strong>. Con \( \beta_1 &gt; 0 \) el mismo porcentaje es la <strong>potencia</strong>: sube con el efecto y con \(n\). La curva es la distribución teórica \( N(\beta_1,\ \sigma^2/S_{xx}) \) — la base de toda la inferencia sobre coeficientes.</p>
+          </div>
+
+          <p class="note">Cada punto o muestra se acumula a tu boleta: llevas <strong class="mono" id="simEver">0</strong> (1,000 o más alcanzan el 100% del rubro de laboratorio, que vale <strong>15%</strong>).</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head" id="simHead"><i data-lucide="chart-scatter"></i>Nube de puntos y recta ajustada</div>
+        <canvas id="simCanvas"></canvas>
+        <div class="graph-cap" id="capFit">Dispersión: puntos generados del modelo real. Discontinua: recta verdadera. Naranja: recta de mínimos cuadrados ajustada a todos los puntos acumulados.</div>
+        <div class="graph-cap" id="capSlope" hidden>Barras: valores de \(b_1\) de cada muestra. Curva: distribución teórica \(N(\beta_1, \sigma^2/S_{xx})\). Líneas verdes: críticos \( \pm t_{0.025,n-2}\,S_{b_1} \) — fuera de ellas se rechaza \(H_0\): \( \beta_1 = 0 \) (línea en 0).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CALCULADORA ==================== -->
+<section class="view" id="v-calculadora" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de cálculo</p>
+      <h2>Calculadora de regresión y correlación</h2>
+      <p class="sub">Ajuste completo con datos crudos, bandas de confianza y predicción, pruebas sobre los coeficientes y sobre la correlación — todo con t de Student calculada numéricamente, sin tablas.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="sliders-horizontal"></i>Parámetros</div>
+        <div class="panel-body">
+          <div style="display:grid;gap:14px;margin-bottom:16px">
+            <div class="field">
+              <label for="calcDist">Cálculo</label>
+              <select id="calcDist">
+                <optgroup label="Con datos crudos (x e y separados por comas)">
+                  <option value="fit" selected>Ajuste completo + prueba de β₁</option>
+                  <option value="bands">Estimación en x₀ — IC de media y predicción</option>
+                </optgroup>
+                <optgroup label="Con resúmenes">
+                  <option value="tbeta">Prueba sobre la pendiente (b₁, Sb₁, n)</option>
+                  <option value="tcorr">Prueba sobre la correlación (r, n)</option>
+                  <option value="summary">Coeficientes desde resúmenes (Sxy, Sxx, Syy…)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label for="calcLevel">Nivel de significancia α / confianza 1−α</label>
+              <select id="calcLevel">
+                <option value="0.01">1%</option>
+                <option value="0.05" selected>5%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+          </div>
+          <div id="calcParams" style="display:grid;gap:14px;margin-bottom:18px"></div>
+          <button class="btn" id="btnCalc" style="width:100%;justify-content:center"><i data-lucide="equal"></i>Calcular</button>
+          <p class="note" id="calcNote">El ajuste completo entrega b₀, b₁, r, r², s, los errores estándar, la prueba t sobre β₁ y la tabla ANOVA de regresión. En «Estimación en x₀» se dibujan las bandas de media (interior) y predicción (exterior) — la predicción siempre es más ancha.</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head"><i data-lucide="chart-line"></i>Resultado</div>
+        <canvas id="calcCanvas"></canvas>
+        <div class="panel-body" id="calcResults">
+          <div class="calc-empty">
+            <i data-lucide="calculator"></i>
+            <p>Elige un cálculo, carga los datos y presiona <strong>Calcular</strong>.<br>Aquí aparecerán los coeficientes, las pruebas y su gráfica.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACTIVIDADES ==================== -->
+<section class="view" id="v-actividades" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Zona de evaluación</p>
+      <h2>Actividades de la unidad</h2>
+      <p class="sub">Instrumentos alineados a las secciones de teoría. Todo tu avance se guarda automáticamente en este dispositivo y se refleja en tu <a href="#" data-view="boleta">boleta de resultados</a>.</p>
+    </div>
+
+    <!-- Rúbrica -->
+    <div class="act-block">
+      <h3>Rúbrica de evaluación</h3>
+      <p class="act-desc">Ponderación de cada instrumento sobre la calificación de la unidad (nota final sobre 10).</p>
+      <div class="rub-row"><span class="rub-name">Participación en el simulador (ajuste y variabilidad de la pendiente)</span><div class="rub-bar"><div style="width:15%"></div></div><span class="rub-pct">15%</span></div>
+      <div class="rub-row"><span class="rub-name">Ejercicios guiados (solución detallada)</span><div class="rub-bar"><div style="width:25%"></div></div><span class="rub-pct">25%</span></div>
+      <div class="rub-row"><span class="rub-name">Quiz de autoevaluación</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <div class="rub-row"><span class="rub-name">Tarea: problemas del Larsen &amp; Marx</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <p class="note">El registro es automático en <a href="#" data-view="boleta">Mi boleta</a>: el simulador por ejecuciones acumuladas, el quiz por tu mejor intento, y los ejercicios y la tarea por las casillas que marques al resolverlos.</p>
+    </div>
+
+    <!-- Ejercicios guiados -->
+    <div class="act-block" id="ejBlock">
+      <h3>Ejercicios guiados con solución</h3>
+      <p class="act-desc">Intenta resolverlos por escrito antes de desplegar la solución. En clase se revisará el procedimiento, no solo el resultado. Al terminar cada uno, márcalo como resuelto para que sume en tu boleta.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · ajuste por mínimos cuadrados — capacitación (administración)</span>Las horas de capacitación \(x\) y el puntaje de productividad \(y\) de 5 empleados son: \( (2,55), (4,63), (6,66), (8,76), (10,79) \). (a) Calcula \( b_1 \) y \( b_0 \) e interpreta la pendiente. (b) Obtén \( \text{SCE} \), \( r^2 \) y \( r \). (c) Escribe la recta ajustada.</span></summary>
+        <div class="sol-body">
+          <p><strong>Sumas:</strong> \( \sum x = 30 \), \( \sum y = 339 \), \( \sum xy = 2156 \), \( \sum x^2 = 220 \), \( \sum y^2 = 23367 \); \( \bar x = 6 \), \( \bar y = 67.8 \).</p>
+          <p>\( S_{xy} = 2156 - \tfrac{30\cdot 339}{5} = 122, \qquad S_{xx} = 220 - \tfrac{30^2}{5} = 40, \qquad S_{yy} = 23367 - \tfrac{339^2}{5} = 382.8. \)</p>
+          <p><strong>(a)</strong> \( b_1 = 122/40 = 3.05 \) puntos por hora; \( b_0 = 67.8 - 3.05(6) = 49.5 \). Cada hora adicional de capacitación se asocia con \( +3.05 \) puntos de productividad.</p>
+          <p><strong>(b)</strong> \( \text{SCE} = S_{yy} - b_1 S_{xy} = 382.8 - 3.05(122) = 10.7 \); \( r^2 = 1 - 10.7/382.8 = 0.972 \); \( r = \sqrt{0.972} \approx 0.986 \).</p>
+          <p><strong>(c)</strong> \( \hat y = 49.5 + 3.05\,x \). La capacitación explica el 97.2% de la variación del puntaje.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e1"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 2 · prueba sobre la correlación — índice y acción (finanzas)</span>Los rendimientos mensuales de una acción y del índice bursátil, en 12 meses, arrojaron \( r = 0.85 \). Con \( \alpha = 0.05 \), (a) prueba \( H_0\!: \rho = 0 \) y decide; (b) interpreta \( r^2 \) en términos de riesgo de mercado.</span></summary>
+        <div class="sol-body">
+          <p><strong>(a)</strong> Con \( n = 12 \), \( \nu = 10 \): &nbsp; \( t = \dfrac{r\sqrt{n-2}}{\sqrt{1-r^2}} = \dfrac{0.85\sqrt{10}}{\sqrt{1-0.7225}} = \dfrac{2.688}{0.527} = 5.10. \)</p>
+          <p>El crítico es \( t_{0.025,10} = 2.228 \) y el valor \( \text{P} \approx 0.0004 \): se rechaza \(H_0\) — existe correlación lineal positiva significativa entre la acción y el índice.</p>
+          <p><strong>(b)</strong> \( r^2 = 0.7225 \): el 72.25% de la variabilidad del rendimiento de la acción se explica por los movimientos del mercado. Esa es, en esencia, la lectura de un «beta» en finanzas: la parte sistemática del riesgo. El 27.75% restante es riesgo idiosincrático de la emisora.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e2"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 3 · prueba e IC de la pendiente — publicidad (marketing)</span>Un ajuste de gasto publicitario (miles de \$) contra visitas web (miles) con \( n = 18 \) semanas da \( b_1 = 1.8 \) y \( S_{b_1} = 0.4 \). (a) Prueba \( H_0\!: \beta_1 = 0 \) vs. \( H_1\!: \beta_1 \ne 0 \) con \( \alpha = 0.05 \). (b) Construye el IC del 95% para \( \beta_1 \) e interpreta. (c) Verifica que la conclusión del IC coincide con la de la prueba.</span></summary>
+        <div class="sol-body">
+          <p><strong>(a)</strong> \( t = 1.8/0.4 = 4.5 \) con \( \nu = n-2 = 16 \). Crítico: \( t_{0.025,16} = 2.120 \). Como \( 4.5 &gt; 2.120 \) (valor \( \text{P} \approx 0.0003 \)), se rechaza \(H_0\): hay relación lineal significativa.</p>
+          <p><strong>(b)</strong> \( 1.8 \pm 2.120(0.4) = 1.8 \pm 0.848 \Rightarrow (0.95,\ 2.65) \) miles de visitas por cada mil dólares. Con 95% de confianza, cada mil dólares extra genera entre ~950 y ~2,650 visitas adicionales.</p>
+          <p><strong>(c)</strong> El 0 no pertenece al intervalo ⟺ la prueba bilateral rechaza: el IC y la prueba son la misma información vista de dos maneras.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e3"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 4 · estimación media vs. predicción — capacitación (administración)</span>Con la recta del Ejercicio 1 (\( \hat y = 49.5 + 3.05x \), \( s = \sqrt{10.7/3} = 1.889 \), \( \bar x = 6 \), \( S_{xx} = 40 \)), estima la productividad para un empleado con \( x_0 = 8 \) horas de capacitación: (a) IC del 95% para la productividad <em>media</em> de todos los empleados con esa capacitación; (b) IC del 95% de <em>predicción</em> para un empleado concreto; (c) ¿por qué el segundo es más ancho?</span></summary>
+        <div class="sol-body">
+          <p>\( \hat y_0 = 49.5 + 3.05(8) = 73.9 \). Con \( t_{0.025,3} = 3.182 \):</p>
+          <p><strong>(a)</strong> \( SE = 1.889\sqrt{\tfrac15 + \tfrac{(8-6)^2}{40}} = 1.889\sqrt{0.3} = 1.035 \Rightarrow \text{IC} = 73.9 \pm 3.29 = (70.6,\ 77.2) \).</p>
+          <p><strong>(b)</strong> \( SE = 1.889\sqrt{1 + 0.2 + 0.1} = 1.889\sqrt{1.3} = 2.153 \Rightarrow \text{IC} = 73.9 \pm 6.85 = (67.0,\ 80.8) \).</p>
+          <p><strong>(c)</strong> El de predicción incluye el término «1» bajo la raíz: además de la incertidumbre sobre <em>dónde está la recta</em>, está el azar individual \( \varepsilon \) del empleado concreto. Predecir un caso siempre es más arriesgado que estimar un promedio.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e4"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+    </div>
+
+    <!-- Refuerzo con redacción -->
+    <div class="act-block" id="redBlock">
+      <h3>Refuerzo: redacta tu solución</h3>
+      <p class="act-desc">Cuatro problemas adicionales —uno por tema— <strong>sin solución visible</strong>: tú escribes el procedimiento completo en el editor con fórmulas en LaTeX y vista previa instantánea. Tu texto se guarda automáticamente en este navegador. Estas redacciones <em>no alteran tu nota automática</em>, pero forman parte de tu trabajo y se revisarán en clase.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 5 · Refuerzo — ecuaciones normales y ajuste</span>(a) Partiendo de \( Q(b_0,b_1) = \sum (y_i - b_0 - b_1 x_i)^2 \), deriva las dos ecuaciones normales igualando a cero \( \partial Q/\partial b_0 \) y \( \partial Q/\partial b_1 \), y despeja \( b_1 = S_{xy}/S_{xx} \) y \( b_0 = \bar y - b_1\bar x \). (b) Aplica el resultado a los datos \( (0,1), (1,3), (2,4), (3,6) \): calcula \( b_1 \), \( b_0 \), la recta y \( \text{SCE} \).</span></summary>
+        <div class="sol-body">
+          <p>En (a) desarrolla las derivadas y muestra que las ecuaciones normales son \( \sum e_i = 0 \) y \( \sum x_i e_i = 0 \) — los residuos son ortogonales a 1 y a \(x\). En (b) calcula primero las sumas: \( \sum x = 6 \), \( \sum y = 14 \), \( \sum xy = 29 \), \( \sum x^2 = 14 \).</p>
+          <div class="ed-box" data-ed="e5"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(b) \( S_{xy} = 29 - \tfrac{6\cdot 14}{4} = 8 \); \( S_{xx} = 14 - \tfrac{36}{4} = 5 \); \( b_1 = 1.6 \); \( b_0 = 3.5 - 1.6(1.5) = 1.1 \). Recta: \( \hat y = 1.1 + 1.6x \). \( S_{yy} = 62 - \tfrac{196}{4} = 13 \); \( \text{SCE} = 13 - 1.6(8) = 0.2 \); \( r^2 = 1 - 0.2/13 \approx 0.985 \).</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 6 · Refuerzo — ¿qué mide mejor la fuerza: r o r²?</span>Dos estudios con \( n = 25 \) reportan \( r = 0.60 \) (satisfacción vs. recompra) y \( r = 0.90 \) (tiempo en sitio vs. compra). (a) Prueba la significancia de ambas correlaciones al 5%. (b) Calcula ambos \( r^2 \) y explica por qué la diferencia práctica entre 0.60 y 0.90 es mucho mayor que la que sugiere la distancia «0.3». (c) Un colega propone comparar solo con \(r\): ¿qué le responderías?</span></summary>
+        <div class="sol-body">
+          <p>En (a) usa \( t = r\sqrt{n-2}/\sqrt{1-r^2} \) con \( \nu = 23 \) y \( t_{0.025,23} = 2.069 \). En (b) compara las proporciones de variabilidad explicada. En (c) discute interpretabilidad y unidades.</p>
+          <div class="ed-box" data-ed="e6"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( t_{0.60} = 0.6\sqrt{23}/0.8 = 3.60 \) y \( t_{0.90} = 0.9\sqrt{23}/\sqrt{0.19} = 9.90 \): ambas significativas, la segunda muy contundentemente.</p>
+              <p>(b) \( r^2 \): 0.36 vs. 0.81 — el primer modelo explica 36% de la variación y el segundo 81%: <em>más del doble</em> de variabilidad capturada, aunque \(r\) solo creció 0.3.</p>
+              <p>(c) \(r\) no escala linealmente la «fuerza explicativa»; \(r^2\) sí, por ser proporción de varianza. Además \(r\) depende del diseño muestral, mientras \(r^2\) se traduce directo a negocio.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — las bandas y la extrapolación (finanzas)</span>Con el ejemplo de publicidad de la teoría (\( \hat y = 2.1 + 1.3x \), \( s = 0.606 \), \( \bar x = 3 \), \( S_{xx} = 10 \), \( n = 5 \), \( \nu = 3 \)): (a) calcula ambos IC del 95% en \( x_0 = 4 \) y en \( x_0 = 10 \); (b) compara el ensanchamiento de las bandas al alejarse de \( \bar x \); (c) comenta la validez de estimar en \( x_0 = 10 \) cuando los datos van de 1 a 5.</span></summary>
+        <div class="sol-body">
+          <p>En (a) aplica \( s\sqrt{1/n + (x_0-\bar x)^2/S_{xx}} \) y añade el «1» para predicción. En (c) reflexiona sobre la suposición de linealidad fuera del rango observado.</p>
+          <div class="ed-box" data-ed="e7"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( x_0 = 4 \): \( \hat y = 7.3 \); \( SE_{med} = 0.606\sqrt{0.2+0.1} = 0.332 \Rightarrow (6.24,\ 8.36) \); \( SE_{pred} = 0.606\sqrt{1.3} = 0.691 \Rightarrow (5.10,\ 9.50) \).</p>
+              <p>\( x_0 = 10 \): \( \hat y = 15.1 \); \( SE_{med} = 0.606\sqrt{0.2+4.9} = 1.369 \Rightarrow (10.75,\ 19.45) \); \( SE_{pred} = 0.606\sqrt{5.1+1} = 1.496 \Rightarrow (10.34,\ 19.86) \).</p>
+              <p>(b) El ancho media en \(x_0=10\) es 4.1 veces el de \(x_0=4\): las bandas se abren como reloj de arena. (c) Extrapolación: los datos observados van de \(x=1\) a 5; suponer la misma recta en \(x=10\) no está respaldado por ellos — el intervalo ancho refleja la duda, no la corrige.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 8 · Refuerzo — tabla ANOVA de regresión y F = t² (marketing)</span>Para los datos de publicidad de la teoría (\( S_{yy} = 18 \), \( \text{SCR} = 16.9 \), \( \text{SCE} = 1.1 \), \( n = 5 \)): (a) construye la tabla ANOVA de regresión completa; (b) calcula \( F \) y compáralo con \( t^2 \) donde \( t = b_1/S_{b_1} \) con \( S_{b_1} = \sqrt{\text{MSE}/S_{xx}} \); (c) decide al 5% con \( F_{0.05}(1,3) = 10.13 \) y conecta con la prueba t del capítulo de pruebas de hipótesis.</span></summary>
+        <div class="sol-body">
+          <p>En (a) recuerda gl: 1 y \( n-2 = 3 \). En (b) calcula primero \( \text{MSE} = \text{SCE}/3 \) y luego \( S_{b_1} \). En (c) argumenta la equivalencia \( F = t^2 \) con 1 gl en el numerador.</p>
+          <div class="ed-box" data-ed="e8"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) Regresión: SC 16.9, gl 1, CM 16.9; Error: SC 1.1, gl 3, CM 0.3667; Total: 18, gl 4. \( F = 16.9/0.3667 = 46.1 \).</p>
+              <p>(b) \( S_{b_1} = \sqrt{0.3667/10} = 0.1915 \); \( t = 1.3/0.1915 = 6.79 \); \( t^2 = 46.1 = F \). ✓</p>
+              <p>(c) \( 46.1 \gg 10.13 \) (valor \( \text{P} \approx 0.0065 \)): se rechaza \( H_0\!: \beta_1 = 0 \). Con 1 gl del numerador, la F de cola derecha y la t bilateral son la misma prueba al cuadrado.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+    </div>
+
+    <!-- Quiz -->
+    <div class="act-block">
+      <h3>Quiz de autoevaluación</h3>
+      <p class="act-desc">Siete preguntas de opción múltiple. Al calificar recibirás la retroalimentación de cada respuesta; tu <strong>mejor intento</strong> se registra en tu boleta.</p>
+      <div id="quizList"></div>
+      <div class="quiz-foot">
+        <button class="btn" id="btnGrade"><i data-lucide="check-check"></i>Calificar quiz</button>
+        <button class="btn ghost" id="btnQuizReset"><i data-lucide="rotate-ccw"></i>Reintentar</button>
+        <div class="quiz-result" id="quizResult"></div>
+      </div>
+    </div>
+
+    <!-- Tarea -->
+    <div class="act-block" style="margin-bottom:0">
+      <h3>Tarea de la unidad — problemas del Larsen &amp; Marx</h3>
+      <p class="act-desc">Resuelve los ejercicios seleccionados del capítulo de regresión simple (verifica la numeración en tu edición) y registra tu avance. Fecha límite: <strong id="taskDeadline"></strong>.</p>
+      <div class="task-panel">
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="list-checks"></i>Avance de la tarea</div>
+          <div class="panel-body">
+            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">
+              <span>Progreso</span><span id="taskPct">0 / 8 · 0%</span>
+            </div>
+            <div class="conv-bar" style="margin-bottom:18px"><div id="taskBar" style="background:var(--pine)"></div></div>
+            <div id="taskList"></div>
+            <p class="note">Tu avance se guarda en este navegador y se refleja en <a href="#" data-view="boleta">Mi boleta</a>.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="file-text"></i>Instrucciones de entrega</div>
+          <div class="panel-body">
+            <ol style="margin-left:20px;font-size:14.5px">
+              <li style="margin-bottom:9px">En cada problema presenta: diagrama de dispersión (aunque sea esquemático), sumas auxiliares (\( S_{xy}, S_{xx}, S_{yy} \)), coeficientes y su interpretación en el contexto del problema.</li>
+              <li style="margin-bottom:9px">Distingue siempre entre IC de la <em>media</em> y de <em>predicción</em>, y señala si un \(x_0\) pedido cae fuera del rango observado (extrapolación).</li>
+              <li style="margin-bottom:9px">Marca aquí cada problema terminado; el avance se guarda automáticamente en este dispositivo.</li>
+              <li>Entrega el PDF en la plataforma de la clase el día de la sesión 4.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MI BOLETA ==================== -->
+<section class="view" id="v-boleta" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Expediente individual</p>
+      <h2>Mi boleta de resultados</h2>
+      <p class="sub">Regístrate una sola vez en este dispositivo: tu progreso y tu nota final quedan a tu nombre, y podrás descargar tu boleta como imagen para compartirla. Los datos nunca salen de tu navegador.</p>
+    </div>
+
+    <div class="panel" id="regEmpty" style="max-width:560px">
+      <div class="panel-head"><i data-lucide="user-plus"></i>Ficha de registro individual</div>
+      <div class="panel-body">
+        <form id="formEst" style="display:grid;gap:14px" novalidate>
+          <div class="field">
+            <label for="alNombre">Nombre completo</label>
+            <input id="alNombre" type="text" placeholder="Ej. Ana Sofía Delgado Ruiz" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMat">Matrícula</label>
+            <input id="alMat" type="text" placeholder="Ej. 20240315" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMail">Correo electrónico</label>
+            <input id="alMail" type="email" placeholder="nombre@universidad.edu.mx" autocomplete="off">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn" type="submit" id="btnEstSave"><i data-lucide="user-plus"></i><span>Registrarme</span></button>
+            <button class="btn ghost" type="button" id="btnEstCancel" hidden>Cancelar</button>
+          </div>
+        </form>
+        <p class="hint" style="margin-top:12px">Tu registro y todo tu avance se guardan únicamente en este navegador. Si ya marcaste actividades, aparecerán automáticamente en tu boleta al registrarte.</p>
+      </div>
+    </div>
+
+    <div id="boletaWrap" hidden>
+      <div class="boleta-card" id="boletaCard">
+        <div class="b-head">
+          <span class="avatar" id="bAvatar">··</span>
+          <div>
+            <div class="b-title">Boleta de evaluación · Tema 5 — Regresión simple y correlación · Estadística Inferencial</div>
+            <div class="b-name" id="bName">—</div>
+            <div class="b-meta" id="bMeta">—</div>
+          </div>
+          <div class="b-seal"><span>Aula<br>Interactiva</span><strong>Tema 5</strong></div>
+        </div>
+        <div class="b-body" id="bRows"></div>
+        <div class="b-total">
+          <div>
+            <div class="b-total-lbl">Nota final de la unidad</div>
+            <div class="b-total-det">Simulador 15% · Ejercicios 25% · Quiz 30% · Tarea 30%</div>
+          </div>
+          <div class="b-score"><span class="big" id="bNota">0.0</span><span class="den">/ 10</span></div>
+        </div>
+        <div class="b-foot">
+          <span>Emitida: <strong id="bEmit">—</strong></span>
+          <span>Registro desde: <strong id="bSince">—</strong></span>
+          <span>Estadística Inferencial · Dr. Adrián Cerda</span>
+        </div>
+      </div>
+
+      <div class="boleta-actions">
+        <button class="btn" id="btnBoletaPng"><i data-lucide="download"></i>Descargar boleta (PNG)</button>
+        <button class="btn ghost" id="btnEstEdit"><i data-lucide="pencil"></i>Editar datos</button>
+        <button class="del-btn" id="btnEstDel"><i data-lucide="trash-2"></i><span>Borrar registro y avance</span></button>
+      </div>
+      <p class="note" style="max-width:700px"><strong>Criterios de la nota.</strong> <em>Simulador:</em> 20% del rubro por cada nivel de ejecuciones acumuladas — 1, 25, 100, 500 y 1,000 o más. <em>Quiz:</em> proporción de tu mejor intento (0–7 aciertos). <em>Ejercicios y tarea:</em> casillas marcadas en Actividades. Las redacciones de refuerzo se guardan por separado y se revisan en clase. Al borrar el registro se elimina también todo el avance guardado en este navegador.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div><strong>Referencia:</strong> Larsen, R. J. &amp; Marx, M. L. — <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. — capítulo de regresión lineal simple y correlación.</div>
+    <div>Universidad Panamericana · Escuela de Ciencias Empresariales · uso educativo · los datos se guardan solo en este navegador.</div>
+  </div>
+</footer>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const INK='#1c2b25', PINE='#1e4636', TERRA='#c2542f', PAPER='#fffdf8';
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtP(v){ if(!isFinite(v)) return '—'; if(v!==0 && Math.abs(v)<1e-6) return v.toExponential(3); return String(parseFloat(v.toFixed(6))); }
+function fmtNum(v){ if(v===0) return '0'; const a=Math.abs(v); if(a>=1e5||a<1e-4) return v.toExponential(1); if(a<1) return String(parseFloat(v.toFixed(4))); return String(parseFloat(v.toPrecision(4))); }
+function fmt(x){ return String(parseFloat(x.toPrecision(6))); }
+function toast(msg, type='ok'){
+  const box=$('#toasts'), t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML = `<i data-lucide="${type==='ok'?'check-circle-2':'alert-circle'}"></i><span>${msg}</span>`;
+  box.appendChild(t); lucide.createIcons();
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ============================================================
+   PERSISTENCIA: registro individual + actividades por curso
+============================================================ */
+const LS_EST='aula_estudiante';
+const LS_ACT='aula_actividades';
+const CURSO='inf8';
+
+function loadEst(){ try{ return JSON.parse(localStorage.getItem(LS_EST)); }catch(e){ return null; } }
+function saveEst(e){ localStorage.setItem(LS_EST, JSON.stringify(e)); }
+function loadAct(){ try{ return JSON.parse(localStorage.getItem(LS_ACT)||'{}'); }catch(e){ return {}; } }
+function act(){
+  const a=loadAct();
+  a[CURSO]=a[CURSO]||{ sim:{rolls:0}, ej:{}, quiz:null, tarea:{}, red:{} };
+  a[CURSO].sim=a[CURSO].sim||{rolls:0};
+  a[CURSO].ej=a[CURSO].ej||{};
+  a[CURSO].tarea=a[CURSO].tarea||{};
+  a[CURSO].red=a[CURSO].red||{};
+  return a;
+}
+function saveAct(a){ localStorage.setItem(LS_ACT, JSON.stringify(a)); }
+
+/* ============================================================
+   NAVEGACIÓN DE VISTAS
+============================================================ */
+function showView(v){
+  $$('.view').forEach(s => s.hidden = true);
+  $('#v-'+v).hidden = false;
+  $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(v==='inicio')      animateHero();
+  if(v==='simulador')   requestAnimationFrame(drawSim);
+  if(v==='calculadora') redrawCalc();
+  if(v==='boleta')      renderBoleta();
+}
+ $$('[data-view]').forEach(el => el.addEventListener('click', e => {
+  if(el.tagName==='A'){ e.preventDefault(); }
+  showView(el.dataset.view);
+}));
+
+/* ============================================================
+   MATEMÁTICAS: gamma, normal y t de Student
+============================================================ */
+function logGamma(z){ // Lanczos
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5) return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
+  z-=1; let x=0.99999999999980993;
+  for(let i=0;i<8;i++) x+=g[i]/(z+i+1);
+  const t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function erf(x){
+  const s = x<0?-1:1; x=Math.abs(x);
+  const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;
+  const t=1/(1+p*x), y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+const Phi = z => 0.5*(1+erf(z/Math.SQRT2));
+function normPdf(x,m,s){ return Math.exp(-Math.pow(x-m,2)/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
+function tPdf(t,v){
+  return Math.exp(logGamma((v+1)/2)-logGamma(v/2))/Math.sqrt(v*Math.PI)
+       * Math.pow(1+t*t/v, -(v+1)/2);
+}
+function tCdf(t,v){
+  const a=Math.abs(t); if(a===0) return .5;
+  const N=600, h=a/N; let s=0;
+  for(let i=0;i<=N;i++){ let y=tPdf(i*h,v); if(i!==0&&i!==N) y*=(i%2?4:2); s+=y; }
+  s*=h/3;
+  return t>=0? .5+s : .5-s;
+}
+function tQuantile(p,v){
+  let lo=0, hi=30;
+  for(let i=0;i<90;i++){ const m=(lo+hi)/2; if(tCdf(m,v)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+function niceStep(range,n){ const raw=range/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), q=raw/mag;
+  return (q<1.5?1:q<3?2:q<7?5:10)*mag; }
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+/* Regresión: ajuste desde pares */
+function fitLine(pts){
+  const n=pts.length;
+  let sx=0, sy=0, sxy=0, sxx=0, syy=0;
+  pts.forEach(p=>{ sx+=p.x; sy+=p.y; sxy+=p.x*p.y; sxx+=p.x*p.x; syy+=p.y*p.y; });
+  const xbar=sx/n, ybar=sy/n;
+  const Sxx=sxx-n*xbar*xbar, Syy=syy-n*ybar*ybar, Sxy=sxy-n*xbar*ybar;
+  const b1=Sxy/Sxx, b0=ybar-b1*xbar;
+  const SCE=Syy-b1*Sxy, SCR=Syy-SCE;
+  const r2=Syy>0? SCR/Syy : 0;
+  const r=(Sxy>=0?1:-1)*Math.sqrt(Math.max(0,r2));
+  return {n, xbar, ybar, Sxx, Syy, Sxy, b0, b1, SCE, SCR, r2, r};
+}
+
+/* ============================================================
+   DIBUJO EN CANVAS
+============================================================ */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = Math.max(10, r.width*dpr); cv.height = Math.max(10, r.height*dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width, h:r.height};
+}
+function makeMargins(w,h){ return {l:52,r:14,t:22,b:36, pw:w-52-14, ph:h-22-36}; }
+function axes(ctx,m){
+  ctx.strokeStyle=INK; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l, m.t-8); ctx.lineTo(m.l, m.t+m.ph); ctx.lineTo(m.l+m.pw+8, m.t+m.ph); ctx.stroke();
+}
+function xyTicks(ctx,m,lo,hi,vert){
+  const s=niceStep(hi-lo,5);
+  ctx.font='11px Instrument Sans';
+  for(let v=Math.ceil(lo/s)*s; v<=hi; v+=s){
+    if(vert){
+      const y=m.t+m.ph-(v-lo)/(hi-lo)*m.ph;
+      ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(28,43,37,.6)'; ctx.textAlign='right'; ctx.fillText(fmtNum(v), m.l-7, y+4);
+    }else{
+      const x=m.l+(v-lo)/(hi-lo)*m.pw;
+      ctx.fillStyle='rgba(28,43,37,.7)'; ctx.textAlign='center'; ctx.fillText(fmtNum(v), x, m.t+m.ph+17);
+    }
+  }
+}
+
+/* ============================================================
+   HERO: nube + recta ajustada (animado)
+============================================================ */
+let heroAnim=null;
+const HERO_PTS=[[1,3.4],[2,5.1],[3,6.2],[4,7.1],[5,8.9],[6,9.6],[7,11.4],[8,12.3]];
+function drawHero(t){
+  const cv=$('#heroCanvas'); if(!cv || cv.offsetParent===null) return;
+  const {ctx,w,h}=setupCanvas(cv);
+  const m={l:30,r:20,t:24,b:30}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+  const lo=0.4, hi=8.6, ylo=2, yhi=13.6;
+  const X=x=>m.l+(x-lo)/(hi-lo)*pw, Y=y=>m.t+ph-(y-ylo)/(yhi-ylo)*ph;
+  const fl=fitLine(HERO_PTS.map(([x,y])=>({x,y})));
+  axes(ctx,m);
+  xyTicks(ctx,m,lo,hi,false); xyTicks(ctx,m,ylo,yhi,true);
+  // recta verdadera
+  if(t>0.45){
+    ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(X(1),Y(2.1+1.3*1)); ctx.lineTo(X(8.5),Y(2.1+1.3*8.5)); ctx.stroke(); ctx.setLineDash([]);
+  }
+  // puntos
+  const shown=Math.floor(HERO_PTS.length*Math.min(1,t/0.55));
+  for(let i=0;i<shown;i++){
+    ctx.fillStyle='rgba(30,70,54,.85)';
+    ctx.beginPath(); ctx.arc(X(HERO_PTS[i][0]),Y(HERO_PTS[i][1]),5,0,7); ctx.fill();
+  }
+  // recta ajustada
+  if(t>0.5){
+    const frac=Math.min(1,(t-0.5)/0.45);
+    const x1=1, x2=1+(8.5-1)*frac;
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(X(x1),Y(fl.b0+fl.b1*x1)); ctx.lineTo(X(x2),Y(fl.b0+fl.b1*x2)); ctx.stroke();
+  }
+  if(t>0.85){
+    ctx.fillStyle=TERRA; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='left';
+    ctx.fillText('ŷ = '+fl.b0.toFixed(1)+' + '+fl.b1.toFixed(1)+'·x', m.l+6, m.t+12);
+    ctx.fillStyle='rgba(28,43,37,.75)'; ctx.textAlign='right';
+    ctx.fillText('r² = '+fl.r2.toFixed(3), w-m.r-4, m.t+12);
+  }
+  ctx.font='600 11px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle=INK; ctx.fillText('ventas vs. publicidad (miles)', m.l, m.t-8);
+}
+function animateHero(){
+  cancelAnimationFrame(heroAnim);
+  const t0=performance.now();
+  (function loop(now){
+    const t=Math.min(1,(now-t0)/1700);
+    drawHero(1-Math.pow(1-t,3));
+    if(t<1) heroAnim=requestAnimationFrame(loop);
+  })(t0);
+}
+
+/* ============================================================
+   SIMULADOR: ajuste en vivo + variabilidad de b1
+============================================================ */
+let simMode='fit';
+const simFit={pts:[], total:0};
+const simS={vals:[], total:0, sum:0, sumSq:0, rej:0};
+
+function bumpRolls(k){
+  const a=act(); a[CURSO].sim.rolls=(a[CURSO].sim.rolls||0)+k; saveAct(a);
+  $('#simEver').textContent=(a[CURSO].sim.rolls).toLocaleString('es-MX');
+}
+function setMode(m){
+  simMode=m;
+  $('#mFit').classList.toggle('ghost', m!=='fit');
+  $('#mSlope').classList.toggle('ghost', m!=='slope');
+  $('#fitBlock').hidden = m!=='fit';
+  $('#slopeBlock').hidden = m!=='slope';
+  $('#capFit').hidden = m!=='fit';
+  $('#capSlope').hidden = m!=='slope';
+  $('#simHead').innerHTML = m==='fit'
+    ? '<i data-lucide="chart-scatter"></i>Nube de puntos y recta ajustada'
+    : '<i data-lucide="shuffle"></i>Distribución de la pendiente muestral b₁';
+  refreshIcons(); drawSim();
+}
+/* --- modo A: ajuste en vivo --- */
+function fitParams(){ return {beta:+$('#simBeta').value, sig:+$('#simSig').value}; }
+function addPoints(k){
+  const P=fitParams();
+  for(let i=0;i<k;i++){
+    const x=1+9*Math.random();
+    const y=20+P.beta*x+P.sig*randn();
+    simFit.pts.push({x,y});
+  }
+  simFit.total+=k; bumpRolls(k); updateFit(); drawSim();
+}
+function resetFit(){ simFit.pts.length=0; simFit.total=0; updateFit(); drawSim(); }
+function updateFit(){
+  const P=fitParams();
+  $('#pN').textContent=simFit.total.toLocaleString('es-MX');
+  $('#pB1').textContent='—';
+  if(simFit.total<2){ $('#pR').textContent='—'; $('#pR2').textContent='—'; return; }
+  const f=fitLine(simFit.pts);
+  $('#pB1').textContent=f.b1.toFixed(3)+' (real: '+P.beta.toFixed(1)+')';
+  $('#pR').textContent=f.r.toFixed(3);
+  $('#pR2').textContent=(100*f.r2).toFixed(1)+'%';
+}
+/* --- modo B: variabilidad de b1 --- */
+const S_SIG=5;
+function slopeParams(){
+  const n=+$('#simSN').value, beta=+$('#simSB').value;
+  const xs=Array.from({length:n},(_,i)=>1+9*i/(n-1));
+  const xbar=xs.reduce((a,b)=>a+b,0)/n;
+  const Sxx=xs.reduce((s,x)=>s+(x-xbar)*(x-xbar),0);
+  const SE=S_SIG/Math.sqrt(Sxx);
+  const crit=tQuantile(0.975, n-2)*SE;
+  return {n,beta,xs,Sxx,SE,crit};
+}
+function addSlopes(k){
+  const P=slopeParams();
+  for(let e=0;e<k;e++){
+    const ys=P.xs.map(x=>20+P.beta*x+S_SIG*randn());
+    let sxy=0;
+    const xbar=P.xs.reduce((a,b)=>a+b,0)/P.n, ybar=ys.reduce((a,b)=>a+b,0)/P.n;
+    P.xs.forEach((x,i)=>sxy+=(x-xbar)*(ys[i]-ybar));
+    const b1=sxy/P.Sxx;
+    simS.vals.push(b1); if(simS.vals.length>9000) simS.vals.shift();
+    simS.total++; simS.sum+=b1; simS.sumSq+=b1*b1;
+    if(Math.abs(b1)>P.crit) simS.rej++;
+  }
+  bumpRolls(k); updateSlope(); drawSim();
+}
+function resetSlope(){ simS.vals.length=0; simS.total=0; simS.sum=0; simS.sumSq=0; simS.rej=0; updateSlope(); drawSim(); }
+function updateSlope(){
+  const P=slopeParams();
+  $('#sN').textContent=simS.total.toLocaleString('es-MX');
+  $('#sMean').textContent = simS.total? (simS.sum/simS.total).toFixed(3) : '—';
+  $('#sSE').textContent=P.SE.toFixed(4);
+  $('#sRej').textContent = simS.total? (100*simS.rej/simS.total).toFixed(1)+'%' : '—';
+  $('#sCrit').innerHTML = `Críticos ±t·Sb₁ = ±<strong class="mono">${P.crit.toFixed(3)}</strong> (n = ${P.n}, ν = ${P.n-2}, σ = ${S_SIG})`
+    + (P.beta===0? ' — H₀ verdadera: % de rechazo → α = 5%' : ' — H₁ verdadera: % de rechazo = potencia');
+}
+function drawFit(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const P=fitParams();
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const xlo=0.4, xhi=9.6, ylo=0, yhi=68;
+  const X=x=>m.l+(x-xlo)/(xhi-xlo)*m.pw, Y=y=>m.t+m.ph-(y-ylo)/(yhi-ylo)*m.ph;
+  axes(ctx,m); xyTicks(ctx,m,xlo,xhi,false); xyTicks(ctx,m,ylo,yhi,true);
+  // recta verdadera
+  ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(X(0.5),Y(20+P.beta*0.5)); ctx.lineTo(X(9.5),Y(20+P.beta*9.5)); ctx.stroke(); ctx.setLineDash([]);
+  // puntos
+  ctx.fillStyle='rgba(30,70,54,.82)';
+  simFit.pts.forEach(p=>{ ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),3.4,0,7); ctx.fill(); });
+  // recta ajustada
+  if(simFit.total>=2){
+    const f=fitLine(simFit.pts);
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(X(0.5),Y(f.b0+f.b1*0.5)); ctx.lineTo(X(9.5),Y(f.b0+f.b1*9.5)); ctx.stroke();
+  }
+  // leyenda
+  ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle=INK; ctx.fillText('— — verdadera  y = 20 + '+P.beta.toFixed(0)+'·x', m.l+6, m.t+12);
+  ctx.fillStyle=TERRA; ctx.fillText('—— ajustada (MC)', m.l+236, m.t+12);
+  if(!simFit.total){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Genera puntos para ajustar la recta', m.l+m.pw/2, m.t+m.ph/2);
+  }
+}
+function drawSlope(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const P=slopeParams();
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const lo=Math.min(P.beta-4.6*P.SE, -P.crit*1.35), hi=Math.max(P.beta+4.6*P.SE, P.crit*1.35);
+  const B=42, bw=(hi-lo)/B, counts=Array(B).fill(0);
+  let out=0;
+  for(const v of simS.vals){ const b=Math.floor((v-lo)/bw); if(b<0||b>=B) out++; else counts[b]++; }
+  const maxC=Math.max(1,...counts), yMax=Math.ceil(maxC*1.18);
+  axes(ctx,m); xyTicks(ctx,m,lo,hi,false); xyTicks(ctx,m,0,yMax,true);
+  const slot=m.pw/B, bar=slot*0.9;
+  counts.forEach((c,i)=>{
+    if(!c) return;
+    const bh=(c/yMax)*m.ph;
+    ctx.fillStyle='rgba(30,70,54,.78)';
+    ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
+  });
+  if(simS.total>0){
+    // región de rechazo
+    ctx.fillStyle='rgba(194,84,47,.13)';
+    ctx.fillRect(m.l, m.t, (Math.max(0,-P.crit)-lo)/(hi-lo)*m.pw, m.ph);
+    ctx.fillRect(m.l+(P.crit-lo)/(hi-lo)*m.pw, m.t, m.pw-(P.crit-lo)/(hi-lo)*m.pw, m.ph);
+    // curva teórica
+    let peak=0;
+    for(let i=0;i<=300;i++){ const x=lo+(hi-lo)*i/300; peak=Math.max(peak,normPdf(x,P.beta,P.SE)); }
+    const scale=maxC/(peak*1.15);
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const x=lo+(hi-lo)*i/300, y=normPdf(x,P.beta,P.SE)*scale;
+      const px=m.l+(x-lo)/(hi-lo)*m.pw, py=m.t+m.ph-Math.min(y,yMax)*m.ph/yMax;
+      i? ctx.lineTo(px,py) : ctx.moveTo(px,py);
+    }
+    ctx.stroke();
+  }
+  // críticos y 0
+  [-P.crit, P.crit].forEach(c=>{
+    ctx.strokeStyle=PINE; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m.l+(c-lo)/(hi-lo)*m.pw, m.t+2); ctx.lineTo(m.l+(c-lo)/(hi-lo)*m.pw, m.t+m.ph); ctx.stroke();
+  });
+  ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l+(0-lo)/(hi-lo)*m.pw, m.t+2); ctx.lineTo(m.l+(0-lo)/(hi-lo)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+  ctx.fillText('0', m.l+(0-lo)/(hi-lo)*m.pw, m.t+m.ph+30>h? m.t-4 : m.t+m.ph+16);
+  if(!simS.total){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Genera muestras para construir el histograma de b₁', m.l+m.pw/2, m.t+m.ph/2);
+  }
+}
+function drawSim(){ simMode==='fit'? drawFit() : drawSlope(); }
+
+ $('#mFit').addEventListener('click',()=>setMode('fit'));
+ $('#mSlope').addEventListener('click',()=>setMode('slope'));
+ $('#btnP1').addEventListener('click',()=>addPoints(1));
+ $('#btnP10').addEventListener('click',()=>addPoints(10));
+ $('#btnP100').addEventListener('click',()=>addPoints(100));
+ $('#btnPReset').addEventListener('click',()=>{ resetFit(); toast('Nube reiniciada (tu acumulado se conserva).'); });
+ $('#btnS1').addEventListener('click',()=>addSlopes(1));
+ $('#btnS100').addEventListener('click',()=>addSlopes(100));
+ $('#btnS500').addEventListener('click',()=>addSlopes(500));
+ $('#btnSReset').addEventListener('click',()=>{ resetSlope(); toast('Muestras reiniciadas (tu acumulado se conserva).'); });
+['simBeta','simSig'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetFit(); updateFit(); }));
+['simSN','simSB'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetSlope(); updateSlope(); }));
+
+/* ============================================================
+   CALCULADORA DE REGRESIÓN
+============================================================ */
+const PDEFS={
+  fit:[
+    {k:'xs',type:'textarea',label:'Valores de x (separados por comas)',val:'1, 2, 3, 4, 5'},
+    {k:'ys',type:'textarea',label:'Valores de y (separados por comas)',val:'3, 5, 6, 8, 8'}],
+  bands:[
+    {k:'xs',type:'textarea',label:'Valores de x (separados por comas)',val:'1, 2, 3, 4, 5'},
+    {k:'ys',type:'textarea',label:'Valores de y (separados por comas)',val:'3, 5, 6, 8, 8'},
+    {k:'x0',label:'x₀ — valor donde estimar',min:-1e9,max:1e9,step:0.1,val:6}],
+  tbeta:[
+    {k:'b1',label:'b₁ — pendiente ajustada',min:-1e9,max:1e9,step:0.01,val:1.8},
+    {k:'sb',label:'S(b₁) — error estándar de la pendiente',min:1e-9,max:1e6,step:0.01,val:0.4},
+    {k:'n',label:'n — tamaño de la muestra',min:3,max:100000,step:1,val:18}],
+  tcorr:[
+    {k:'r',label:'r — correlación muestral',min:-0.9999,max:0.9999,step:0.01,val:0.85},
+    {k:'n',label:'n — tamaño de la muestra',min:3,max:100000,step:1,val:12}],
+  summary:[
+    {k:'sxy',label:'Sxy — suma de productos cruzados',min:-1e12,max:1e12,step:0.1,val:13},
+    {k:'sxx',label:'Sxx — suma de cuadrados de x',min:1e-9,max:1e12,step:0.1,val:10},
+    {k:'syy',label:'Syy — suma de cuadrados de y',min:1e-9,max:1e12,step:0.1,val:18},
+    {k:'xbar',label:'x̄ — media de x',min:-1e9,max:1e9,step:0.1,val:3},
+    {k:'ybar',label:'ȳ — media de y',min:-1e9,max:1e9,step:0.1,val:6},
+    {k:'n',label:'n — tamaño de la muestra',min:3,max:100000,step:1,val:5}]
+};
+const CALC_NAMES={fit:'Ajuste completo',bands:'IC de media y predicción',tbeta:'Prueba sobre la pendiente',
+  tcorr:'Prueba de correlación',summary:'Coeficientes desde resúmenes'};
+
+function buildParams(){
+  const key=$('#calcDist').value, box=$('#calcParams');
+  box.innerHTML = PDEFS[key].map(p=>{
+    if(p.type==='textarea'){
+      return `<div class="field"><label for="cp_${p.k}">${p.label}</label>
+        <textarea id="cp_${p.k}" rows="2">${esc(p.val||'')}</textarea></div>`;
+    }
+    return `<div class="field">
+      <label for="cp_${p.k}">${p.label}</label>
+      <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
+    </div>`;
+  }).join('');
+}
+ $('#calcDist').addEventListener('change',()=>{
+  buildParams();
+  $('#calcResults').innerHTML=`<div class="calc-empty"><i data-lucide="calculator"></i>
+    <p>Cálculo seleccionado: <strong>${CALC_NAMES[$('#calcDist').value]}</strong>.<br>Presiona <strong>Calcular</strong>.</p></div>`;
+  refreshIcons();
+  const cv=$('#calcCanvas'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+});
+
+function readVals(key){
+  const out={};
+  for(const p of PDEFS[key]){
+    if(p.type==='textarea'){ out[p.k]=$('#cp_'+p.k).value.trim(); continue; }
+    const v=parseFloat($('#cp_'+p.k).value);
+    if(isNaN(v)) throw `Revisa el campo «${p.label.split('—')[0].trim()}».`;
+    if(v<p.min||v>p.max) throw `«${p.label.split('—')[0].trim()}» debe estar entre ${p.min} y ${p.max}.`;
+    out[p.k]=v;
+  }
+  return out;
+}
+function parsePairs(xsRaw, ysRaw){
+  const xs=xsRaw.split(',').map(s=>parseFloat(s.trim()));
+  const ys=ysRaw.split(',').map(s=>parseFloat(s.trim()));
+  if(xs.some(isNaN)||ys.some(isNaN)) throw 'Revisa las listas: solo números separados por comas.';
+  if(xs.length!==ys.length) throw `Las listas deben tener la misma longitud (tienes ${xs.length} x y ${ys.length} y).`;
+  if(xs.length<3) throw 'Se necesitan al menos 3 pares de datos.';
+  return xs.map((x,i)=>({x, y:ys[i]}));
+}
+/* gráfica de dispersión con recta y bandas opcionales */
+function drawReg(cv, pts, f, xlo, xhi, bands, x0){
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  let ymin=Math.min(...pts.map(p=>p.y)), ymax=Math.max(...pts.map(p=>p.y));
+  for(let i=0;i<=60;i++){ const x=xlo+(xhi-xlo)*i/60, y=f.b0+f.b1*x;
+    ymin=Math.min(ymin,y); ymax=Math.max(ymax,y);
+    if(bands){ ymin=Math.min(ymin,y-bands.pred(x)); ymax=Math.max(ymax,y+bands.pred(x)); }
+  }
+  const padY=(ymax-ymin)*0.12+1e-9;
+  ymin-=padY; ymax+=padY;
+  const X=x=>m.l+(x-xlo)/(xhi-xlo)*m.pw, Y=y=>m.t+m.ph-(y-ymin)/(ymax-ymin)*m.ph;
+  axes(ctx,m); xyTicks(ctx,m,xlo,xhi,false); xyTicks(ctx,m,ymin,ymax,true);
+  if(bands){
+    ['pred','mean'].forEach((k,col)=>{});
+    // bandas: predicción (más clara, más ancha) y media (más oscura)
+    [['pred','rgba(201,162,39,.30)'],['mean','rgba(194,84,47,.25)']].forEach(([k,fill])=>{
+      ctx.beginPath();
+      for(let i=0;i<=80;i++){ const x=xlo+(xhi-xlo)*i/80; const y=f.b0+f.b1*x;
+        i? ctx.lineTo(X(x),Y(y+bands[k](x))) : ctx.moveTo(X(x),Y(y+bands[k](x))); }
+      for(let i=80;i>=0;i--){ const x=xlo+(xhi-xlo)*i/80; const y=f.b0+f.b1*x;
+        ctx.lineTo(X(x),Y(y-bands[k](x))); }
+      ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+    });
+  }
+  // recta
+  ctx.strokeStyle=TERRA; ctx.lineWidth=2.6;
+  ctx.beginPath(); ctx.moveTo(X(xlo),Y(f.b0+f.b1*xlo)); ctx.lineTo(X(xhi),Y(f.b0+f.b1*xhi)); ctx.stroke();
+  // puntos
+  ctx.fillStyle='rgba(30,70,54,.85)';
+  pts.forEach(p=>{ ctx.beginPath(); ctx.arc(X(p.x),Y(p.y),4.2,0,7); ctx.fill(); });
+  // x0
+  if(x0!=null && x0>xlo && x0<xhi){
+    const y0=f.b0+f.b1*x0;
+    ctx.strokeStyle=PINE; ctx.setLineDash([4,3]); ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(X(x0),Y(0*0+ymin)); ctx.lineTo(X(x0),Y(y0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=PINE; ctx.beginPath(); ctx.arc(X(x0),Y(y0),4.6,0,7); ctx.fill();
+    ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='left';
+    ctx.fillText('x₀', X(x0)+6, Y(y0)-8);
+  }
+  // leyenda
+  ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle=TERRA; ctx.fillText('ŷ = '+fmtNum(f.b0)+' + '+fmtNum(f.b1)+'·x', m.l+6, m.t+12);
+}
+function drawLineOnly(cv, f, xc, half){
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const xlo=xc-half, xhi=xc+half, ymin=f.b0+f.b1*xlo, ymax=f.b0+f.b1*xhi;
+  const pad=(Math.abs(ymax-ymin))*0.15+1;
+  const X=x=>m.l+(x-xlo)/(xhi-xlo)*m.pw, Y=y=>m.t+m.ph-(y-(ymin-pad))/(ymax-ymin+2*pad)*m.ph;
+  axes(ctx,m); xyTicks(ctx,m,xlo,xhi,false); xyTicks(ctx,m,ymin-pad,ymax+pad,true);
+  ctx.strokeStyle=TERRA; ctx.lineWidth=2.6;
+  ctx.beginPath(); ctx.moveTo(X(xlo),Y(f.b0+f.b1*xlo)); ctx.lineTo(X(xhi),Y(f.b0+f.b1*xhi)); ctx.stroke();
+  ctx.fillStyle=PINE; ctx.beginPath(); ctx.arc(X(xc),Y(f.b0+f.b1*xc),5,0,7); ctx.fill();
+  ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle=TERRA; ctx.fillText('ŷ(x̄) = '+fmtNum(f.b0+f.b1*xc), m.l+6, m.t+12);
+}
+
+function computeCalc(key,v,alpha){
+  const R=[];
+  const tCrit=nu=>tQuantile(1-alpha/2, nu);
+  const pTwo=t=>2*(1-tCdf(Math.abs(t), arguments.length?0:0)); // placeholder reemplazado abajo
+  if(key==='fit'){
+    const pts=parsePairs(v.xs, v.ys);
+    const f=fitLine(pts);
+    const nu=f.n-2;
+    if(nu<1) throw 'Se necesitan al menos 4 puntos para estimar la varianza del error.';
+    if(f.SCE<=0) throw 'Los datos son perfectamente colineales: no hay residuos que analizar.';
+    const s=Math.sqrt(f.SCE/nu), Sb1=Math.sqrt((f.SCE/nu)/f.Sxx), t=f.b1/Sb1;
+    const pv=2*(1-tCdf(Math.abs(t),nu));
+    const Sb0=Math.sqrt((f.SCE/nu)*(1/f.n + f.xbar*f.xbar/f.Sxx)), t0=f.b0/Sb0, pv0=2*(1-tCdf(Math.abs(t0),nu));
+    const F=t*t, Fcrit=(()=>{ // F(1,nu) al 1-alpha equivale a t^2 del cuantil
+      const tc=tQuantile(1-alpha/2,nu); return tc*tc; })();
+    const rows=`<tr><td>Regresión</td><td class="center">${fmtNum(f.SCR)}</td><td class="center">1</td><td class="center">${fmtNum(f.SCR)}</td><td class="center"><strong>${F.toFixed(3)}</strong></td></tr>
+      <tr><td>Error</td><td class="center">${fmtNum(f.SCE)}</td><td class="center">${nu}</td><td class="center">${fmtNum(f.SCE/nu)}</td><td class="center"></td></tr>
+      <tr><td>Total</td><td class="center">${fmtNum(f.Syy)}</td><td class="center">${f.n-1}</td><td colspan="2" class="center" style="color:var(--muted)">F crítico = ${Fcrit.toFixed(3)}</td></tr>`;
+    const html=`<table class="tbl"><thead><tr><th>Fuente</th><th class="center">SC</th><th class="center">gl</th><th class="center">CM</th><th class="center">F</th></tr></thead><tbody>${rows}</tbody></table>`;
+    R.push(['b₁ (pendiente)',f.b1],['b₀ (intersección)',f.b0],['r (correlación)',f.r],['r² (variación explicada)',f.r2],
+           ['s = √MSE',s],[`t para β₁ (ν = ${nu})`,t],['Valor P',pv],['F = t²',F],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀: hay relación lineal':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no']);
+    const tc=tCrit(nu);
+    R.push([`IC del 95% para β₁ (${(100*(1-alpha)).toFixed(0)}%)`,`${fmtNum(f.b1-tc*Sb1)} a ${fmtNum(f.b1+tc*Sb1)}`,1],
+           [`t para β₀ / valor P`,`${t0.toFixed(3)} / ${fmtP(pv0)}`,1]);
+    const xs=pts.map(p=>p.x);
+    const xlo=Math.min(...xs)-(Math.max(...xs)-Math.min(...xs))*0.08, xhi=Math.max(...xs)+(Math.max(...xs)-Math.min(...xs))*0.08;
+    return {results:R, html,
+      tex:`\\hat{y}=${fmtNum(f.b0)}+${fmtNum(f.b1)}\\,x,\\quad r^2=${f.r2.toFixed(4)},\\quad t=${t.toFixed(3)},\\;\\nu=${nu}`,
+      draw:()=>drawReg($('#calcCanvas'), pts, f, xlo, xhi, null, null)};
+  }
+  if(key==='bands'){
+    const pts=parsePairs(v.xs, v.ys);
+    const f=fitLine(pts);
+    const nu=f.n-2;
+    if(nu<1) throw 'Se necesitan al menos 4 puntos para estimar la varianza del error.';
+    const s=Math.sqrt(f.SCE/nu), tc=tCrit(nu);
+    const x0=v.x0;
+    const inRange = x0>=Math.min(...pts.map(p=>p.x)) && x0<=Math.max(...pts.map(p=>p.x));
+    const y0=f.b0+f.b1*x0;
+    const seM=s*Math.sqrt(1/f.n + (x0-f.xbar)*(x0-f.xbar)/f.Sxx);
+    const seP=s*Math.sqrt(1 + 1/f.n + (x0-f.xbar)*(x0-f.xbar)/f.Sxx);
+    R.push(['ŷ(x₀) estimación puntual',y0],
+           ['SE de la media',seM],[`IC media (${(100*(1-alpha)).toFixed(0)}%)`,`${fmtNum(y0-tc*seM)} a ${fmtNum(y0+tc*seM)}`,1],
+           ['SE de predicción',seP],[`IC predicción (${(100*(1-alpha)).toFixed(0)}%)`,`${fmtNum(y0-tc*seP)} a ${fmtNum(y0+tc*seP)}`,1]);
+    const warn = !inRange? '⚠ x₀ está fuera del rango observado de x: es una extrapolación — el modelo lineal no está verificado allí.' : null;
+    const xs=pts.map(p=>p.x);
+    let xlo=Math.min(...xs), xhi=Math.max(...xs);
+    const padX=(xhi-xlo)*0.08; xlo-=padX; xhi+=padX;
+    xlo=Math.min(xlo,x0); xhi=Math.max(xhi,x0);
+    const bands={
+      mean: x=>tc*s*Math.sqrt(1/f.n + (x-f.xbar)*(x-f.xbar)/f.Sxx),
+      pred: x=>tc*s*Math.sqrt(1 + 1/f.n + (x-f.xbar)*(x-f.xbar)/f.Sxx)
+    };
+    return {results:R, warn,
+      tex:`\\hat{y}_0=${fmtNum(y0)},\\quad SE_{med}=${fmtNum(seM)},\\quad SE_{pred}=${fmtNum(seP)}`,
+      draw:()=>drawReg($('#calcCanvas'), pts, f, xlo, xhi, bands, x0)};
+  }
+  if(key==='tbeta'){
+    const {b1,sb,n}=v, nu=n-2, t=b1/sb;
+    const pv=2*(1-tCdf(Math.abs(t),nu)), tc=tCrit(nu);
+    R.push([`t (ν = ${nu})`,t],['Valor P',pv],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀: β₁ ≠ 0':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no'],
+           [`IC (${(100*(1-alpha)).toFixed(0)}%) para β₁`,`${fmtNum(b1-tc*sb)} a ${fmtNum(b1+tc*sb)}`,1]);
+    const lo=Math.min(b1-tc*sb*1.6, -tc*sb*1.2), hi=Math.max(b1+tc*sb*1.6, tc*sb*1.2);
+    return {results:R,
+      tex:`t=\\dfrac{b_1}{S_{b_1}}=\\dfrac{${fmtNum(b1)}}{${fmtNum(sb)}}=${t.toFixed(3)},\\;\\nu=${nu}`,
+      draw:()=>drawT(cvT(t,nu,tc,[-tc,tc],lo,hi))};
+  }
+  if(key==='tcorr'){
+    const {r,n}=v, nu=n-2, t=r*Math.sqrt(nu)/Math.sqrt(1-r*r);
+    const pv=2*(1-tCdf(Math.abs(t),nu)), tc=tCrit(nu);
+    R.push([`t (ν = ${nu})`,t],['Valor P',pv],['r² (variación explicada)',r*r],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀: ρ ≠ 0':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no']);
+    return {results:R,
+      tex:`t=\\dfrac{r\\sqrt{n-2}}{\\sqrt{1-r^2}}=\\dfrac{${fmtNum(r)}\\sqrt{${nu}}}{\\sqrt{1-${fmtNum(r*r)}}}=${t.toFixed(3)}`,
+      draw:()=>drawT(cvT(t,nu,tc,[-tc,tc], Math.min(-1,Math.min(t,-tc)*1.3), Math.max(1,Math.max(t,tc)*1.3)))};
+  }
+  if(key==='summary'){
+    const {sxy,sxx,syy,xbar,ybar,n}=v;
+    const b1=sxy/sxx, b0=ybar-b1*xbar;
+    const SCE=syy-sxy*sxy/sxx, SCR=syy-SCE;
+    const r2=SCR/syy, r=(sxy>=0?1:-1)*Math.sqrt(Math.max(0,r2));
+    const nu=n-2;
+    if(nu<1||SCE<=0) throw 'Revisa los resúmenes: se necesita n ≥ 3 y residuos no nulos.';
+    const s=Math.sqrt(SCE/nu), Sb1=Math.sqrt((SCE/nu)/sxx), t=b1/Sb1;
+    const pv=2*(1-tCdf(Math.abs(t),nu)), tc=tCrit(nu);
+    R.push(['b₁ (pendiente)',b1],['b₀ (intersección)',b0],['r',r],['r²',r2],
+           ['SCE',SCE],['s = √MSE',s],[`t para β₁ (ν = ${nu})`,t],['Valor P',pv],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no'],
+           [`IC (${(100*(1-alpha)).toFixed(0)}%) para β₁`,`${fmtNum(b1-tc*Sb1)} a ${fmtNum(b1+tc*Sb1)}`,1]);
+    const f={b0,b1};
+    const half=2.2*Math.sqrt(sxx/(n-1))+1e-9;
+    return {results:R,
+      tex:`\\hat{y}=${fmtNum(b0)}+${fmtNum(b1)}\\,x,\\quad r^2=${r2.toFixed(4)}`,
+      draw:()=>drawLineOnly($('#calcCanvas'), f, xbar, half)};
+  }
+  function cvT(t,nu,tc,regions,lo,hi){
+    return {t,nu,tc,regions,lo,hi};
+  }
+  function drawT(o){
+    const {ctx,w,h}=setupCanvas(cv);
+    const m=makeMargins(w,h);
+    const N=300; let maxV=0;
+    for(let i=0;i<=N;i++){ maxV=Math.max(maxV,tPdf(o.lo+(o.hi-o.lo)*i/N,o.nu)); }
+    const yMax=maxV*1.15;
+    const X=x=>m.l+(x-o.lo)/(o.hi-o.lo)*m.pw, Y=v=>m.t+m.ph-(v/yMax)*m.ph;
+    o.regions.forEach(([a,b])=>{
+      ctx.beginPath(); ctx.moveTo(X(a),Y(0));
+      for(let i=0;i<=120;i++){ const x=a+(b-a)*i/120; ctx.lineTo(X(x),Y(tPdf(x,o.nu))); }
+      ctx.lineTo(X(b),Y(0)); ctx.closePath();
+      ctx.fillStyle='rgba(194,84,47,.24)'; ctx.fill();
+    });
+    ctx.strokeStyle=INK; ctx.lineWidth=2; ctx.beginPath();
+    for(let i=0;i<=N;i++){ const x=o.lo+(o.hi-o.lo)*i/N; i? ctx.lineTo(X(x),Y(tPdf(x,o.nu))) : ctx.moveTo(X(x),Y(tPdf(x,o.nu))); }
+    ctx.stroke();
+    ctx.strokeStyle=PINE; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(X(o.t), m.t+m.ph); ctx.lineTo(X(o.t), m.t+10); ctx.stroke();
+    ctx.fillStyle=PINE; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('t = '+o.t.toFixed(3), X(o.t), m.t+6);
+    [-o.tc,o.tc].forEach(c=>{
+      ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans';
+      ctx.fillText(fmtNum(c), X(c), m.t+m.ph+16);
+    });
+    axes(ctx,m);
+  }
+}
+
+let calcState=null;
+ $('#btnCalc').addEventListener('click',()=>{
+  const key=$('#calcDist').value, alpha=+$('#calcLevel').value;
+  let v,out;
+  try{ v=readVals(key); out=computeCalc(key,v,alpha); }
+  catch(e){ toast(typeof e==='string'? e : 'Parámetros inválidos.','err'); return; }
+  calcState=out;
+  $('#calcResults').innerHTML =
+    `<div class="calc-formula" id="calcTex"></div>` +
+    (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
+    out.results.map(([lab,val,isTxt,cls])=>`
+      <div class="res-row"><span class="res-label">${lab}</span>
+      <span class="res-val mono ${cls||''}">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('') +
+    (out.html? `<div style="margin-top:14px">${out.html}</div>`:'');
+  try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
+  out.draw();
+  toast(`${CALC_NAMES[key]} calculado.`);
+});
+function redrawCalc(){ if(calcState) calcState.draw(); }
+buildParams();
+
+/* ============================================================
+   QUIZ (guarda el mejor intento para la boleta)
+============================================================ */
+const QUIZ=[
+ {q:'El método de mínimos cuadrados elige la recta que minimiza…',
+  opts:['La suma de los residuos \\(\\sum e_i\\)','La suma de los cuadrados de las distancias verticales \\(\\sum e_i^2\\)','La suma de las distancias perpendiculares a la recta','La varianza de las x'],
+  ans:1, why:'Los residuos se miden verticalmente (en la dirección de \\(Y\\)) y se elevan al cuadrado antes de sumar: \\(\\sum e_i\\) siempre puede anularse con rectas que compensan errores.'},
+ {q:'En \\( \\hat y = 2.1 + 1.3x \\) con x en miles de $ y y en decenas de miles, la pendiente 1.3 significa…',
+  opts:['Cuando x = 0, y = 1.3','Por cada mil $ extra de publicidad, las ventas suben en promedio 1.3 (≈ $13,000)','La correlación entre x e y es 1.3','El 1.3% de las ventas se explica por la publicidad'],
+  ans:1, why:'La pendiente es el <em>cambio esperado en Y por unidad de X</em>. La intersección (2.1) es el valor cuando \\(x=0\\), y la explicación de variabilidad la da \\(r^2\\), no \\(b_1\\).'},
+ {q:'Si r = −0.80, entonces…',
+  opts:['El 80% de la variabilidad está explicada','La relación lineal es negativa y \\(r^2 = 0.64\\): el 64% de la variabilidad está explicada','La pendiente es −0.80','La correlación es débil porque el signo es negativo'],
+  ans:1, why:'El signo indica la dirección y \\(|r|\\) la fuerza lineal. La proporción de variabilidad explicada es \\(r^2 = 0.64\\), no \\(|r|\\).'},
+ {q:'El IC de predicción para un valor individual es más ancho que el IC de la media porque…',
+  opts:['Usa más grados de libertad','Además de la incertidumbre de la recta, incluye la variabilidad del error individual ε','La media siempre es más variable que un dato','Se calcula con otra distribución'],
+  ans:1, why:'La predicción añade el término «1» bajo la raíz: el azar de la unidad concreta se suma a la duda sobre dónde está la recta. Predecir un caso siempre es más incierto que estimar un promedio.'},
+ {q:'Rechazar \\(H_0\\!: \\beta_1 = 0\\) en la prueba t significa…',
+  opts:['La recta ajustada es perfecta','Existe evidencia de relación lineal entre x e y','La correlación es igual a 1','La pendiente es económicamente importante'],
+  ans:1, why:'\\(\\beta_1 = 0\\) equivaldría a una recta plana sin valor explicativo. Rechazar dice que <em>hay</em> relación lineal significativa — no que sea perfecta ni que su magnitud sea relevante para el negocio.'},
+ {q:'En regresión lineal simple, los grados de libertad del error son…',
+  opts:['n − 1','n − 2','n − k con k el número de variables','n'],
+  ans:1, why:'Se estiman dos parámetros (\\(\\beta_0\\) y \\(\\beta_1\\)), por lo que el error conserva \\(n-2\\) grados de libertad: de ahí el \\(\\text{MSE} = \\text{SCE}/(n-2)\\).'},
+ {q:'Aumentar n mantiene fijos los demás factores. El IC para β₁…',
+  opts:['No cambia porque depende solo de σ','Se estrecha: \\(S_{b_1} = \\sqrt{\\text{MSE}/S_{xx}}\\) y \\(S_{xx}\\) crece con n','Se hace más ancho por el error muestral','Se vuelve exactamente igual a la prueba t'],
+  ans:1, why:'Más datos aumentan \\(S_{xx}\\) y reducen \\(\\text{MSE}\\): el error estándar de la pendiente baja y el intervalo se estrecha — la misma lógica \\(1/\\sqrt{n}\\) del curso. El simulador «Variabilidad de b₁» lo muestra.'}
+];
+function renderQuiz(){
+  $('#quizList').innerHTML = QUIZ.map((it,i)=>`
+    <article class="quiz-q">
+      <header><span class="qnum">P${i+1}</span><p class="q-text">${it.q}</p></header>
+      <div class="opts">${it.opts.map((o,j)=>`
+        <label class="opt"><input type="radio" name="q${i}" value="${j}">
+        <span class="opt-key">${'ABCD'[j]}</span><span>${o}</span></label>`).join('')}
+      </div>
+      <p class="explain" hidden><strong>Retroalimentación:</strong> ${it.why}</p>
+    </article>`).join('');
+  $('#quizResult').innerHTML='';
+  try{ renderMathInElement($('#quizList'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+}
+ $('#btnGrade').addEventListener('click',()=>{
+  const unanswered = QUIZ.some((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
+  if(unanswered){ toast('Responde todas las preguntas antes de calificar.','err'); return; }
+  let score=0;
+  $$('#quizList .quiz-q').forEach((art,i)=>{
+    const sel=document.querySelector(`input[name="q${i}"]:checked`);
+    if(+sel.value===QUIZ[i].ans) score++;
+    art.querySelectorAll('.opt').forEach(l=>{
+      const inp=l.querySelector('input'); inp.disabled=true; l.classList.add('locked');
+      if(+inp.value===QUIZ[i].ans) l.classList.add('is-correct');
+      else if(+inp.value===+sel.value) l.classList.add('is-wrong');
+    });
+    art.querySelector('.explain').hidden=false;
+  });
+  const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
+  if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
+  const msg = score===QUIZ.length?'Dominio excelente de la unidad.':score>=5?'Muy bien: revisa los puntos marcados en naranja.':
+              score>=3?'Repasa las secciones 5.1 a 5.3 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
+  $('#quizResult').innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
+  toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
+});
+ $('#btnQuizReset').addEventListener('click',()=>{ renderQuiz(); toast('Quiz reiniciado.'); });
+renderQuiz();
+
+/* ============================================================
+   TAREA: avance de los 8 problemas
+============================================================ */
+const PROBLEMAS=['11.2','11.5','11.9','11.14','11.19','11.24','11.30','11.36'];
+const dl=new Date(Date.now()+7*864e5);
+ $('#taskDeadline').textContent = dl.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+
+function renderTaskList(){
+  const T=act()[CURSO].tarea;
+  $('#taskList').innerHTML = PROBLEMAS.map(p=>`
+    <label class="chk ${T[p]?'done':''}">
+      <input type="checkbox" data-p="${p}" ${T[p]?'checked':''}>
+      <span>Problema <strong>${p}</strong> del capítulo de regresión</span>
+    </label>`).join('');
+  updateTaskBar();
+}
+function updateTaskBar(){
+  const T=act()[CURSO].tarea;
+  const done=PROBLEMAS.filter(p=>T[p]).length, pct=Math.round(done/PROBLEMAS.length*100);
+  $('#taskBar').style.width=pct+'%';
+  $('#taskPct').textContent=`${done} / ${PROBLEMAS.length} · ${pct}%`;
+}
+let progToastTimer=null;
+ $('#taskList').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-p]'); if(!cb) return;
+  const p=cb.dataset.p;
+  const a=act(); a[CURSO].tarea[p]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  updateTaskBar(); renderBoleta();
+  clearTimeout(progToastTimer);
+  progToastTimer=setTimeout(()=>{
+    const T=act()[CURSO].tarea, done=PROBLEMAS.filter(q=>T[q]).length;
+    if(done===PROBLEMAS.length) toast('¡Tarea completa! No olvides entregar tu PDF.');
+    else toast(`Avance guardado: ${done} de ${PROBLEMAS.length} problemas.`);
+  },500);
+});
+
+/* ============================================================
+   EJERCICIOS GUIADOS: casillas "ya lo resolví"
+============================================================ */
+const EJ_KEYS=['e1','e2','e3','e4'];
+function syncEjChecks(){
+  const EJ=act()[CURSO].ej;
+  $$('#ejBlock .chk-ej input').forEach(cb=>{
+    cb.checked=!!EJ[cb.dataset.ej];
+    cb.closest('.chk').classList.toggle('done', cb.checked);
+  });
+}
+ $('#ejBlock').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-ej]'); if(!cb) return;
+  const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  renderBoleta();
+  const n=EJ_KEYS.filter(k=>a[CURSO].ej[k]).length;
+  toast(`Ejercicio marcado como resuelto (${n} de ${EJ_KEYS.length}).`);
+});
+
+/* ============================================================
+   EDITOR DE REDACCIÓN (ejercicios de refuerzo e5–e8)
+============================================================ */
+const REDACS=['e5','e6','e7','e8'];
+const redTimers={};
+
+const MANUAL=[
+  {code:'\\( … \\)',      help:'Fórmula en línea (obligatoria para renderizar)', tex:'\\lambda=3', snip:String.raw`\(|\)`},
+  {code:'\\hat{y}',       help:'Valor ajustado (y sombrero)', tex:'\\hat{y}=b_0+b_1x', snip:String.raw`\hat{|}`},
+  {code:'\\beta_0  \\beta_1', help:'Coeficientes del modelo', tex:'y=\\beta_0+\\beta_1x+\\varepsilon', snip:String.raw`\beta_{|}`},
+  {code:'\\bar{x}',       help:'Media muestral',            tex:'\\bar{x}=\\frac{1}{n}\\sum x_i', snip:String.raw`\bar{|}`},
+  {code:'S_{xy}',         help:'Sumas de cuadrados cruzadas', tex:'b_1=\\frac{S_{xy}}{S_{xx}}', snip:String.raw`S_{|}`},
+  {code:'\\sum_x',        help:'Sumatoria',                 tex:'\\sum_{i=1}^{n}(y_i-\\hat{y}_i)^2', snip:String.raw`\sum_{|}`},
+  {code:'x^2   x_i',      help:'Potencias e índices',       tex:'e_i^2', snip:String.raw`x^{|}`},
+  {code:'\\frac{a}{b}',   help:'Fracciones',                tex:'\\frac{S_{xy}}{S_{xx}}', snip:String.raw`\frac{|}{}`},
+  {code:'\\sqrt{x}',      help:'Raíces',                    tex:'r=\\frac{S_{xy}}{\\sqrt{S_{xx}S_{yy}}}', snip:String.raw`\sqrt{|}`},
+  {code:'r^2',            help:'Coeficiente de determinación', tex:'r^2=\\frac{SCR}{S_{yy}}', snip:String.raw`r^2`},
+  {code:'P(X \\ge x)',    help:'Probabilidad',              tex:'P(|t| \\ge 2.12)', snip:String.raw`P(|)`},
+  {code:'t_{\\alpha/2,\\nu}', help:'Valor crítico t (ν gl)',tex:'t_{0.025,\\,16}=2.120', snip:String.raw`t_{\alpha/2,\,|}`},
+  {code:'\\pm',           help:'Más/menos (intervalos)',    tex:'b_1\\pm t\\,S_{b_1}', snip:String.raw`\pm`},
+  {code:'\\le \\ge \\ne \\approx', help:'Comparadores',     tex:'|t| > t_{0.025} \\;\\Rightarrow\\; \\text{rechazar}', snip:String.raw`\approx`},
+  {code:'\\rho',          help:'Correlación poblacional',   tex:'H_0:\\ \\rho=0', snip:String.raw`\rho`},
+  {code:'\\varepsilon',   help:'Error del modelo',          tex:'\\varepsilon\\sim N(0,\\sigma^2)', snip:String.raw`\varepsilon`},
+  {code:'\\Rightarrow',   help:'Implica / por lo tanto',    tex:'P<\\alpha \\Rightarrow \\text{rechazar } H_0', snip:String.raw`\Rightarrow`},
+  {code:'\\cdot',         help:'Multiplicación',            tex:'t \\cdot S_{b_1}', snip:String.raw`\cdot`},
+  {code:'\\text{…}',      help:'Texto dentro de fórmula',   tex:'\\text{IC del } 95\\%', snip:String.raw`\text{|}`},
+  {code:'\\boxed{…}',     help:'Respuesta final destacada', tex:'\\boxed{\\hat{y}=2.1+1.3x}', snip:String.raw`\boxed{|}`},
+  {code:'cases (por tramos)', help:'Funciones a tramos',
+   tex:'L(x)=\\begin{cases} \\text{media}, & \\text{promedio}\\\\ \\text{pred}, & \\text{caso individual}\\end{cases}',
+   snip:String.raw`\begin{cases} \text{media}, & \text{promedio} \\ \text{pred}, & \text{caso individual} \end{cases}`}
+];
+const NOTE_DELIM = String.raw`<strong>Fórmulas:</strong> escríbelas entre <code>\( … \)</code> o <code>$ … $</code>; lo demás queda como texto normal. Pulsa <b>+</b> para insertar un comando en el cursor (si hay texto seleccionado, lo envuelve).`;
+const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 1) plantea el modelo y las sumas auxiliares (\(S_{xy}, S_{xx}, S_{yy}\)) · 2) calcula los coeficientes e interpreta · 3) mide el ajuste (\(r, r^2, s\)) · 4) si hay inferencia, prueba t o IC con \( \nu = n-2 \) · 5) cierra con la interpretación de negocio en <code>\boxed{}</code>.`;
+
+function buildEditors(){
+  $$('.ed-box').forEach(box=>{
+    const k=box.dataset.ed;
+    box.innerHTML=`
+      <div class="ed-toolbar">
+        <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
+        <span class="ed-status" id="st_${k}"><span class="dot"></span>Sin guardar</span>
+      </div>
+      <div class="ed-grid">
+        <div class="ed-main">
+          <textarea id="ta_${k}" class="ed-ta" spellcheck="false"
+            placeholder="Sumas → coeficientes → ajuste → interpretación.&#10;Ej.: \( b_1 = \frac{S_{xy}}{S_{xx}} = \frac{13}{10} = 1.3 \), entonces&#10;\( \hat{y} = 2.1 + 1.3x \) y cada mil $ extra genera…"></textarea>
+          <div class="ed-preview-wrap">
+            <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
+            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
+          </div>
+        </div>
+        <aside class="ed-manual" data-for="${k}"></aside>
+      </div>
+      <div class="ed-foot">
+        <span class="ed-count" id="cn_${k}">0 palabras</span>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn ghost sm" data-redclear="${k}">Limpiar</button>
+          <button type="button" class="btn sm" data-redsave="${k}"><i data-lucide="save"></i>Guardar</button>
+        </div>
+      </div>`;
+  });
+  buildManuals();
+  refreshIcons();
+}
+function buildManuals(){
+  $$('.ed-manual').forEach(box=>{
+    const views=[];
+    const rows=MANUAL.map(m=>{
+      views.push(m);
+      return `
+      <div class="cmd-row">
+        <div><span class="cmd-code">${esc(m.code)}</span><span class="cmd-help">${m.help}</span></div>
+        <span class="cmd-view"></span>
+        <button type="button" class="cmd-add" data-snip="${esc(m.snip)}" title="Insertar en el cursor">+</button>
+      </div>`;
+    }).join('');
+    box.innerHTML=`<p class="ed-note">${NOTE_DELIM}</p>
+      <p class="ed-cmd-title">Comandos esenciales</p>
+      ${rows}
+      <p class="ed-note" style="margin-top:12px">${NOTE_STRUCT}</p>`;
+    box.querySelectorAll('.cmd-view').forEach((el,i)=>{
+      try{ katex.render(views[i].tex, el, {throwOnError:false}); }
+      catch(e){ el.textContent=views[i].code; }
+    });
+  });
+}
+function insertSnippet(ta, snip){
+  const s=ta.selectionStart ?? ta.value.length, e=ta.selectionEnd ?? s;
+  const before=ta.value.slice(0,s), sel=ta.value.slice(s,e), after=ta.value.slice(e);
+  const caret=snip.indexOf('|');
+  let text, pos;
+  if(caret>=0){
+    const clean=snip.replace('|','');
+    if(sel){ text=clean.slice(0,caret)+sel+clean.slice(caret); pos=s+caret+sel.length; }
+    else   { text=clean; pos=s+caret; }
+  }else{
+    text=snip+(sel||''); pos=s+snip.length;
+  }
+  ta.value=before+text+after;
+  ta.selectionStart=ta.selectionEnd=pos;
+  ta.focus();
+  ta.dispatchEvent(new Event('input'));
+}
+function setStatus(k, txt, saved){
+  const st=$('#st_'+k); if(!st) return;
+  st.classList.toggle('saved', !!saved);
+  st.innerHTML='<span class="dot"></span>'+txt;
+}
+function redPreview(k){
+  const ta=$('#ta_'+k), pv=$('#pv_'+k);
+  const raw=ta.value;
+  $('#cn_'+k).textContent=(raw.trim()? raw.trim().split(/\s+/).length:0)+' palabras';
+  if(!raw.trim()){
+    pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    return;
+  }
+  pv.innerHTML=esc(raw).replace(/\n/g,'<br>');
+  if(typeof renderMathInElement==='function'){
+    try{
+      renderMathInElement(pv,{delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\(',right:'\\)',display:false},
+        {left:'$',right:'$',display:false}],throwOnError:false});
+    }catch(e){}
+  }
+}
+function redSave(k, announce){
+  const a=act(); a[CURSO].red[k]=$('#ta_'+k).value; saveAct(a);
+  setStatus(k,'Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}), true);
+  if(announce) toast('Redacción guardada en este navegador.');
+}
+function redInput(k){
+  setStatus(k,'Escribiendo…', false);
+  clearTimeout(redTimers[k+'p']);
+  redTimers[k+'p']=setTimeout(()=>redPreview(k),250);
+  clearTimeout(redTimers[k+'s']);
+  redTimers[k+'s']=setTimeout(()=>redSave(k,false),1100);
+}
+function initRedacs(){
+  const R=act()[CURSO].red||{};
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(!ta) return;
+    if(R[k]){ ta.value=R[k]; setStatus(k,'Guardado en este navegador', true); redPreview(k); }
+    ta.addEventListener('input',()=>redInput(k));
+  });
+  $$('.ed-manual').forEach(m=>m.addEventListener('click',e=>{
+    const b=e.target.closest('.cmd-add'); if(!b) return;
+    insertSnippet($('#ta_'+m.dataset.for), b.dataset.snip);
+  }));
+  $$('[data-redsave]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redsave; redSave(k,true); redPreview(k);
+  }));
+  $$('[data-redclear]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redclear;
+    if(!b.classList.contains('confirm')){
+      b.classList.add('confirm'); b.textContent='¿Borrar todo?';
+      setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm'); b.textContent='Limpiar'; } },2800);
+      return;
+    }
+    b.classList.remove('confirm'); b.textContent='Limpiar';
+    $('#ta_'+k).value=''; redPreview(k); setStatus(k,'Sin guardar',false);
+    const a=act(); a[CURSO].red[k]=''; saveAct(a);
+    toast('Redacción borrada.');
+  }));
+}
+function resetRedacs(){
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(ta) ta.value='';
+    const pv=$('#pv_'+k); if(pv) pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    setStatus(k,'Sin guardar',false);
+    const cn=$('#cn_'+k); if(cn) cn.textContent='0 palabras';
+  });
+}
+
+/* ============================================================
+   REGISTRO INDIVIDUAL + BOLETA DE RESULTADOS
+============================================================ */
+const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
+                 ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
+function initials(name){
+  const p=name.trim().split(/\s+/);
+  return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
+}
+function avColor(name){ return AV_COLORS[[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COLORS.length]; }
+
+function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1?20 : 0; }
+
+function progresoCurso(){
+  const c=act()[CURSO];
+  const rolls=c.sim.rolls||0;
+  const ejOk=EJ_KEYS.filter(k=>c.ej[k]).length;
+  const tOk=PROBLEMAS.filter(p=>c.tarea[p]).length;
+  return {
+    rolls,
+    sim:   simPct(rolls),
+    ej:    ejOk/EJ_KEYS.length*100, ejOk,
+    quiz:  (c.quiz && c.quiz.score!=null)? c.quiz.score/c.quiz.total*100 : 0,
+    quizScore: (c.quiz && c.quiz.score!=null)? c.quiz.score : null,
+    tarea: tOk/PROBLEMAS.length*100, tOk
+  };
+}
+function notaFinal(){
+  const p=progresoCurso();
+  return (p.sim*0.15 + p.ej*0.25 + p.quiz*0.30 + p.tarea*0.30)/10;
+}
+function updateHomeStat(){
+  const est=loadEst();
+  $('#statNota').textContent = est? notaFinal().toFixed(1) : '—';
+}
+function renderBoleta(){
+  const est=loadEst();
+  $('#regEmpty').hidden = !!est;
+  $('#boletaWrap').hidden = !est;
+  updateHomeStat();
+  if(!est) return;
+
+  const [bg,fg]=avColor(est.nombre);
+  const av=$('#bAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
+  $('#bName').textContent=est.nombre;
+  $('#bMeta').textContent=`Matrícula ${est.matricula} · ${est.correo}`;
+  $('#bSince').textContent=new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+
+  const p=progresoCurso();
+  const defs=[
+    {nombre:'Simulador — ajustes y pendientes', pct:p.sim, w:1.5, det:`${p.rolls.toLocaleString('es-MX')} ejecuciones acumuladas`},
+    {nombre:'Ejercicios guiados resueltos', pct:p.ej, w:2.5, det:`${p.ejOk} de ${EJ_KEYS.length} marcados como resueltos`},
+    {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 7 aciertos`},
+    {nombre:'Tarea — problemas de regresión', pct:p.tarea, w:3.0, det:`${p.tOk} de ${PROBLEMAS.length} problemas marcados`}
+  ];
+  $('#bRows').innerHTML=defs.map(d=>`
+    <div class="b-row">
+      <div><div class="b-rubname">${d.nombre}</div><div class="b-rubdet">${d.det}</div></div>
+      <div class="b-bar"><div style="width:${d.pct.toFixed(0)}%"></div></div>
+      <div class="b-pts mono">${(d.pct/100*d.w).toFixed(2)} <small>/ ${d.w.toFixed(1)}</small></div>
+    </div>`).join('');
+  $('#bNota').textContent=notaFinal().toFixed(1);
+  $('#bEmit').textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+}
+
+let editMode=false;
+function setFormMode(edit){
+  editMode=edit;
+  $('#btnEstSave').innerHTML = edit? '<i data-lucide="save"></i><span>Guardar cambios</span>'
+                                   : '<i data-lucide="user-plus"></i><span>Registrarme</span>';
+  $('#btnEstCancel').hidden=!edit;
+  refreshIcons();
+}
+ $('#formEst').addEventListener('submit', e=>{
+  e.preventDefault();
+  const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
+  if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
+  if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
+  if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
+  const prev=loadEst();
+  saveEst({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()});
+  e.target.reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList();
+  toast(prev? 'Datos actualizados correctamente.' : `¡Listo, ${nombre.split(' ')[0]}! Tu avance quedará registrado a tu nombre.`);
+});
+ $('#btnEstEdit').addEventListener('click', ()=>{
+  const est=loadEst(); if(!est) return;
+  $('#alNombre').value=est.nombre; $('#alMat').value=est.matricula; $('#alMail').value=est.correo;
+  $('#regEmpty').hidden=false; $('#boletaWrap').hidden=true;
+  setFormMode(true); $('#alNombre').focus();
+});
+ $('#btnEstCancel').addEventListener('click', ()=>{ $('#formEst').reset(); setFormMode(false); renderBoleta(); });
+
+ $('#btnEstDel').addEventListener('click', ()=>{
+  const b=$('#btnEstDel');
+  if(!b.classList.contains('confirm')){
+    b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar todo?</span>'; refreshIcons();
+    setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
+      b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar registro y avance</span>'; refreshIcons(); } },3000);
+    return;
+  }
+  localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
+  $('#formEst').reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetFit(); resetSlope();
+  toast('Registro y avance borrados de este navegador.');
+});
+
+ $('#btnBoletaPng').addEventListener('click', ()=>{
+  if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
+  toast('Generando imagen de tu boleta…');
+  html2canvas($('#boletaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
+    const est=loadEst();
+    const a=document.createElement('a');
+    a.download=`boleta-inf8-tema5-${est? est.matricula : 'alumno'}.png`;
+    a.href=cv.toDataURL('image/png'); a.click();
+    toast('Boleta descargada como PNG.');
+  }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+});
+
+/* ============================================================
+   RENDER MATEMÁTICO + ARRANQUE
+============================================================ */
+function initMath(){
+  if(typeof renderMathInElement==='function'){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('resize', ()=>{ drawSim(); redrawCalc(); animateHero(); });
+
+refreshIcons();
+initMath();
+buildEditors();
+initRedacs();
+renderTaskList();
+syncEjChecks();
+renderBoleta();
+updateFit(); updateSlope();
+setMode('fit');
+animateHero();
+</script>
+</body>
+</html>
