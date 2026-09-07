@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tema 4 · Pruebas de hipótesis especiales — Estadística Inferencial</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+/* ============================================================
+   VARIABLES Y BASE
+============================================================ */
+:root{
+  --paper:#f7f3eb;
+  --card:#fffdf8;
+  --ink:#1c2b25;
+  --pine:#1e4636;
+  --pine-soft:#2c5e49;
+  --terra:#c2542f;
+  --terra-soft:#f3e0d6;
+  --gold:#c9a227;
+  --line:rgba(28,43,37,.16);
+  --line-strong:rgba(28,43,37,.4);
+  --muted:rgba(28,43,37,.62);
+  --ok-bg:#e7efe6;
+  --err-bg:#f7e6dd;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:150px}
+[hidden]{display:none!important}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  background-image:radial-gradient(rgba(30,70,54,.075) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+.overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+.mono{font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--pine)}
+svg.lucide{width:16px;height:16px;stroke-width:2}
+
+/* ============================================================
+   HEADER / NAV
+============================================================ */
+header.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(247,243,235,.93);
+  backdrop-filter:blur(10px);
+  border-bottom:1.5px solid var(--ink);
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
+.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
+.brand .brand-ico svg{width:17px;height:17px}
+.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:6px;border-top:1px solid var(--line);padding:10px 0;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  border:1px solid transparent;background:transparent;color:var(--pine);
+  font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;
+  transition:all .18s ease;
+}
+.nav-btn svg{width:15px;height:15px}
+.nav-btn:hover{border-color:var(--line-strong)}
+.nav-btn.active{background:var(--ink);color:var(--paper)}
+
+/* ============================================================
+   VISTAS
+============================================================ */
+.view{padding:0 0 80px}
+.view-head{border-bottom:2px solid var(--ink);padding:52px 0 26px;margin-bottom:36px}
+.view-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:8px 0 10px}
+.view-head p.sub{max-width:680px;color:var(--muted)}
+
+/* ============================================================
+   BOTONES / FORMULARIOS
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);border-radius:10px;
+  padding:11px 18px;font-weight:600;font-size:14px;
+  transition:all .18s ease;
+}
+.btn:hover{background:var(--pine);border-color:var(--pine);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:rgba(28,43,37,.06);transform:translateY(-1px)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field textarea{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;resize:vertical;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.hint{font-size:12px;color:var(--muted)}
+.mode-row{display:flex;gap:8px;margin-bottom:16px}
+.mode-row .btn{flex:1;justify-content:center}
+
+/* ============================================================
+   INICIO / HERO
+============================================================ */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:64px 0 56px}
+.hero h1{font-size:clamp(2.3rem,4.6vw,3.7rem);margin:14px 0 18px}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero .lead{font-size:1.05rem;color:var(--muted);max-width:520px}
+.hero-actions{display:flex;gap:12px;margin:26px 0 30px;flex-wrap:wrap}
+.meta-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line-strong);max-width:520px}
+.meta-grid>div{padding:12px 14px 12px 0;border-bottom:1px solid var(--line)}
+.meta-grid dt{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.meta-grid dd{font-weight:600;font-size:14.5px}
+.hero-fig{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:6px 6px 0 rgba(28,43,37,.12)}
+.hero-fig canvas{display:block;width:100%;height:320px}
+.hero-fig figcaption{padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.home-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:44px;border-top:1.5px solid var(--ink);padding-top:38px}
+.route-item{display:grid;grid-template-columns:86px 1fr auto;gap:18px;align-items:center;border-top:1px solid var(--line);padding:22px 4px;cursor:pointer;transition:background .15s}
+.route-item:first-child{border-top:none}
+.route-item:hover{background:rgba(28,43,37,.045)}
+.route-no{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:400;color:rgba(30,70,54,.28)}
+.route-item h3{font-size:1.2rem;margin-bottom:4px}
+.route-item p{font-size:13.5px;color:var(--muted)}
+.route-go{width:38px;height:38px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--ink);transition:all .18s}
+.route-item:hover .route-go{background:var(--ink);color:var(--paper)}
+.side-stats{display:flex;flex-direction:column;gap:12px}
+.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px}
+.stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1}
+.stat .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ============================================================
+   TEORÍA
+============================================================ */
+.theory{display:grid;grid-template-columns:250px 1fr;gap:52px;align-items:start}
+.toc{position:sticky;top:150px;border-left:1.5px solid var(--ink);display:flex;flex-direction:column}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 0 10px 16px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink);padding:9px 16px;font-size:13.5px;font-weight:500;border-left:3px solid transparent;margin-left:-1.5px;transition:all .15s}
+.toc a span{font-family:'Fraunces',serif;color:var(--terra);font-weight:600;min-width:30px}
+.toc a:hover{border-left-color:var(--pine);background:rgba(28,43,37,.05)}
+.sec{border-top:1px solid var(--line);padding:44px 0}
+.sec:first-child{border-top:none;padding-top:0}
+.sec-no{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:rgba(30,70,54,.22);line-height:1}
+.sec h3{font-size:1.55rem;margin:6px 0 16px}
+.prose p{margin:0 0 14px;max-width:70ch}
+.prose ul,.prose ol{margin:0 0 14px 22px;max-width:70ch}
+.prose li{margin-bottom:6px}
+.def{background:#ecf1ea;border:1px solid rgba(30,70,54,.28);border-radius:0 10px 10px 0;border-left:4px solid var(--pine);padding:18px 22px;margin:20px 0}
+.def .def-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--pine)}
+.def p{margin:6px 0 0}
+.ex{background:var(--card);border:1px solid var(--line-strong);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin:20px 0}
+.ex .ex-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a6d10}
+.formula-hero{display:flex;justify-content:center;padding:16px 0;font-size:1.15rem}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.tbl th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line)}
+.tbl tbody tr:hover{background:rgba(28,43,37,.04)}
+.tbl td.center,.tbl th.center{text-align:center}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+.tag.d{color:var(--pine);border-color:rgba(30,70,54,.45);background:#ecf1ea}
+.tag.c{color:var(--terra);border-color:rgba(194,84,47,.45);background:var(--terra-soft)}
+.tag.g{color:#8a6d10;border-color:rgba(201,162,39,.5);background:#f6eecf}
+.spec-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:18px;align-items:center;border-top:1px solid var(--line);padding:18px 6px;transition:background .15s}
+.spec-row:hover{background:rgba(28,43,37,.04)}
+.spec-row:last-child{border-bottom:1px solid var(--line)}
+.spec-id{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.spec-id .no{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--muted)}
+.spec-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600}
+.spec-use{font-size:13px;color:var(--muted);margin-top:2px}
+.spec-math{text-align:right;font-size:1rem;overflow-x:auto}
+
+/* ============================================================
+   PANELES / LABORATORIOS
+============================================================ */
+.panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.panel-body{padding:20px 18px}
+.lab-grid{display:grid;grid-template-columns:350px 1fr;gap:28px;align-items:start}
+.sim-controls{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-2 .stat{padding:11px 14px}
+.stat-2 .num{font-size:1.35rem}
+.conv{margin-top:18px}
+.conv-bar{height:8px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper);margin-top:6px}
+.conv-bar>div{height:100%;background:var(--terra);width:0%;transition:width .4s ease}
+.note{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line-strong);margin-top:18px;padding-top:12px}
+.graph-frame canvas{display:block;width:100%;height:340px}
+.graph-cap{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+
+/* Resultados calculadora */
+.res-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding:10px 2px}
+.res-row:last-child{border-bottom:none}
+.res-label{font-size:13.5px;font-weight:600}
+.res-val{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--pine)}
+.res-val.dec-ok{color:var(--pine)}
+.res-val.dec-no{color:var(--terra)}
+.calc-formula{border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;margin-bottom:14px;text-align:center;overflow-x:auto}
+.calc-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:46px 20px;color:var(--muted);text-align:center}
+.calc-empty svg{width:30px;height:30px;stroke-width:1.5}
+.warn-box{border:1px solid rgba(194,84,47,.5);background:var(--terra-soft);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--terra);margin-bottom:12px}
+
+/* ============================================================
+   ACTIVIDADES
+============================================================ */
+.act-block{margin-bottom:52px}
+.act-block>h3{font-size:1.45rem;margin:8px 0 6px}
+.act-block>.act-desc{color:var(--muted);max-width:70ch;margin-bottom:20px}
+.rub-row{display:grid;grid-template-columns:280px 1fr 60px;gap:16px;align-items:center;border-top:1px solid var(--line);padding:14px 4px}
+.rub-row:last-child{border-bottom:1px solid var(--line)}
+.rub-row .rub-name{font-weight:600;font-size:14.5px}
+.rub-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+.rub-bar>div{height:100%;background:var(--pine)}
+.rub-pct{text-align:right;font-family:'Fraunces',serif;font-weight:600}
+details.sol{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);margin-bottom:14px;overflow:hidden}
+details.sol summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;font-weight:600;transition:background .15s}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary:hover{background:rgba(28,43,37,.04)}
+.sol-marker{flex:none;width:24px;height:24px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;transition:transform .2s;margin-top:1px}
+details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);color:var(--paper)}
+.sol-body{border-top:1px dashed var(--line-strong);padding:16px 20px;font-size:14.5px}
+.sol-body p{margin-bottom:10px;max-width:75ch}
+.prob-tag{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:4px}
+.quiz-q{border-top:1px solid var(--line);padding:24px 4px}
+.quiz-q header{display:flex;gap:14px;margin-bottom:14px}
+.qnum{flex:none;font-family:'Fraunces',serif;font-weight:700;color:var(--terra);border:1.5px solid var(--terra);border-radius:8px;padding:2px 9px;height:fit-content}
+.quiz-q .q-text{font-weight:600;font-size:15.5px;padding-top:4px}
+.opts{display:grid;gap:9px;margin-left:56px}
+.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--card);transition:all .15s;font-size:14.5px}
+.opt:hover{border-color:var(--pine)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt-key{flex:none;width:26px;height:26px;border:1.5px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .15s}
+.opt.is-correct{border-color:var(--pine);background:var(--ok-bg)}
+.opt.is-correct .opt-key{background:var(--pine);border-color:var(--pine);color:var(--paper)}
+.opt.is-wrong{border-color:var(--terra);background:var(--err-bg)}
+.opt.is-wrong .opt-key{background:var(--terra);border-color:var(--terra);color:var(--paper)}
+.opt.locked{cursor:default}
+.explain{margin:12px 0 0 56px;font-size:13.5px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 14px;background:var(--card)}
+.quiz-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;border-top:1.5px solid var(--ink);padding-top:20px}
+.quiz-result{font-size:15px}
+.quiz-result strong{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--pine);margin-right:8px}
+.task-panel{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.chk{display:flex;align-items:center;gap:11px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card);padding:10px 14px;margin-bottom:9px;cursor:pointer;transition:all .15s;font-size:14.5px}
+.chk:hover{border-color:var(--pine)}
+.chk input{width:16px;height:16px;accent-color:var(--pine)}
+.chk.done{background:var(--ok-bg);border-color:var(--pine)}
+
+/* ============================================================
+   EDITOR DE REDACCIÓN
+============================================================ */
+.ed-box{border:1.5px solid var(--ink);border-radius:10px;margin-top:18px;overflow:hidden;background:var(--card)}
+.ed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);background:#ecf1ea;flex-wrap:wrap}
+.ed-title{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--pine)}
+.ed-title svg{width:13px;height:13px}
+.ed-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.ed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ed-status.saved{color:var(--pine);font-weight:600}
+.ed-status.saved .dot{background:#4a8a5c}
+.ed-grid{display:grid;grid-template-columns:1fr 330px}
+.ed-main{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ed-ta{width:100%;min-height:200px;resize:vertical;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink)}
+.ed-ta:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.ed-preview-wrap{border:1px dashed var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper)}
+.ed-preview-head{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 12px;background:rgba(28,43,37,.04);border-bottom:1px dashed var(--line)}
+.ed-preview{padding:12px 14px;font-size:14.5px;min-height:56px;overflow-x:auto}
+.ed-preview .katex-display{margin:6px 0}
+.ed-ph{color:var(--muted);font-size:13px}
+.ed-manual{border-left:1px solid var(--line);padding:12px 14px;background:rgba(28,43,37,.03);max-height:460px;overflow:auto}
+.ed-note{font-size:12px;color:var(--muted);margin-bottom:10px}
+.ed-note code{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px}
+.ed-cmd-title{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);margin:12px 0 4px}
+.cmd-row{display:grid;grid-template-columns:minmax(0,1fr) auto 26px;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.cmd-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--ink);overflow-x:auto;white-space:nowrap;display:block}
+.cmd-help{display:block;font-size:10.5px;color:var(--muted);font-family:'Instrument Sans'}
+.cmd-view{font-size:13px;text-align:right;max-width:130px;overflow-x:auto;padding:2px 0}
+.cmd-add{width:26px;height:26px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);display:grid;place-items:center;font-weight:700;color:var(--pine);transition:all .15s;font-size:14px;flex:none}
+.cmd-add:hover{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+.ed-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px dashed var(--line-strong);flex-wrap:wrap}
+.ed-count{font-size:12px;color:var(--muted)}
+details.mini-check{border:1px dashed var(--line-strong);border-radius:8px;background:var(--terra-soft);margin-top:14px}
+details.mini-check summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;list-style:none}
+details.mini-check summary::-webkit-details-marker{display:none}
+details.mini-check summary:hover{color:var(--terra)}
+details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-top:8px;font-size:13.5px}
+
+/* ============================================================
+   REGISTRO Y BOLETA
+============================================================ */
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.del-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;transition:all .15s}
+.del-btn:hover{border-color:var(--terra);color:var(--terra)}
+.del-btn.confirm{background:var(--terra);border-color:var(--terra);color:#fff}
+.boleta-card{position:relative;max-width:700px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 rgba(28,43,37,.12);overflow:hidden}
+.b-head{display:flex;align-items:center;gap:16px;padding:22px 24px;border-bottom:1.5px solid var(--ink)}
+.b-head .avatar{width:52px;height:52px;font-size:17px;border:1.5px solid var(--ink)}
+.b-head>div{flex:1;min-width:0}
+.b-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--terra);margin-bottom:3px}
+.b-name{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;line-height:1.15}
+.b-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.b-seal{flex:none;width:76px;height:76px;border:2px solid var(--terra);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.85;line-height:1.25}
+.b-seal span{font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.b-seal strong{font-family:'Fraunces',serif;font-size:1.05rem}
+.b-body{padding:8px 24px 18px}
+.b-row{display:grid;grid-template-columns:1fr 150px 92px;gap:14px;align-items:center;border-top:1px solid var(--line);padding:13px 0}
+.b-row:first-child{border-top:none}
+.b-rubname{font-weight:600;font-size:14.5px}
+.b-rubdet{font-size:12px;color:var(--muted);margin-top:1px}
+.b-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper)}
+.b-bar>div{height:100%;background:var(--pine);transition:width .4s ease}
+.b-pts{text-align:right;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+.b-pts small{font-weight:400;color:var(--muted);font-size:.75em}
+.b-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#ecf1ea;padding:16px 24px}
+.b-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem}
+.b-total-det{font-size:11.5px;color:var(--muted);margin-top:2px}
+.b-score{display:flex;align-items:baseline;gap:6px}
+.b-score .big{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;color:var(--pine);line-height:1}
+.b-score .den{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--muted)}
+.b-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line-strong);padding:11px 24px;font-size:11.5px;color:var(--muted)}
+.boleta-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:700px}
+
+/* ============================================================
+   TOASTS / FOOTER
+============================================================ */
+#toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(28,43,37,.28);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
+.toast svg{flex:none;width:17px;height:17px}
+.toast.ok svg{color:#8fd0a5}
+.toast.err svg{color:#f0a284}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.foot-row strong{color:var(--ink)}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:34px}
+  .home-grid{grid-template-columns:1fr}
+  .theory{grid-template-columns:1fr}
+  .toc{position:static;flex-direction:row;overflow-x:auto;border-left:none;border-bottom:1.5px solid var(--ink);gap:2px}
+  .toc-title{display:none}
+  .toc a{white-space:nowrap;border-left:none;border-bottom:3px solid transparent}
+  .toc a:hover{border-bottom-color:var(--pine)}
+  .lab-grid,.task-panel{grid-template-columns:1fr}
+  .spec-row{grid-template-columns:1fr;gap:8px}
+  .spec-math{text-align:left}
+  .rub-row{grid-template-columns:1fr;gap:8px}
+  .rub-pct{text-align:left}
+  .meta-grid{max-width:none}
+  .ed-grid{grid-template-columns:1fr}
+  .ed-manual{border-left:none;border-top:1px solid var(--line);max-height:none}
+}
+@media (max-width:640px){
+  .b-row{grid-template-columns:1fr 86px}
+  .b-bar{display:none}
+  .b-seal{display:none}
+  .b-total{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <div class="brand">
+      <span class="brand-ico"><i data-lucide="sigma"></i></span>
+      <span>Estadística Inferencial<small>Aula interactiva — Dr. Adrián Cerda</small></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" id="mainNav">
+      <button class="nav-btn active" data-view="inicio"><i data-lucide="home"></i>Inicio</button>
+      <button class="nav-btn" data-view="teoria"><i data-lucide="book-open"></i>Teoría</button>
+      <button class="nav-btn" data-view="simulador"><i data-lucide="factory"></i>Simulador</button>
+      <button class="nav-btn" data-view="calculadora"><i data-lucide="calculator"></i>Calculadora</button>
+      <button class="nav-btn" data-view="actividades"><i data-lucide="clipboard-list"></i>Actividades</button>
+      <button class="nav-btn" data-view="boleta"><i data-lucide="badge-check"></i>Mi boleta</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== INICIO ==================== -->
+<section class="view" id="v-inicio">
+  <div class="wrap hero">
+    <div>
+      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Parte 2, tema 4 del programa</p>
+      <h1>Pruebas de hipótesis <em>especiales</em></h1>
+      <p class="lead">Las dos distribuciones que sostienen la inferencia avanzada —χ² y F de Snedecor—, las tablas de contingencia para datos categóricos, y el análisis de varianza: la herramienta que compara k medias a la vez sin inflar el error.</p>
+      <div class="hero-actions">
+        <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
+        <button class="btn ghost" data-view="simulador"><i data-lucide="factory"></i>Probar el simulador</button>
+      </div>
+      <dl class="meta-grid">
+        <div><dt>Unidad</dt><dd>Tema 4 — Pruebas especiales</dd></div>
+        <div><dt>Sesiones</dt><dd>4 · teórico-prácticas</dd></div>
+        <div><dt>Evaluación</dt><dd>Quiz + tareas + laboratorio</dd></div>
+        <div><dt>Requisitos</dt><dd>Pruebas de hipótesis (Parte 1)</dd></div>
+      </dl>
+    </div>
+    <figure class="hero-fig">
+      <canvas id="heroCanvas"></canvas>
+      <figcaption><strong>La idea del ANOVA.</strong> Tres grupos de observaciones: la variabilidad <em>entre</em> las medias de grupo (naranja) se compara con la variabilidad <em>dentro</em> de los grupos (dorado). Si la primera domina, las medias no son todas iguales.</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap home-grid">
+    <div>
+      <p class="overline" style="margin-bottom:14px">Ruta de la unidad</p>
+      <div class="route-item" data-view="teoria">
+        <span class="route-no">01</span>
+        <div><h3>Desarrollo de la teoría</h3><p>Las distribuciones χ² y F de Snedecor, el análisis de tablas de contingencia y el ANOVA de un factor, paso a paso.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="simulador">
+        <span class="route-no">02</span>
+        <div><h3>Laboratorio de simulación</h3><p>Ve nacer la χ² y la F desde las normales estándar, y observa al ANOVA decidir miles de veces entre «medias iguales» y «al menos una distinta».</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="actividades">
+        <span class="route-no">03</span>
+        <div><h3>Evaluación y tareas</h3><p>Ejercicios guiados, redacción de soluciones en LaTeX, quiz de autoevaluación y la tarea de problemas del Larsen &amp; Marx.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="boleta">
+        <span class="route-no">04</span>
+        <div><h3>Mi boleta</h3><p>Regístrate una sola vez y sigue tu nota: tu avance y tu calificación final, con descarga en imagen para compartir.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+    </div>
+    <aside>
+      <p class="overline" style="margin-bottom:14px">En un vistazo</p>
+      <div class="side-stats">
+        <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
+        <div class="stat"><div class="num">2</div><div class="lbl">Distribuciones nuevas (χ², F)</div></div>
+        <div class="stat"><div class="num">7</div><div class="lbl">Preguntas del quiz</div></div>
+        <div class="stat"><div class="num">16</div><div class="lbl">Ejercicios y problemas</div></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TEORÍA ==================== -->
+<section class="view" id="v-teoria" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Desarrollo de la teoría</p>
+      <h2>Distribuciones χ² y F, contingencia y ANOVA</h2>
+      <p class="sub">Parte 2 del tema de pruebas de hipótesis. Síntesis basada en Larsen, R. J. &amp; Marx, M. L., <em>An Introduction to Mathematical Statistics and Its Applications</em> (verifica secciones en tu edición). Cubre el programa: distribución χ² (4.1), tablas de contingencia (4.2), distribución F de Snedecor (4.3) y análisis de varianza (4.4).</p>
+    </div>
+
+    <div class="theory">
+      <aside class="toc">
+        <p class="toc-title">Contenido</p>
+        <a href="#t41"><span>4.1</span>Distribución ji-cuadrada</a>
+        <a href="#t42"><span>4.2</span>Tablas de contingencia</a>
+        <a href="#t43"><span>4.3</span>Distribución F de Snedecor</a>
+        <a href="#t44"><span>4.4</span>Análisis de varianza</a>
+      </aside>
+
+      <div class="prose">
+
+        <div class="def" style="border-left-color:var(--gold)">
+          <span class="def-tag" style="color:#8a6d10">Correspondencia con el programa</span>
+          <p><strong>4.1 Distribución de probabilidad ji-cuadrada</strong> → sección 4.1 · <strong>4.2 Análisis de tablas de contingencia</strong> → sección 4.2 · <strong>4.3 Distribución de probabilidad F de Snedecor</strong> → sección 4.3 · <strong>4.4 Análisis de varianza</strong> → sección 4.4. (La parte 1 del tema — formulación, pruebas una/dos muestras, valores p y tipos de error — corresponde a la unidad anterior).</p>
+        </div>
+
+        <!-- 4.1 -->
+        <article class="sec" id="t41">
+          <div class="sec-no">4.1</div>
+          <h3>La distribución de probabilidad ji-cuadrada</h3>
+          <div class="def">
+            <span class="def-tag">Definición</span>
+            <p>Si \( Z_1, Z_2, \dots, Z_\nu \) son variables aleatorias normales estándar <em>independientes</em>, entonces la suma de sus cuadrados</p>
+            <p style="display:flex;justify-content:center;padding:6px 0">\( \displaystyle Y = Z_1^2 + Z_2^2 + \cdots + Z_\nu^2 \)</p>
+            <p>sigue una distribución <strong>ji-cuadrada</strong> con \( \nu \) grados de libertad, escrita \( Y \sim \chi^2(\nu) \). Los grados de libertad cuentan <em>cuántas normales independientes se están elevando al cuadrado</em>.</p>
+          </div>
+          <p>Es una distribución <strong>continua, no negativa y asimétrica a la derecha</strong>, cuya forma depende por completo de \( \nu \): con grados de libertad pequeños está fuertemente concentrada cerca de cero con cola larga; al crecer \( \nu \) se vuelve más simétrica y en campanada. Sus propiedades centrales:</p>
+          <ul>
+            <li><strong>Esperanza y varianza:</strong> \( E(Y) = \nu \) y \( \mathrm{Var}(Y) = 2\nu \). La media de una χ² <em>es</em> su número de grados de libertad.</li>
+            <li><strong>Aditividad:</strong> si \( X \sim \chi^2(\nu_1) \) e \( Y \sim \chi^2(\nu_2) \) son independientes, entonces \( X+Y \sim \chi^2(\nu_1+\nu_2) \). Las sumas de cuadrados independientes se acumulan sumando grados de libertad.</li>
+            <li><strong>Solo la cola derecha importa:</strong> en las pruebas que la usan (varianza, bondad de ajuste, contingencia, ANOVA) el rechazo ocurre con valores <em>grandes</em> del estadístico.</li>
+          </ul>
+          <p>Su papel en la inferencia viene de la varianza muestral: si \( X_1,\dots,X_n \) es una muestra aleatoria de una población normal con varianza \( \sigma^2 \), entonces</p>
+          <div class="formula-hero">\( \displaystyle \frac{(n-1)\,S^2}{\sigma^2} \sim \chi^2(n-1), \)</div>
+          <p>resultado que ya empleamos para probar y estimar varianzas. Algunos cuantiles que conviene reconocer —\(P(\chi^2(\nu) &gt; \chi^2_{\alpha,\nu}) = \alpha\)—:</p>
+          <table class="tbl">
+            <thead><tr><th class="center">\( \nu \)</th><th class="center">2</th><th class="center">3</th><th class="center">5</th><th class="center">10</th><th class="center">15</th><th class="center">20</th></tr></thead>
+            <tbody><tr><td class="center">\( \chi^2_{0.05,\,\nu} \)</td><td class="center">5.99</td><td class="center">7.81</td><td class="center">11.07</td><td class="center">18.31</td><td class="center">25.00</td><td class="center">31.41</td></tr></tbody>
+          </table>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — propiedades en acción</span>
+            <p>Sea \( X \sim \chi^2(12) \). Entonces \( E(X)=12 \), \( \mathrm{Var}(X)=24 \) y \( \sigma_X = \sqrt{24} \approx 4.90 \). El valor que deja el 5% a la derecha es \( \chi^2_{0.05,\,12} = 21.03 \): solo el 5% de las sumas de 12 cuadrados normales independientes lo supera. Verifica estas probabilidades en la <a href="#" data-view="calculadora">calculadora de la unidad</a>, que calcula la CDF y los cuantiles de forma numérica, sin tablas.</p>
+          </div>
+        </article>
+
+        <!-- 4.2 -->
+        <article class="sec" id="t42">
+          <div class="sec-no">4.2</div>
+          <h3>Análisis de tablas de contingencia</h3>
+          <p>Cuando cada elemento clasifica según <strong>dos criterios categóricos</strong> —\( r \) filas y \( c \) columnas— los datos forman una tabla de contingencia \( r \times c \). La pregunta estadística es si los criterios están <strong>asociados</strong> o actúan de forma independiente. Bajo la hipótesis de no asociación, la frecuencia esperada de la celda \( (i,j) \) se estima con los totales marginales:</p>
+          <div class="formula-hero">\( \displaystyle E_{ij} = \frac{(\text{total fila } i)\times(\text{total columna } j)}{N}, \qquad \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}, \quad \text{gl} = (r-1)(c-1). \)</div>
+          <p>Los grados de libertad cuentan las celdas <em>libres</em> una vez respetados los totales marginales — de ahí que una tabla 2×2 tenga un solo grado de libertad. La validez del estadístico exige frecuencias esperadas no demasiado pequeñas: regla práctica \( E_{ij} \ge 5 \) en todas las celdas. Dos diseños distintos comparten el mismo cálculo:</p>
+          <ul>
+            <li><strong>Independencia:</strong> una sola muestra aleatoria clasificada por dos variables. Pregunta: ¿están asociadas?</li>
+            <li><strong>Homogeneidad:</strong> varias muestras predefinidas (poblaciones o tratamientos) comparadas en una misma variable categórica. Pregunta: ¿comparten la misma distribución?</li>
+          </ul>
+          <p><strong>¿Qué tan fuerte es la asociación?</strong> Con \( N \) grande, casi cualquier desviación pequeña resulta «significativa». El <strong>coeficiente V de Cramér</strong> corrige la escala y mide la fuerza del vínculo:</p>
+          <div class="formula-hero">\( \displaystyle V = \sqrt{\frac{\chi^2}{N\cdot\min(r-1,\ c-1)}}, \qquad 0 \le V \le 1. \)</div>
+          <p>Valores de \( V \) cercanos a 0 indican asociación despreciable; por encima de 0.3, una asociación que ya es relevante para la toma de decisiones. La bondad de ajuste estudiada antes es el caso particular de una sola variable: las «columnas» son las categorías del modelo teórico.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — medio de pago y edad (marketing)</span>
+            <p>Se clasifican 320 clientes por segmento de edad y medio de pago. Totales por fila: 100 (18–34), 120 (35–54), 100 (55+); por columna: 150 efectivo, 170 digital. Esperados, por ejemplo 18–34/efectivo: \( 100\times 150/320 = 46.875 \). El estadístico completa:</p>
+            <p>\( \chi^2 = \tfrac{(30-46.875)^2}{46.875} + \tfrac{(70-53.125)^2}{53.125} + \tfrac{(55-56.25)^2}{56.25} + \tfrac{(65-63.75)^2}{63.75} + \tfrac{(65-46.875)^2}{46.875} + \tfrac{(35-53.125)^2}{53.125} \approx 24.68. \)</p>
+            <p>Con \( \text{gl} = (3-1)(2-1) = 2 \), \( \chi^2_{0.05,2} = 5.99 \) y valor \( \text{P} \approx 1.4\times 10^{-6} \): rechazo contundente — edad y medio de pago están asociados. La fuerza: \( V = \sqrt{24.68/320} \approx 0.28 \), asociación moderada. Los segmentos jóvenes y mayores se alejan más de lo esperado, en direcciones opuestas: digitalización creciente en unos, resistida en otros.</p>
+          </div>
+        </article>
+
+        <!-- 4.3 -->
+        <article class="sec" id="t43">
+          <div class="sec-no">4.3</div>
+          <h3>La distribución de probabilidad F de Snedecor</h3>
+          <div class="def">
+            <span class="def-tag">Definición</span>
+            <p>Si \( U \sim \chi^2(\nu_1) \) y \( V \sim \chi^2(\nu_2) \) son independientes, entonces el cociente de las dos chi-cuadradas, cada una dividida entre sus grados de libertad,</p>
+            <p style="display:flex;justify-content:center;padding:6px 0">\( \displaystyle F = \frac{U/\nu_1}{V/\nu_2} \)</p>
+            <p>sigue una distribución <strong>F de Snedecor</strong> con \( \nu_1 \) grados de libertad del <em>numerador</em> y \( \nu_2 \) del <em>denominador</em>, escrita \( F(\nu_1, \nu_2) \).</p>
+          </div>
+          <p>La F es continua, no negativa y asimétrica a la derecha; sus dos parámetros se deben citar <em>en orden</em>: \( F(5,20) \ne F(20,5) \). Propiedades esenciales:</p>
+          <ul>
+            <li><strong>Esperanza:</strong> \( E(F) = \dfrac{\nu_2}{\nu_2 - 2} \) para \( \nu_2 &gt; 2 \) — ligeramente mayor que 1: bajo igualdad de varianzas, el cociente ronda 1 con cola derecha.</li>
+            <li><strong>Reciprocidad:</strong> \( F_{1-\alpha}(\nu_1,\nu_2) = \dfrac{1}{F_{\alpha}(\nu_2,\nu_1)} \). Si tu estadístico cae en la cola <em>izquierda</em>, invierte el cociente y compara en la cola derecha.</li>
+            <li><strong>Relación con la t:</strong> \( T^2 \sim F(1, \nu) \). Una prueba bilateral con t es exactamente la misma que una F con un grado de libertad en el numerador: dos caras de la misma moneda.</li>
+          </ul>
+          <p>Sus dos grandes usos: (i) <strong>comparar dos varianzas</strong> —\( F = s_1^2/s_2^2 \) con \( \nu_i = n_i - 1 \), la prueba de consistencia entre procesos— y (ii) <strong>sostener el ANOVA</strong>, donde el cociente entre variabilidad explicada y residual decide si las medias de k grupos difieren (sección 4.4).</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — dos máquinas de empaque (operaciones)</span>
+            <p>La máquina 1 produce \( s_1 = 6 \) g con \( n_1 = 13 \) paquetes; la máquina 2, \( s_2 = 4 \) g con \( n_2 = 17 \). ¿Difieren las varianzas, al 5%? Prueba bilateral: \( F = 36/16 = 2.25 \) con \( \nu_1 = 12, \nu_2 = 16 \). El crítico es \( F_{0.025}(12,16) \approx 2.9 \); como \( 2.25 \) no lo supera, no se rechaza la igualdad de varianzas (valor \( \text{P} &gt; 0.05 \); la <a href="#" data-view="calculadora">calculadora</a> lo calcula exacto). Conclusión práctica: puede justificarse la t agrupada que asume varianzas iguales.</p>
+          </div>
+        </article>
+
+        <!-- 4.4 -->
+        <article class="sec" id="t44">
+          <div class="sec-no">4.4</div>
+          <h3>Análisis de varianza (ANOVA) de un factor</h3>
+          <p><strong>El problema.</strong> Comparar dos medias se hacía con t; pero comparar <em>k</em> medias con pruebas t dos a dos infla el error: con \( k = 5 \) hay 10 comparaciones y el error global se dispara. El ANOVA resuelve esto con <strong>una sola prueba</strong> de hipótesis:</p>
+          <div class="formula-hero">\( H_0\!: \mu_1 = \mu_2 = \cdots = \mu_k \qquad \text{vs.} \qquad H_1\!: \text{al menos una media difiere}. \)</div>
+          <p><strong>La idea.</strong> Toda la variabilidad de los datos se descompone en dos fuentes: la <em>entre</em> grupos —cuánto se alejan las medias muestrales entre sí— y la <em>dentro</em> de los grupos —el ruido natural del proceso—. Si las medias poblacionales fueran iguales, ambas fuentes estimarían la misma \( \sigma^2 \) y su cociente rondaría 1. Si algún tratamiento funciona, la variabilidad entre grupos se infla y el cociente crece:</p>
+          <div class="formula-hero">\( \displaystyle \text{SCT} = \text{SCTR} + \text{SCE} \)</div>
+          <table class="tbl">
+            <thead><tr><th>Fuente</th><th>Suma de cuadrados</th><th class="center">gl</th><th>Cuadrado medio</th><th>Estadístico</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Entre tratamientos</strong></td><td>\( \text{SCTR} = \sum_i n_i(\bar x_i - \bar x)^2 \)</td><td class="center">\( k-1 \)</td><td>\( \text{MSTR} = \text{SCTR}/(k-1) \)</td><td rowspan="2">\( F = \dfrac{\text{MSTR}}{\text{MSE}} \sim F(k-1,\ N-k) \) bajo \(H_0\)</td></tr>
+              <tr><td><strong>Error (dentro)</strong></td><td>\( \text{SCE} = \sum_i\sum_j (x_{ij} - \bar x_i)^2 \)</td><td class="center">\( N-k \)</td><td>\( \text{MSE} = \text{SCE}/(N-k) \)</td></tr>
+              <tr><td><strong>Total</strong></td><td>\( \text{SCT} = \sum_i\sum_j (x_{ij} - \bar x)^2 \)</td><td class="center">\( N-1 \)</td><td colspan="2" style="color:var(--muted)">con \( N = \sum n_i \) observaciones y \( k \) grupos</td></tr>
+            </tbody>
+          </table>
+          <p>Se rechaza \(H_0\) con valores <em>grandes</em> de \( F \): comparar contra \( F_{\alpha}(k-1,\ N-k) \) o usar el valor P. Los <strong>supuestos</strong> son tres: muestras independientes, poblaciones aproximadamente normales y varianzas iguales (homocedasticidad). Un rechazo dice «al menos una media difiere», pero <em>no cuál</em>: para ubicar las diferencias se aplican métodos posteriores (Tukey, Bonferroni) que se estudian con el ANOVA en el curso.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo completo — tres capacitaciones (administración)</span>
+            <p>Se asignan al azar 15 empleados a tres métodos de capacitación y se mide su desempeño (0–100):</p>
+            <table class="tbl">
+              <thead><tr><th>Método</th><th>Datos</th><th class="center">\(n_i\)</th><th class="center">\(\bar x_i\)</th></tr></thead>
+              <tbody>
+                <tr><td>A (presencial)</td><td class="mono">63, 65, 67, 64, 66</td><td class="center">5</td><td class="center">65</td></tr>
+                <tr><td>B (taller práctico)</td><td class="mono">68, 70, 72, 69, 71</td><td class="center">5</td><td class="center">70</td></tr>
+                <tr><td>C (en línea)</td><td class="mono">58, 60, 62, 59, 61</td><td class="center">5</td><td class="center">60</td></tr>
+              </tbody>
+            </table>
+            <p>Gran media: \( \bar x = (325+350+300)/15 = 65 \). Entre tratamientos: \( \text{SCTR} = 5[(65-65)^2 + (70-65)^2 + (60-65)^2] = 5(50) = 250 \). Dentro: cada grupo tiene desviaciones \((-2,0,2,-1,1)\) con suma de cuadrados 10, de modo que \( \text{SCE} = 30 \) y \( \text{SCT} = 280 \). La tabla ANOVA:</p>
+            <table class="tbl">
+              <thead><tr><th>Fuente</th><th class="center">SC</th><th class="center">gl</th><th class="center">CM</th><th class="center">F</th></tr></thead>
+              <tbody>
+                <tr><td>Entre tratamientos</td><td class="center">250</td><td class="center">2</td><td class="center">125</td><td class="center"><strong>50</strong></td></tr>
+                <tr><td>Error</td><td class="center">30</td><td class="center">12</td><td class="center">2.5</td><td class="center"></td></tr>
+                <tr><td>Total</td><td class="center">280</td><td class="center">14</td><td colspan="2" class="center" style="color:var(--muted)">\( F_{0.05}(2,12) = 3.89 \)</td></tr>
+              </tbody>
+            </table>
+            <p>Como \( F = 125/2.5 = 50 \gg 3.89 \) (valor \( \text{P} \approx 10^{-6} \)), se rechaza \(H_0\): los métodos <em>no</em> producen desempeño medio igual. La lectura de negocio: el taller práctico (70) supera al presencial (65) y este a la modalidad en línea (60). Los datos son deliberadamente limpios para practicar el cálculo a mano; con datos reales usa la <a href="#" data-view="calculadora">calculadora ANOVA</a>, que admite los valores crudos y entrega la tabla completa.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SIMULADOR ==================== -->
+<section class="view" id="v-simulador" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de simulación · Actividad práctica</p>
+      <h2>De la definición a la decisión: χ², F y ANOVA en vivo</h2>
+      <p class="sub">Dos experimentos: <strong>① la fábrica de χ² y F</strong> —cada generación construye la distribución desde su definición, sumando cuadrados de normales o dividiendo dos χ²— y <strong>② el ANOVA en vivo</strong> —miles de experimentos con tres grupos, para ver cuándo el estadístico F rechaza y cuándo calla.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="factory"></i>Controles del experimento</div>
+        <div class="panel-body">
+          <div class="mode-row">
+            <button class="btn sm" id="mFactory"><i data-lucide="shapes"></i>Fábrica de χ² y F</button>
+            <button class="btn sm ghost" id="mAnova"><i data-lucide="columns-3"></i>ANOVA en vivo</button>
+          </div>
+
+          <!-- Modo A: fábrica -->
+          <div id="factoryBlock">
+            <div class="field" style="margin-bottom:14px">
+              <label for="simDist">Distribución a construir</label>
+              <select id="simDist">
+                <optgroup label="Ji-cuadrada — suma de ν cuadrados normales">
+                  <option value="chi2-1">χ²(1) — un solo Z²</option>
+                  <option value="chi2-2">χ²(2)</option>
+                  <option value="chi2-3">χ²(3)</option>
+                  <option value="chi2-5" selected>χ²(5)</option>
+                  <option value="chi2-10">χ²(10)</option>
+                  <option value="chi2-20">χ²(20)</option>
+                </optgroup>
+                <optgroup label="F de Snedecor — razón de dos χ²">
+                  <option value="F-2-12">F(2, 12)</option>
+                  <option value="F-3-10">F(3, 10)</option>
+                  <option value="F-5-20">F(5, 20)</option>
+                  <option value="F-10-10">F(10, 10)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnF1"><i data-lucide="play"></i>+1 valor</button>
+              <button class="btn ghost" id="btnF200"><i data-lucide="plus"></i>200</button>
+              <button class="btn ghost" id="btnF1000"><i data-lucide="plus"></i>1,000</button>
+              <button class="btn ghost" id="btnFReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="fN">0</div><div class="lbl">Valores generados</div></div>
+              <div class="stat"><div class="num mono" id="fMean">—</div><div class="lbl">Media empírica</div></div>
+              <div class="stat"><div class="num mono" id="fMeanT">—</div><div class="lbl">Media teórica</div></div>
+              <div class="stat"><div class="num mono" id="fSD">—</div><div class="lbl">Desv. empírica</div></div>
+            </div>
+            <p class="note" id="fTheo">—</p>
+            <p class="note">Conforme acumulas generaciones, el histograma debe calzar con la curva teórica: <em>la distribución existe porque el procedimiento la produce</em>. Cambia los grados de libertad y observa cómo χ² se centra en su media \( \nu \) — mientras que F se queda cerca de 1 con cola derecha.</p>
+          </div>
+
+          <!-- Modo B: ANOVA -->
+          <div id="anovaBlock" hidden>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simAN">Observaciones por grupo</label>
+                <select id="simAN">
+                  <option value="5">n = 5</option>
+                  <option value="10" selected>n = 10</option>
+                  <option value="20">n = 20</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simADelta">Efecto real del grupo C</label>
+                <select id="simADelta">
+                  <option value="0" selected>Ninguno (H₀ verdadera)</option>
+                  <option value="0.5">0.5 σ (+1 punto)</option>
+                  <option value="1">1 σ (+2 puntos)</option>
+                  <option value="1.5">1.5 σ (+3 puntos)</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnA1"><i data-lucide="play"></i>+1 experimento</button>
+              <button class="btn ghost" id="btnA50"><i data-lucide="plus"></i>50</button>
+              <button class="btn ghost" id="btnA200"><i data-lucide="plus"></i>200</button>
+              <button class="btn ghost" id="btnAReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="aExp">0</div><div class="lbl">Experimentos</div></div>
+              <div class="stat"><div class="num mono" id="aRej">0</div><div class="lbl">Rechazos de H₀</div></div>
+              <div class="stat"><div class="num mono" id="aPct">—</div><div class="lbl">% de rechazo</div></div>
+              <div class="stat"><div class="num mono" id="aLast" style="font-size:1.05rem">—</div><div class="lbl">Último F (valor P)</div></div>
+            </div>
+            <p class="note" id="aCrit">Crítico F(0.05): —</p>
+            <p class="note">Cada experimento toma <strong>tres muestras nuevas</strong> (grupos A y B en \( \mu = 10 \), grupo C en \( \mu = 10 + \delta \), con \( \sigma = 2 \)) y corre el ANOVA. Con «ninguno», \(H_0\) es verdadera y el % de rechazo debe acercarse a \( \alpha = 5\% \): las <strong>falsas alarmas</strong>. Aumenta el efecto y el mismo porcentaje se vuelve la <strong>potencia</strong>; más observaciones por grupo la suben.</p>
+          </div>
+
+          <p class="note">Cada generación se acumula a tu boleta: llevas <strong class="mono" id="simEver">0</strong> (1,000 o más alcanzan el 100% del rubro de laboratorio, que vale <strong>15%</strong>).</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head" id="simHead"><i data-lucide="shapes"></i>Histograma vs. densidad teórica</div>
+        <canvas id="simCanvas"></canvas>
+        <div class="graph-cap" id="capFactory">Barras: frecuencias de los valores generados. Curva: densidad teórica (χ² con ν gl, o F con ν₁, ν₂ gl). La escala vertical adapta la curva al conteo total.</div>
+        <div class="graph-cap" id="capAnova" hidden>Barras: estadísticos F de cada experimento. Curva: modelo teórico F(2, N−3) bajo H₀. Línea punteada: valor crítico al 5%. Toda barra a su derecha es un rechazo de H₀.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CALCULADORA ==================== -->
+<section class="view" id="v-calculadora" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de cálculo</p>
+      <h2>Calculadora χ², F y ANOVA</h2>
+      <p class="sub">Probabilidades y cuantiles de las distribuciones ji-cuadrada y F de Snedecor (sin tablas), las pruebas χ² para datos categóricos, la comparación de varianzas y el ANOVA de un factor con datos crudos.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="sliders-horizontal"></i>Parámetros</div>
+        <div class="panel-body">
+          <div style="display:grid;gap:14px;margin-bottom:16px">
+            <div class="field">
+              <label for="calcDist">Cálculo</label>
+              <select id="calcDist">
+                <optgroup label="Distribuciones: probabilidades y cuantiles">
+                  <option value="chi2cdf" selected>χ² — probabilidad acumulada</option>
+                  <option value="chi2q">χ² — cuantil (valor crítico)</option>
+                  <option value="fcdf">F — probabilidad acumulada</option>
+                  <option value="fq">F — cuantil (valor crítico)</option>
+                </optgroup>
+                <optgroup label="Pruebas">
+                  <option value="var2">Varianzas — razón F (dos muestras)</option>
+                  <option value="gof">Bondad de ajuste (χ²)</option>
+                  <option value="indep">Independencia / homogeneidad (χ²)</option>
+                  <option value="anova">ANOVA de un factor (datos crudos)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label for="calcLevel">Nivel de significancia α (para las pruebas)</label>
+              <select id="calcLevel">
+                <option value="0.01">1%</option>
+                <option value="0.05" selected>5%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+          </div>
+          <div id="calcParams" style="display:grid;gap:14px;margin-bottom:18px"></div>
+          <button class="btn" id="btnCalc" style="width:100%;justify-content:center"><i data-lucide="equal"></i>Calcular</button>
+          <p class="note" id="calcNote">Las CDF y cuantiles de χ² y F se calculan numéricamente (gamma incompleta regularizada y integración de Simpson), con precisión de tabla estadística. En los modos de datos, las listas van separadas por comas y los grupos por «;».</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head"><i data-lucide="chart-line"></i>Resultado</div>
+        <canvas id="calcCanvas"></canvas>
+        <div class="panel-body" id="calcResults">
+          <div class="calc-empty">
+            <i data-lucide="calculator"></i>
+            <p>Elige un cálculo, carga los datos y presiona <strong>Calcular</strong>.<br>Aquí aparecerán los resultados y su gráfica.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACTIVIDADES ==================== -->
+<section class="view" id="v-actividades" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Zona de evaluación</p>
+      <h2>Actividades de la unidad</h2>
+      <p class="sub">Instrumentos alineados a las secciones de teoría. Todo tu avance se guarda automáticamente en este dispositivo y se refleja en tu <a href="#" data-view="boleta">boleta de resultados</a>.</p>
+    </div>
+
+    <!-- Rúbrica -->
+    <div class="act-block">
+      <h3>Rúbrica de evaluación</h3>
+      <p class="act-desc">Ponderación de cada instrumento sobre la calificación de la unidad (nota final sobre 10).</p>
+      <div class="rub-row"><span class="rub-name">Participación en el simulador (fábrica de distribuciones y ANOVA)</span><div class="rub-bar"><div style="width:15%"></div></div><span class="rub-pct">15%</span></div>
+      <div class="rub-row"><span class="rub-name">Ejercicios guiados (solución detallada)</span><div class="rub-bar"><div style="width:25%"></div></div><span class="rub-pct">25%</span></div>
+      <div class="rub-row"><span class="rub-name">Quiz de autoevaluación</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <div class="rub-row"><span class="rub-name">Tarea: problemas del Larsen &amp; Marx</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <p class="note">El registro es automático en <a href="#" data-view="boleta">Mi boleta</a>: el simulador por ejecuciones acumuladas, el quiz por tu mejor intento, y los ejercicios y la tarea por las casillas que marques al resolverlos.</p>
+    </div>
+
+    <!-- Ejercicios guiados -->
+    <div class="act-block" id="ejBlock">
+      <h3>Ejercicios guiados con solución</h3>
+      <p class="act-desc">Intenta resolverlos por escrito antes de desplegar la solución. En clase se revisará el procedimiento, no solo el resultado. Al terminar cada uno, márcalo como resuelto para que sume en tu boleta.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · χ² en control de calidad — latencia del servidor (administración)</span>La especificación de un servidor exige una latencia con desviación estándar de \( \sigma = 0.3 \) s. Una auditoría de \( n = 25 \) mediciones (población ≈ normal) reporta \( s = 0.42 \) s. Con \( \alpha = 0.05 \), ¿hay evidencia de variabilidad excesiva?</span></summary>
+        <div class="sol-body">
+          <p>Hipótesis: \( H_0\!: \sigma^2 = 0.09 \) vs. \( H_1\!: \sigma^2 &gt; 0.09 \). Estadístico con \( \nu = n-1 = 24 \):</p>
+          <p>\( \chi^2 = \dfrac{(n-1)s^2}{\sigma_0^2} = \dfrac{24 \times 0.1764}{0.09} = \dfrac{4.2336}{0.09} = 47.04. \)</p>
+          <p>Valor crítico: \( \chi^2_{0.05,\,24} = 36.42 \). Como \( 47.04 &gt; 36.42 \) (valor \( \text{P} \approx 0.003 \)), se rechaza \(H_0\): la latencia es hoy <em>más variable</em> que la especificación. La media del proceso puede estar perfecta y aun así fallar aquí: la varianza es un parámetro distinto que exige su propia prueba.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e1"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 2 · independencia en tabla 2×2 — canal de contacto (marketing)</span>De 200 clientes contactados por correo compraron 48; de 180 contactados en tienda compraron 81. Con \( \alpha = 0.05 \), ¿está asociada la decisión de compra con el canal de contacto?</span></summary>
+        <div class="sol-body">
+          <p>Totales: compraron 129, no compraron 251, \( N = 380 \). Esperados: correo-sí \( = 200\times 129/380 = 67.89 \); correo-no \( = 132.11 \); tienda-sí \( = 61.11 \); tienda-no \( = 118.89 \). Todos \( \ge 5 \). ✓</p>
+          <p>En una 2×2 las cuatro diferencias absolutas coinciden (\( |O-E| = 19.89 \)), y el estadístico se simplifica:</p>
+          <p>\( \chi^2 = 19.89^2\left(\tfrac{1}{67.89}+\tfrac{1}{132.11}+\tfrac{1}{61.11}+\tfrac{1}{118.89}\right) = 395.6 \times 0.04707 = 18.62. \)</p>
+          <p>Con \( \text{gl} = (2-1)(2-1) = 1 \): \( \chi^2_{0.05,1} = 3.84 \) y valor \( \text{P} \approx 1.6\times 10^{-5} \). Se rechaza la independencia: el canal y la compra están fuertemente asociados. Las tasas lo confirman: tienda 45% vs. correo 24%. \( V = \sqrt{18.62/380} = 0.22 \): asociación moderada en tamaño, muy consistente en dirección.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e2"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 3 · F de Snedecor — dos procesos de llenado (operaciones)</span>El proceso 1 llena con \( s_1 = 8.2 \) ml en \( n_1 = 10 \) envases; el proceso 2, con \( s_2 = 3.5 \) ml en \( n_2 = 12 \). Con \( \alpha = 0.05 \), ¿hay evidencia de que el proceso 1 es <em>menos consistente</em> (mayor varianza) que el proceso 2?</span></summary>
+        <div class="sol-body">
+          <p>Hipótesis: \( H_0\!: \sigma_1^2 = \sigma_2^2 \) vs. \( H_1\!: \sigma_1^2 &gt; \sigma_2^2 \) (unilateral derecha). Estadístico con \( \nu_1 = 9, \nu_2 = 11 \):</p>
+          <p>\( F = \dfrac{s_1^2}{s_2^2} = \dfrac{67.24}{12.25} = 5.49. \)</p>
+          <p>Valor crítico: \( F_{0.05}(9,11) \approx 2.90 \). Como \( 5.49 &gt; 2.90 \), se rechaza \(H_0\). De hecho \( 5.49 \) supera también a \( F_{0.01}(9,11) \approx 4.6 \), de modo que el valor \( \text{P} &lt; 0.01 \) (la <a href="#" data-view="calculadora">calculadora</a> da el valor exacto). El proceso 1 requiere calibración: su inconsistencia, no su media, es el problema.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e3"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 4 · completa la tabla ANOVA — cuatro regiones de venta (administración)</span>Un ANOVA de un factor compara las ventas medias de \( k = 4 \) regiones con \( N = 24 \) sucursales. Se sabe que \( \text{SCTR} = 96 \) y que el estadístico resultó \( F = 8 \), con decisión de rechazo al \( \alpha = 0.05 \). Completa la tabla ANOVA y verifica la decisión.</span></summary>
+        <div class="sol-body">
+          <p>Grados de libertad: \( k-1 = 3 \) y \( N-k = 20 \). Cuadrado medio entre: \( \text{MSTR} = 96/3 = 32 \).</p>
+          <p>De \( F = \text{MSTR}/\text{MSE} = 8 \) se despeja \( \text{MSE} = 32/8 = 4 \), y de ahí \( \text{SCE} = 4 \times 20 = 80 \). Total: \( \text{SCT} = 96 + 80 = 176 \) con \( 23 \) gl.</p>
+          <table class="tbl">
+            <thead><tr><th>Fuente</th><th class="center">SC</th><th class="center">gl</th><th class="center">CM</th><th class="center">F</th></tr></thead>
+            <tbody>
+              <tr><td>Entre regiones</td><td class="center">96</td><td class="center">3</td><td class="center">32</td><td class="center"><strong>8</strong></td></tr>
+              <tr><td>Error</td><td class="center">80</td><td class="center">20</td><td class="center">4</td><td class="center"></td></tr>
+              <tr><td>Total</td><td class="center">176</td><td class="center">23</td><td colspan="2" class="center" style="color:var(--muted)">\( F_{0.05}(3,20) = 3.10 \)</td></tr>
+            </tbody>
+          </table>
+          <p>Decisión: \( 8 &gt; 3.10 \) (valor \( \text{P} &lt; 0.01 \)) ⇒ se rechaza \(H_0\): no todas las regiones venden, en promedio, lo mismo. El ejercicio muestra la lógica interna de la tabla: conocidos dos de los elementos, los demás se deducen por las relaciones \( \text{CM} = \text{SC}/\text{gl} \) y \( F = \text{MSTR}/\text{MSE} \).</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e4"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+    </div>
+
+    <!-- Refuerzo con redacción -->
+    <div class="act-block" id="redBlock">
+      <h3>Refuerzo: redacta tu solución</h3>
+      <p class="act-desc">Cuatro problemas adicionales —uno por tema— <strong>sin solución visible</strong>: tú escribes el procedimiento completo en el editor con fórmulas en LaTeX y vista previa instantánea. Tu texto se guarda automáticamente en este navegador. Estas redacciones <em>no alteran tu nota automática</em>, pero forman parte de tu trabajo y se revisarán en clase.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 5 · Refuerzo — aditividad y propiedades χ²</span>Sean \( X \sim \chi^2(8) \) e \( Y \sim \chi^2(7) \) independientes. (a) Justifica, a partir de la definición de la χ² como suma de cuadrados de normales estándar, cuál es la distribución de \( X + Y \). (b) Calcula \( E(X+Y) \), \( \mathrm{Var}(X+Y) \) y su desviación estándar. (c) Usando la tabla de cuantiles, calcula \( P(X+Y &gt; 25) \).</span></summary>
+        <div class="sol-body">
+          <p>En (a) desarrolla la suma explícita: \( X = Z_1^2+\cdots+Z_8^2 \), \( Y = Z_9^2+\cdots+Z_{15}^2 \) con 15 normales independientes. En (b) usa linealidad de la esperanza e independencia para la varianza. En (c) identifica el cuantil apropiado de la tabla.</p>
+          <div class="ed-box" data-ed="e5"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( X+Y \sim \chi^2(15) \): quince cuadrados de normales independientes. &nbsp; (b) \( E = 15 \), \( \mathrm{Var} = 30 \), \( \sigma = \sqrt{30} \approx 5.48 \).</p>
+              <p>(c) Como \( \chi^2_{0.05,\,15} = 25.00 \), entonces \( P(X+Y &gt; 25) = 0.05 \) exactamente.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 6 · Refuerzo — homogeneidad entre tiendas (marketing)</span>Se pregunta a clientes de tres tiendas por su producto preferido. Tienda A (n=80): 40 prefieren el producto 1 y 40 el 2; tienda B (n=90): 54 y 36; tienda C (n=80): 48 y 32. Con \( \alpha = 0.05 \), ¿las tres tiendas tienen la misma distribución de preferencias? Construye la tabla de esperados, el χ² y concluye.</span></summary>
+        <div class="sol-body">
+          <p>Este es un problema de <strong>homogeneidad</strong>: tres poblaciones predefinidas y una variable categórica. Totales por columna: producto 1 → 142; producto 2 → 138; \( N = 250 \). Esperados, por ejemplo A/1: \( 80 \times 142/250 = 45.44 \). Grados de libertad \( (3-1)(2-1) = 2 \).</p>
+          <div class="ed-box" data-ed="e6"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>\( \chi^2 = 0.651 + 0.856 + 0.162 + 0.213 + 0.144 + 0.190 = 2.22 \), con \( \text{gl} = 2 \).</p>
+              <p>Valor \( \text{P} = e^{-2.22/2} \approx 0.33 \) (en χ² de 2 gl la cola exacta es \( e^{-x/2} \)): muy por encima de 0.05 ⇒ <strong>no se rechaza</strong> la homogeneidad. La mezcla de preferencias es consistente entre tiendas.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — la relación entre t y F</span>La estadística afirma que si \( T \sim t(\nu) \), entonces \( T^2 \sim F(1,\nu) \). (a) Verifícalo numéricamente con \( \nu = 10 \): compara \( t_{0.025,\,10}^2 \) con \( F_{0.05}(1,10) \) y explica por qué coinciden. (b) Explica por qué la prueba t bilateral para \( \mu_1 = \mu_2 \) y el ANOVA con \( k = 2 \) grupos son equivalentes. (c) ¿Qué prueba usarías para comparar tres canales de venta y por qué no tres pruebas t por pares?</span></summary>
+        <div class="sol-body">
+          <p>En (a) usa los valores \( t_{0.025,10} = 2.228 \) y \( F_{0.05}(1,10) \approx 4.96 \). En (b) argumenta con los grados de libertad: \( k-1 = 1 \) en el numerador. En (c) calcula el error de las tres comparaciones simultáneas al 5%.</p>
+          <div class="ed-box" data-ed="e7"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( 2.228^2 = 4.964 \approx F_{0.05}(1,10) = 4.96 \): el cuadrado del crítico t bilateral es el crítico F de cola derecha. &nbsp; (b) Con \( k=2 \): \( \text{MSTR} = \) variación entre dos medias \( = \) la misma evidencia del numerador de t; ambos estadísticos son funciones monótonas del mismo dato.</p>
+              <p>(c) ANOVA: tres pruebas t al 5% acumulan un error global cercano a \( 1-(0.95)^3 \approx 14.3\% \) si las pruebas fueran independientes; el ANOVA mantiene el 5% con una sola decisión.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 8 · Refuerzo — ANOVA: efecto del tamaño de muestra</span>En un experimento con \( k = 3 \) grupos y \( \sigma = 2 \): (a) si el efecto real entre medias es de \( \delta = 1 \) punto, argumenta qué le ocurre a la potencia al pasar de \( n = 5 \) a \( n = 20 \) observaciones por grupo; (b) si con \( n = 10 \) un experimento arrojó \( F = 2.1 \) con \( F_{0.05}(2,27) = 3.35 \), decide y explica qué NO se concluye; (c) si el ANOVA rechaza con los tres métodos de capacitación, ¿qué paso sigue en el análisis?</span></summary>
+        <div class="sol-body">
+          <p>Conecta (a) con el simulador «ANOVA en vivo»: más observaciones reducen el ruido del denominador (MSE) y separan las distribuciones bajo \(H_0\) y \(H_1\). En (b) recuerda la asimetría de la conclusión: no rechazar no prueba la igualdad. En (c) piensa en comparaciones múltiples.</p>
+          <div class="ed-box" data-ed="e8"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) La potencia aumenta: con \( n = 20 \) el error estándar de cada media baja a la mitad y el F esperado bajo \(H_1\) crece con \( n \) (el numerador escala con \( n \), el denominador no).</p>
+              <p>(b) \( 2.1 &lt; 3.35 \): no se rechaza \(H_0\). No se concluye que las medias sean iguales — solo que la evidencia no alcanza al 5% con ese tamaño de muestra.</p>
+              <p>(c) Comparaciones múltiples (Tukey o Bonferroni) para identificar qué pares de métodos difieren, con el error global controlado.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+    </div>
+
+    <!-- Quiz -->
+    <div class="act-block">
+      <h3>Quiz de autoevaluación</h3>
+      <p class="act-desc">Siete preguntas de opción múltiple. Al calificar recibirás la retroalimentación de cada respuesta; tu <strong>mejor intento</strong> se registra en tu boleta.</p>
+      <div id="quizList"></div>
+      <div class="quiz-foot">
+        <button class="btn" id="btnGrade"><i data-lucide="check-check"></i>Calificar quiz</button>
+        <button class="btn ghost" id="btnQuizReset"><i data-lucide="rotate-ccw"></i>Reintentar</button>
+        <div class="quiz-result" id="quizResult"></div>
+      </div>
+    </div>
+
+    <!-- Tarea -->
+    <div class="act-block" style="margin-bottom:0">
+      <h3>Tarea de la unidad — problemas del Larsen &amp; Marx</h3>
+      <p class="act-desc">Resuelve los ejercicios seleccionados correspondientes a χ², contingencia, F y ANOVA (verifica la numeración en tu edición) y registra tu avance. Fecha límite: <strong id="taskDeadline"></strong>.</p>
+      <div class="task-panel">
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="list-checks"></i>Avance de la tarea</div>
+          <div class="panel-body">
+            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">
+              <span>Progreso</span><span id="taskPct">0 / 8 · 0%</span>
+            </div>
+            <div class="conv-bar" style="margin-bottom:18px"><div id="taskBar" style="background:var(--pine)"></div></div>
+            <div id="taskList"></div>
+            <p class="note">Tu avance se guarda en este navegador y se refleja en <a href="#" data-view="boleta">Mi boleta</a>.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="file-text"></i>Instrucciones de entrega</div>
+          <div class="panel-body">
+            <ol style="margin-left:20px;font-size:14.5px">
+              <li style="margin-bottom:9px">En cada problema identifica la distribución que sostiene la prueba (χ² o F), sus grados de libertad y las condiciones de validez (esperados \( \ge 5 \), normalidad, homocedasticidad).</li>
+              <li style="margin-bottom:9px">En ANOVA, presenta siempre la tabla completa (SC, gl, CM, F) y termina con la <em>conclusión en lenguaje del problema</em>, no solo «se rechaza \(H_0\)».</li>
+              <li style="margin-bottom:9px">Marca aquí cada problema terminado; el avance se guarda automáticamente en este dispositivo.</li>
+              <li>Entrega el PDF en la plataforma de la clase el día de la sesión 4.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MI BOLETA ==================== -->
+<section class="view" id="v-boleta" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Expediente individual</p>
+      <h2>Mi boleta de resultados</h2>
+      <p class="sub">Regístrate una sola vez en este dispositivo: tu progreso y tu nota final quedan a tu nombre, y podrás descargar tu boleta como imagen para compartirla. Los datos nunca salen de tu navegador.</p>
+    </div>
+
+    <div class="panel" id="regEmpty" style="max-width:560px">
+      <div class="panel-head"><i data-lucide="user-plus"></i>Ficha de registro individual</div>
+      <div class="panel-body">
+        <form id="formEst" style="display:grid;gap:14px" novalidate>
+          <div class="field">
+            <label for="alNombre">Nombre completo</label>
+            <input id="alNombre" type="text" placeholder="Ej. Ana Sofía Delgado Ruiz" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMat">Matrícula</label>
+            <input id="alMat" type="text" placeholder="Ej. 20240315" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMail">Correo electrónico</label>
+            <input id="alMail" type="email" placeholder="nombre@universidad.edu.mx" autocomplete="off">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn" type="submit" id="btnEstSave"><i data-lucide="user-plus"></i><span>Registrarme</span></button>
+            <button class="btn ghost" type="button" id="btnEstCancel" hidden>Cancelar</button>
+          </div>
+        </form>
+        <p class="hint" style="margin-top:12px">Tu registro y todo tu avance se guardan únicamente en este navegador. Si ya marcaste actividades, aparecerán automáticamente en tu boleta al registrarte.</p>
+      </div>
+    </div>
+
+    <div id="boletaWrap" hidden>
+      <div class="boleta-card" id="boletaCard">
+        <div class="b-head">
+          <span class="avatar" id="bAvatar">··</span>
+          <div>
+            <div class="b-title">Boleta de evaluación · Tema 4 — Pruebas de hipótesis especiales · Estadística Inferencial</div>
+            <div class="b-name" id="bName">—</div>
+            <div class="b-meta" id="bMeta">—</div>
+          </div>
+          <div class="b-seal"><span>Aula<br>Interactiva</span><strong>Tema 4</strong></div>
+        </div>
+        <div class="b-body" id="bRows"></div>
+        <div class="b-total">
+          <div>
+            <div class="b-total-lbl">Nota final de la unidad</div>
+            <div class="b-total-det">Simulador 15% · Ejercicios 25% · Quiz 30% · Tarea 30%</div>
+          </div>
+          <div class="b-score"><span class="big" id="bNota">0.0</span><span class="den">/ 10</span></div>
+        </div>
+        <div class="b-foot">
+          <span>Emitida: <strong id="bEmit">—</strong></span>
+          <span>Registro desde: <strong id="bSince">—</strong></span>
+          <span>Estadística Inferencial · Dr. Adrián Cerda</span>
+        </div>
+      </div>
+
+      <div class="boleta-actions">
+        <button class="btn" id="btnBoletaPng"><i data-lucide="download"></i>Descargar boleta (PNG)</button>
+        <button class="btn ghost" id="btnEstEdit"><i data-lucide="pencil"></i>Editar datos</button>
+        <button class="del-btn" id="btnEstDel"><i data-lucide="trash-2"></i><span>Borrar registro y avance</span></button>
+      </div>
+      <p class="note" style="max-width:700px"><strong>Criterios de la nota.</strong> <em>Simulador:</em> 20% del rubro por cada nivel de ejecuciones acumuladas — 1, 25, 100, 500 y 1,000 o más. <em>Quiz:</em> proporción de tu mejor intento (0–7 aciertos). <em>Ejercicios y tarea:</em> casillas marcadas en Actividades. Las redacciones de refuerzo se guardan por separado y se revisan en clase. Al borrar el registro se elimina también todo el avance guardado en este navegador.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div><strong>Referencia:</strong> Larsen, R. J. &amp; Marx, M. L. — <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. — distribuciones χ² y F, tablas de contingencia y ANOVA (verifica secciones en tu edición).</div>
+    <div>Universidad Panamericana · Escuela de Ciencias Empresariales · uso educativo · los datos se guardan solo en este navegador.</div>
+  </div>
+</footer>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const INK='#1c2b25', PINE='#1e4636', TERRA='#c2542f', PAPER='#fffdf8', GOLD='#c9a227';
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtP(v){ if(!isFinite(v)) return '—'; if(v!==0 && Math.abs(v)<1e-6) return v.toExponential(3); return String(parseFloat(v.toFixed(6))); }
+function fmtNum(v){ if(v===0) return '0'; const a=Math.abs(v); if(a>=1e5||a<1e-4) return v.toExponential(1); if(a<1) return String(parseFloat(v.toFixed(4))); return String(parseFloat(v.toPrecision(4))); }
+function fmt(x){ return String(parseFloat(x.toPrecision(6))); }
+function toast(msg, type='ok'){
+  const box=$('#toasts'), t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML = `<i data-lucide="${type==='ok'?'check-circle-2':'alert-circle'}"></i><span>${msg}</span>`;
+  box.appendChild(t); lucide.createIcons();
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ============================================================
+   PERSISTENCIA: registro individual + actividades por curso
+============================================================ */
+const LS_EST='aula_estudiante';
+const LS_ACT='aula_actividades';
+const CURSO='inf7';
+
+function loadEst(){ try{ return JSON.parse(localStorage.getItem(LS_EST)); }catch(e){ return null; } }
+function saveEst(e){ localStorage.setItem(LS_EST, JSON.stringify(e)); }
+function loadAct(){ try{ return JSON.parse(localStorage.getItem(LS_ACT)||'{}'); }catch(e){ return {}; } }
+function act(){
+  const a=loadAct();
+  a[CURSO]=a[CURSO]||{ sim:{rolls:0}, ej:{}, quiz:null, tarea:{}, red:{} };
+  a[CURSO].sim=a[CURSO].sim||{rolls:0};
+  a[CURSO].ej=a[CURSO].ej||{};
+  a[CURSO].tarea=a[CURSO].tarea||{};
+  a[CURSO].red=a[CURSO].red||{};
+  return a;
+}
+function saveAct(a){ localStorage.setItem(LS_ACT, JSON.stringify(a)); }
+
+/* ============================================================
+   NAVEGACIÓN DE VISTAS
+============================================================ */
+function showView(v){
+  $$('.view').forEach(s => s.hidden = true);
+  $('#v-'+v).hidden = false;
+  $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(v==='inicio')      animateHero();
+  if(v==='simulador')   requestAnimationFrame(drawSim);
+  if(v==='calculadora') redrawCalc();
+  if(v==='boleta')      renderBoleta();
+}
+ $$('[data-view]').forEach(el => el.addEventListener('click', e => {
+  if(el.tagName==='A'){ e.preventDefault(); }
+  showView(el.dataset.view);
+}));
+
+/* ============================================================
+   MATEMÁTICAS: gamma, χ² y F completas
+============================================================ */
+function logGamma(z){ // Lanczos
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5) return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
+  z-=1; let x=0.99999999999980993;
+  for(let i=0;i<8;i++) x+=g[i]/(z+i+1);
+  const t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+/* Gamma incompleta regularizada P(s,x) → CDF de χ² */
+function gammaincP(s,x){
+  if(x<=0) return 0;
+  if(x < s+1){
+    let ap=s, sum=1/s, del=sum;
+    for(let n=1;n<300;n++){ ap++; del*=x/ap; sum+=del; if(Math.abs(del)<Math.abs(sum)*1e-13) break; }
+    return sum*Math.exp(-x + s*Math.log(x) - logGamma(s));
+  }
+  const FPMIN=1e-300;
+  let b=x+1-s, c=1/FPMIN, d=1/b, h=d;
+  for(let i=1;i<300;i++){
+    const an=-i*(i-s);
+    b+=2;
+    d=an*d+b; if(Math.abs(d)<FPMIN) d=FPMIN;
+    c=b+an/c; if(Math.abs(c)<FPMIN) c=FPMIN;
+    d=1/d;
+    const del=d*c; h*=del;
+    if(Math.abs(del-1)<1e-13) break;
+  }
+  const q=Math.exp(-x + s*Math.log(x) - logGamma(s))*h;
+  return 1-q;
+}
+function chi2Pdf(x,k){
+  if(x<=0) return 0;
+  return Math.exp((k/2-1)*Math.log(x) - x/2 - (k/2)*Math.LN2 - logGamma(k/2));
+}
+const chi2Cdf=(x,k)=>gammaincP(k/2, x/2);
+function chi2Quantile(p,k){
+  let lo=0, hi=1;
+  while(chi2Cdf(hi,k)<p) hi*=2;
+  for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(chi2Cdf(m,k)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+/* F de Snedecor: pdf, cdf (Simpson) y cuantil (bisección) */
+function fPdf(x,d1,d2){
+  if(x<=0) return 0;
+  const lc=logGamma((d1+d2)/2)-logGamma(d1/2)-logGamma(d2/2)+(d1/2)*Math.log(d1/d2);
+  return Math.exp(lc + (d1/2-1)*Math.log(x) - ((d1+d2)/2)*Math.log(1+d1*x/d2));
+}
+function fCdf(x,d1,d2){
+  if(x<=0) return 0;
+  const N=500, h=x/N; let s=0;
+  for(let i=0;i<=N;i++){ let y=fPdf(i*h,d1,d2); if(i!==0&&i!==N) y*=(i%2?4:2); s+=y; }
+  return s*h/3;
+}
+function fQuantile(p,d1,d2){
+  let lo=0, hi=1;
+  while(fCdf(hi,d1,d2)<p) hi*=2;
+  for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(fCdf(m,d1,d2)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+function niceStep(range,n){ const raw=range/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), q=raw/mag;
+  return (q<1.5?1:q<3?2:q<7?5:10)*mag; }
+
+/* ============================================================
+   DIBUJO EN CANVAS
+============================================================ */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = Math.max(10, r.width*dpr); cv.height = Math.max(10, r.height*dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width, h:r.height};
+}
+function axes(ctx,m){
+  ctx.strokeStyle=INK; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l, m.t-8); ctx.lineTo(m.l, m.t+m.ph); ctx.lineTo(m.l+m.pw+8, m.t+m.ph); ctx.stroke();
+}
+function makeMargins(w,h){ return {l:48,r:14,t:22,b:36, pw:w-48-14, ph:h-22-36}; }
+function yTicks(ctx,m,yMax){
+  const s=niceStep(yMax,4);
+  ctx.font='11px Instrument Sans'; ctx.textAlign='right';
+  for(let v=s; v<=yMax; v+=s){
+    const y=m.t+m.ph-(v/yMax)*m.ph;
+    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4);
+  }
+}
+function xTicks(ctx,m,lo,hi){
+  const s=niceStep(hi-lo,5);
+  ctx.font='11px Instrument Sans'; ctx.textAlign='center';
+  for(let v=Math.ceil(lo/s)*s; v<=hi; v+=s){
+    ctx.fillStyle='rgba(28,43,37,.7)'; ctx.fillText(fmtNum(v), m.l+(v-lo)/(hi-lo)*m.pw, m.t+m.ph+17);
+  }
+}
+
+/* ============================================================
+   HERO: la descomposición ANOVA (animado)
+============================================================ */
+let heroAnim=null, heroPts=null;
+function makeHeroPts(){
+  const sd=1.05, means=[7.5,12,9.5];
+  return { pts: means.map(mu=>Array.from({length:9},()=>mu+sd*randn())), means };
+}
+function drawHero(t){
+  const cv=$('#heroCanvas'); if(!cv || cv.offsetParent===null) return;
+  const {ctx,w,h}=setupCanvas(cv);
+  const m={l:20,r:20,t:34,b:30}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+  if(!heroPts) heroPts=makeHeroPts();
+  const lo=4.6, hi=14.9, X=x=>m.l+(x-lo)/(hi-lo)*pw;
+  const bands=[0.16,0.5,0.84]; // posiciones verticales de las bandas
+  const jit=[-6,0,5,-3,4,2,-5,6,-2];
+  const GCOLS=['rgba(30,70,54,.8)','rgba(30,70,54,.8)','rgba(30,70,54,.8)'];
+  // eje
+  ctx.strokeStyle=INK; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l, m.t+ph); ctx.lineTo(w-m.r, m.t+ph); ctx.stroke();
+  xTicks(ctx,m,lo,hi);
+  // puntos (revelado progresivo)
+  const shown=Math.floor(27*Math.min(1,t/0.55));
+  let count=0;
+  heroPts.pts.forEach((arr,g)=>{
+    arr.forEach((x,i)=>{
+      if(count++>=shown) return;
+      const y=m.t+bands[g]*ph+jit[i];
+      ctx.fillStyle=GCOLS[g];
+      ctx.beginPath(); ctx.arc(X(x),y,4.2,0,7); ctx.fill();
+    });
+  });
+  // gran media
+  const gm=(7.5*9+12*9+9.5*9)/27;
+  if(t>0.6){
+    ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(X(gm), m.t+4); ctx.lineTo(X(gm), m.t+ph); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('x̄ global', X(gm), m.t-6);
+  }
+  // medias de grupo + segmentos "entre"
+  if(t>0.45){
+    heroPts.means.forEach((mu,g)=>{
+      const y=m.t+bands[g]*ph;
+      ctx.fillStyle=TERRA;
+      ctx.beginPath(); ctx.moveTo(X(mu), y-9); ctx.lineTo(X(mu)-6, y-19); ctx.lineTo(X(mu)+6, y-19); ctx.closePath(); ctx.fill();
+      if(t>0.78){
+        ctx.strokeStyle='rgba(194,84,47,.85)'; ctx.lineWidth=2;
+        ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.moveTo(X(mu), y-22); ctx.lineTo(X(mu), m.t+2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(gm), m.t+2); ctx.lineTo(X(mu), m.t+2); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+    if(t>0.78){
+      ctx.fillStyle=TERRA; ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+      ctx.fillText('variación ENTRE grupos', m.l+4, m.t+ph+18>h? m.t+ph-4 : m.t-24+18);
+    }
+  }
+  // segmento "dentro" del grupo B
+  if(t>0.88){
+    const g=1, x0=heroPts.pts[g][2], y=m.t+bands[g]*ph;
+    ctx.strokeStyle='rgba(201,162,39,.95)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(X(x0), y+9); ctx.lineTo(X(x0), y+22); ctx.lineTo(X(heroPts.means[g]), y+22); ctx.lineTo(X(heroPts.means[g]), y+9); ctx.stroke();
+    ctx.fillStyle='#8a6d10'; ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='right';
+    ctx.fillText('variación DENTRO', w-m.r-4, m.t+ph+16>h? m.t+ph-4 : m.t+ph+16>h? m.t+ph-4 : m.t-24+18);
+  }
+  if(t<0.2){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 12.5px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Tres grupos, una pregunta: ¿sus medias difieren más que su ruido?', m.l+pw/2, m.t+ph/2);
+  }
+}
+function animateHero(){
+  cancelAnimationFrame(heroAnim);
+  const t0=performance.now();
+  (function loop(now){
+    const t=Math.min(1,(now-t0)/1800);
+    drawHero(1-Math.pow(1-t,3));
+    if(t<1) heroAnim=requestAnimationFrame(loop);
+  })(t0);
+}
+
+/* ============================================================
+   SIMULADOR: fábrica de χ²/F + ANOVA en vivo
+============================================================ */
+let simMode='factory';
+const simF={vals:[], sum:0, sumSq:0, total:0};
+const simA={list:[], total:0, rej:0};
+
+function bumpRolls(k){
+  const a=act(); a[CURSO].sim.rolls=(a[CURSO].sim.rolls||0)+k; saveAct(a);
+  $('#simEver').textContent=(a[CURSO].sim.rolls).toLocaleString('es-MX');
+}
+function parseDistKey(key){
+  if(key.startsWith('chi2')) return {type:'chi2', nu:+key.split('-')[1]};
+  const p=key.split('-'); return {type:'F', nu1:+p[1], nu2:+p[2]};
+}
+function genOne(D){
+  if(D.type==='chi2'){ let s=0; for(let i=0;i<D.nu;i++) s+=randn()*randn(); return s; }
+  let u=0,v=0;
+  for(let i=0;i<D.nu1;i++) u+=randn()*randn();
+  for(let i=0;i<D.nu2;i++) v+=randn()*randn();
+  return (u/D.nu1)/(v/D.nu2);
+}
+function setMode(m){
+  simMode=m;
+  $('#mFactory').classList.toggle('ghost', m!=='factory');
+  $('#mAnova').classList.toggle('ghost', m!=='anova');
+  $('#factoryBlock').hidden = m!=='factory';
+  $('#anovaBlock').hidden  = m!=='anova';
+  $('#capFactory').hidden = m!=='factory';
+  $('#capAnova').hidden = m!=='anova';
+  $('#simHead').innerHTML = m==='factory'
+    ? '<i data-lucide="shapes"></i>Histograma vs. densidad teórica'
+    : '<i data-lucide="columns-3"></i>Distribución del estadístico F bajo H₀';
+  refreshIcons(); drawSim();
+}
+function addFactory(k){
+  const D=parseDistKey($('#simDist').value);
+  for(let i=0;i<k;i++){ const v=genOne(D); simF.vals.push(v); simF.sum+=v; simF.sumSq+=v*v; }
+  simF.total+=k; bumpRolls(k); updateFactory(); drawSim();
+}
+function resetFactory(){
+  simF.vals.length=0; simF.sum=0; simF.sumSq=0; simF.total=0; updateFactory(); drawSim();
+}
+function updateFactory(){
+  const D=parseDistKey($('#simDist').value);
+  $('#fN').textContent=simF.total.toLocaleString('es-MX');
+  if(!simF.total){ $('#fMean').textContent='—'; $('#fSD').textContent='—'; $('#fMeanT').textContent='—'; $('#fTheo').textContent='—'; return; }
+  const mean=simF.sum/simF.total;
+  const sd=Math.sqrt(Math.max(0, simF.sumSq/simF.total - mean*mean));
+  $('#fMean').textContent=mean.toFixed(3);
+  $('#fSD').textContent=sd.toFixed(3);
+  if(D.type==='chi2'){
+    $('#fMeanT').textContent=D.nu.toFixed(3);
+    $('#fTheo').innerHTML=`Teóricos: \(E=\nu=${D.nu}\) · \( \mathrm{Var}=2\nu=${2*D.nu}\) · \( \sigma=\sqrt{2\nu}=${Math.sqrt(2*D.nu).toFixed(3)}\)`;
+  }else{
+    const mt=D.nu2>2? D.nu2/(D.nu2-2) : Infinity;
+    $('#fMeanT').textContent=isFinite(mt)? mt.toFixed(3):'∞';
+    $('#fTheo').innerHTML=`Teóricos: \(E=\dfrac{\nu_2}{\nu_2-2}=${mt.toFixed(3)}\) · media muy cerca de 1 bajo igualdad de varianzas, con cola derecha`;
+  }
+  if(typeof renderMathInElement==='function'){
+    try{ renderMathInElement($('#fTheo'),{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'$$',right:'$$',display:true}],throwOnError:false}); }catch(e){}
+  }
+}
+function anovaParams(){
+  const n=+$('#simAN').value, delta=+$('#simADelta').value;
+  return {n, delta, gl1:2, gl2:3*n-3, crit:fQuantile(0.05,2,3*n-3)};
+}
+function addAnova(k){
+  const P=anovaParams(), sd=2, muC=10+P.delta*sd;
+  for(let e=0;e<k;e++){
+    const groups=[10,10,muC].map(mu=>{
+      const arr=[]; for(let i=0;i<P.n;i++) arr.push(mu+sd*randn()); return arr;
+    });
+    const gmean=groups.flat().reduce((a,b)=>a+b,0)/(3*P.n);
+    const sctr=groups.reduce((s,g)=>{ const m=g.reduce((a,b)=>a+b,0)/g.length; return s+g.length*(m-gmean)*(m-gmean); },0);
+    const sce=groups.reduce((s,g)=>{ const m=g.reduce((a,b)=>a+b,0)/g.length; return s+g.reduce((a,b)=>a+(b-m)*(b-m),0); },0);
+    const F=(sctr/P.gl1)/(sce/P.gl2);
+    simA.list.push(F); if(simA.list.length>8000) simA.list.shift();
+    simA.total++; if(F>P.crit) simA.rej++;
+  }
+  bumpRolls(k); updateAnova(); drawSim();
+}
+function resetAnova(){
+  simA.list.length=0; simA.total=0; simA.rej=0; updateAnova(); drawSim();
+}
+function updateAnova(){
+  const P=anovaParams();
+  $('#aExp').textContent=simA.total.toLocaleString('es-MX');
+  $('#aRej').textContent=simA.rej.toLocaleString('es-MX');
+  $('#aPct').textContent = simA.total? (100*simA.rej/simA.total).toFixed(1)+'%' : '—';
+  const last=simA.list[simA.list.length-1];
+  $('#aLast').textContent = last!=null? `${last.toFixed(2)} (${(1-fCdf(last,P.gl1,P.gl2)).toFixed(3)})` : '—';
+  $('#aCrit').innerHTML = `Crítico F(0.05, 2, ${P.gl2}): <strong class="mono">${P.crit.toFixed(3)}</strong>` + (P.delta==0? ' — H₀ verdadera: % de rechazo → α' : ' — H₁ verdadera: % de rechazo = potencia');
+}
+function drawFactory(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const D=parseDistKey($('#simDist').value);
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  let pdf, hi, meanT;
+  if(D.type==='chi2'){ pdf=x=>chi2Pdf(x,D.nu); hi=chi2Quantile(0.998,D.nu); meanT=D.nu; }
+  else { pdf=x=>fPdf(x,D.nu1,D.nu2); hi=fQuantile(0.998,D.nu1,D.nu2); meanT=D.nu2/(D.nu2-2); }
+  const lo=D.type==='chi2'? 0 : 0;
+  const B=42, bw=(hi-lo)/B, counts=Array(B).fill(0);
+  let out=0;
+  for(const v of simF.vals){ const b=Math.floor((v-lo)/bw); if(b<0||b>=B) out++; else counts[b]++; }
+  const maxC=Math.max(1,...counts), yMax=Math.ceil(maxC*1.18);
+  axes(ctx,m); xTicks(ctx,m,lo,hi); yTicks(ctx,m,yMax);
+  const slot=m.pw/B, bar=slot*0.9;
+  counts.forEach((c,i)=>{
+    if(!c) return;
+    const bh=(c/yMax)*m.ph;
+    ctx.fillStyle='rgba(30,70,54,.78)';
+    ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
+  });
+  if(simF.total>0){
+    // yMax teórico: el pico de la densidad dentro del rango (evitar singularidad en χ²(1))
+    let peak=0;
+    for(let i=0;i<=300;i++){ const x=lo+(hi-lo)*(i/300)+(D.type==='chi2'&&D.nu===1? hi*0.004:0);
+      if(x>lo) peak=Math.max(peak,pdf(x)); }
+    const scale=(maxC)/(peak*1.15);
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
+    let started=false;
+    for(let i=0;i<=300;i++){
+      const x=lo+(hi-lo)*i/300 + (D.type==='chi2'&&D.nu===1 && i===0? hi*0.004:0);
+      const y=pdf(x)*scale;
+      const px=m.l+(x-lo)/(hi-lo)*m.pw, py=m.t+m.ph-Math.min(y,yMax)*m.ph/yMax;
+      if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // media teórica
+    if(meanT>lo && meanT<hi){
+      ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(m.l+(meanT-lo)/(hi-lo)*m.pw, m.t+4);
+      ctx.lineTo(m.l+(meanT-lo)/(hi-lo)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle='rgba(30,70,54,.9)'; ctx.fillRect(m.l+6, m.t-8, 10, 10);
+  ctx.fillStyle=INK; ctx.fillText('frecuencia generada', m.l+21, m.t+1);
+  ctx.strokeStyle=TERRA; ctx.lineWidth=2.2;
+  ctx.beginPath(); ctx.moveTo(m.l+170, m.t-3); ctx.lineTo(m.l+186, m.t-3); ctx.stroke();
+  ctx.fillStyle=INK; ctx.fillText('densidad teórica', m.l+192, m.t+1);
+  if(out>0){ ctx.fillStyle='rgba(28,43,37,.55)'; ctx.textAlign='right';
+    ctx.fillText(out.toLocaleString('es-MX')+' fuera de rango', w-m.r-4, m.t+1); }
+  if(!simF.total){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Genera valores para construir el histograma', m.l+m.pw/2, m.t+m.ph/2);
+  }
+}
+function drawAnova(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const P=anovaParams();
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const hi=P.crit*2.6, B=46, bw=hi/B, counts=Array(B).fill(0);
+  let out=0;
+  for(const v of simA.list){ const b=Math.floor(v/bw); if(b<0||b>=B) out++; else counts[b]++; }
+  const maxC=Math.max(1,...counts), yMax=Math.ceil(maxC*1.18);
+  axes(ctx,m); xTicks(ctx,m,0,hi); yTicks(ctx,m,yMax);
+  const slot=m.pw/B, bar=slot*0.9;
+  counts.forEach((c,i)=>{
+    if(!c) return;
+    const bh=(c/yMax)*m.ph;
+    ctx.fillStyle='rgba(30,70,54,.78)';
+    ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
+  });
+  if(simA.total>0){
+    // región de rechazo
+    ctx.fillStyle='rgba(194,84,47,.14)';
+    ctx.fillRect(m.l+(P.crit/hi)*m.pw, m.t, m.pw-(P.crit/hi)*m.pw, m.ph);
+    // curva teórica
+    let peak=0;
+    for(let i=1;i<=300;i++){ const x=hi*i/300; peak=Math.max(peak,fPdf(x,P.gl1,P.gl2)); }
+    const scale=maxC/(peak*1.15);
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const x=hi*(i+0.6)/300.6, y=fPdf(Math.max(x,0.001),P.gl1,P.gl2)*scale;
+      const px=m.l+(x/hi)*m.pw, py=m.t+m.ph-Math.min(y,yMax)*m.ph/yMax;
+      i? ctx.lineTo(px,py) : ctx.moveTo(px,py);
+    }
+    ctx.stroke();
+  }
+  // línea crítica
+  ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(m.l+(P.crit/hi)*m.pw, m.t+2); ctx.lineTo(m.l+(P.crit/hi)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+  ctx.fillText('crítico = '+P.crit.toFixed(2), m.l+(P.crit/hi)*m.pw, m.t+m.ph+30>h? m.t-4 : m.t+m.ph+16);
+  if(!simA.total){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Genera experimentos para construir el histograma', m.l+m.pw/2, m.t+m.ph/2);
+  }
+}
+function drawSim(){ simMode==='factory'? drawFactory() : drawAnova(); }
+
+ $('#mFactory').addEventListener('click',()=>setMode('factory'));
+ $('#mAnova').addEventListener('click',()=>setMode('anova'));
+ $('#btnF1').addEventListener('click',()=>addFactory(1));
+ $('#btnF200').addEventListener('click',()=>addFactory(200));
+ $('#btnF1000').addEventListener('click',()=>addFactory(1000));
+ $('#btnFReset').addEventListener('click',()=>{ resetFactory(); toast('Generaciones reiniciadas (tu acumulado se conserva).'); });
+ $('#btnA1').addEventListener('click',()=>addAnova(1));
+ $('#btnA50').addEventListener('click',()=>addAnova(50));
+ $('#btnA200').addEventListener('click',()=>addAnova(200));
+ $('#btnAReset').addEventListener('click',()=>{ resetAnova(); toast('Experimentos reiniciados (tu acumulado se conserva).'); });
+ $('#simDist').addEventListener('change',()=>{ resetFactory(); updateFactory(); });
+['simAN','simADelta'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetAnova(); updateAnova(); }));
+
+/* ============================================================
+   CALCULADORA: χ², F, pruebas categóricas y ANOVA
+============================================================ */
+const PDEFS={
+  chi2cdf:[
+    {k:'x',label:'x — valor del estadístico χ²',min:0,max:100000,step:0.01,val:18.31},
+    {k:'nu',label:'ν — grados de libertad',min:1,max:500,step:1,val:10}],
+  chi2q:[
+    {k:'p',label:'p — probabilidad acumulada (0 a 1)',min:0.0001,max:0.9999,step:0.01,val:0.95},
+    {k:'nu',label:'ν — grados de libertad',min:1,max:500,step:1,val:10}],
+  fcdf:[
+    {k:'x',label:'x — valor del estadístico F',min:0,max:100000,step:0.01,val:3.89},
+    {k:'nu1',label:'ν₁ — gl del numerador',min:1,max:500,step:1,val:2},
+    {k:'nu2',label:'ν₂ — gl del denominador',min:1,max:500,step:1,val:12}],
+  fq:[
+    {k:'p',label:'p — probabilidad acumulada (0 a 1)',min:0.0001,max:0.9999,step:0.01,val:0.95},
+    {k:'nu1',label:'ν₁ — gl del numerador',min:1,max:500,step:1,val:2},
+    {k:'nu2',label:'ν₂ — gl del denominador',min:1,max:500,step:1,val:12}],
+  var2:[
+    {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:8.2},
+    {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:10},
+    {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:3.5},
+    {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:12}],
+  gof:[
+    {k:'obs',type:'textarea',label:'Frecuencias observadas (separadas por comas)',val:'22, 26, 23, 24, 25'},
+    {k:'pr',type:'textarea',label:'Probabilidades bajo H₀ (opcional; vacío = uniforme)',val:'',opt:true}],
+  indep:[
+    {k:'tab',type:'textarea',label:'Tabla de contingencia: filas separadas por «;» y celdas por «,»',val:'48, 152; 81, 99'}],
+  anova:[
+    {k:'data',type:'textarea',label:'Datos por grupos (grupo = lista separada por comas; grupos separados por «;»)',val:'63,65,67,64,66; 68,70,72,69,71; 58,60,62,59,61'}]
+};
+const CALC_NAMES={chi2cdf:'χ² — probabilidad acumulada',chi2q:'χ² — cuantil',fcdf:'F — probabilidad acumulada',
+  fq:'F — cuantil',var2:'Varianzas — razón F',gof:'Bondad de ajuste — χ²',
+  indep:'Independencia/homogeneidad — χ²',anova:'ANOVA de un factor'};
+
+function buildParams(){
+  const key=$('#calcDist').value, box=$('#calcParams');
+  box.innerHTML = PDEFS[key].map(p=>{
+    if(p.type==='textarea'){
+      return `<div class="field"><label for="cp_${p.k}">${p.label}</label>
+        <textarea id="cp_${p.k}" rows="3">${esc(p.val||'')}</textarea></div>`;
+    }
+    return `<div class="field">
+      <label for="cp_${p.k}">${p.label}</label>
+      <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
+    </div>`;
+  }).join('');
+}
+ $('#calcDist').addEventListener('change',()=>{
+  buildParams();
+  $('#calcResults').innerHTML=`<div class="calc-empty"><i data-lucide="calculator"></i>
+    <p>Cálculo seleccionado: <strong>${CALC_NAMES[$('#calcDist').value]}</strong>.<br>Presiona <strong>Calcular</strong>.</p></div>`;
+  refreshIcons();
+  const cv=$('#calcCanvas'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+});
+
+function readVals(key){
+  const out={};
+  for(const p of PDEFS[key]){
+    if(p.type==='textarea'){ out[p.k]=$('#cp_'+p.k).value.trim(); continue; }
+    const v=parseFloat($('#cp_'+p.k).value);
+    if(isNaN(v)) throw `Revisa el campo «${p.label.split('—')[0].trim()}».`;
+    if(v<p.min||v>p.max) throw `«${p.label.split('—')[0].trim()}» debe estar entre ${p.min} y ${p.max}.`;
+    out[p.k]=v;
+  }
+  return out;
+}
+function parseList(raw){
+  const arr=raw.split(',').map(s=>parseFloat(s.trim()));
+  if(arr.some(v=>isNaN(v)||v<0)) throw 'Revisa la lista: solo números no negativos separados por comas.';
+  return arr;
+}
+/* Densidad con región de rechazo y estadístico marcado */
+function drawD(cv, pdf, lo, hi, regions, stat, statLab){
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const N=360; let maxV=0;
+  for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N, v=Math.max(0,pdf(x)); if(v>maxV)maxV=v; }
+  const yMax=maxV*1.15||1;
+  const X=x=>m.l+(x-lo)/(hi-lo)*m.pw, Y=v=>m.t+m.ph-(v/yMax)*m.ph;
+  (regions||[]).forEach(([a,b])=>{
+    const a2=Math.max(a,lo), b2=Math.min(b,hi);
+    if(b2<=a2) return;
+    ctx.beginPath(); ctx.moveTo(X(a2),Y(0));
+    const steps=140;
+    for(let i=0;i<=steps;i++){ const x=a2+(b2-a2)*i/steps; ctx.lineTo(X(x),Y(Math.max(0,pdf(x)))); }
+    ctx.lineTo(X(b2),Y(0)); ctx.closePath();
+    ctx.fillStyle='rgba(194,84,47,.24)'; ctx.fill();
+  });
+  ctx.strokeStyle=INK; ctx.lineWidth=2; ctx.beginPath();
+  let started=false;
+  for(let i=0;i<=N;i++){
+    const x=lo+(hi-lo)*i/N, y=Math.max(0,pdf(x));
+    if(y>yMax*1.2 && !started) continue;
+    const py=Math.min(Y(y), m.t-2);
+    if(!started){ ctx.moveTo(X(x),py); started=true; } else ctx.lineTo(X(x),py);
+  }
+  ctx.stroke();
+  if(stat!=null && stat>lo && stat<hi){
+    ctx.strokeStyle=PINE; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(X(stat), m.t+m.ph); ctx.lineTo(X(stat), m.t+10); ctx.stroke();
+    ctx.fillStyle=PINE; ctx.font='700 11.5px Instrument Sans';
+    ctx.textAlign = X(stat) > m.l+m.pw-100 ? 'right' : 'center';
+    ctx.fillText(statLab || ('estadístico = '+fmtNum(stat)), X(stat), m.t+6);
+  }
+  axes(ctx,m); xTicks(ctx,m,lo,hi);
+  const s=niceStep(yMax,4); ctx.font='11px Instrument Sans'; ctx.textAlign='right';
+  for(let v=s; v<=yMax; v+=s){ const y=Y(v);
+    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
+}
+
+function computeCalc(key,v,alpha){
+  const R=[];
+  if(key==='chi2cdf'){
+    const {x,nu}=v, P=chi2Cdf(x,nu);
+    R.push(['P(X ≤ x)',P],['P(X > x)',1-P],['E(X) = ν',nu],['Var(X) = 2ν',2*nu]);
+    const hi=chi2Quantile(0.9995,nu);
+    return {results:R,
+      tex:`P(\\chi^2_{${nu}} \\le ${fmtNum(x)}) = ${P.toFixed(6)}`,
+      draw:()=>drawD($('#calcCanvas'), t=>chi2Pdf(t,nu), 0, hi, [[x,hi]], x)};
+  }
+  if(key==='chi2q'){
+    const {p,nu}=v, x=chi2Quantile(p,nu);
+    R.push([`Cuantil χ² (ν = ${nu})`,x],['P(X > x)',1-p]);
+    const hi=chi2Quantile(0.9995,nu);
+    return {results:R,
+      tex:`\\chi^2_{${(1-p).toFixed(4)},\\,${nu}} = ${x.toFixed(4)}`,
+      draw:()=>drawD($('#calcCanvas'), t=>chi2Pdf(t,nu), 0, hi, [[x,hi]], x)};
+  }
+  if(key==='fcdf'){
+    const {x,nu1,nu2}=v, P=fCdf(x,nu1,nu2);
+    R.push(['P(F ≤ x)',P],['P(F > x)',1-P],['E(F) = ν₂/(ν₂−2)',nu2>2? nu2/(nu2-2):Infinity]);
+    const hi=fQuantile(0.9995,nu1,nu2);
+    return {results:R,
+      tex:`P(F_{${nu1},${nu2}} \\le ${fmtNum(x)}) = ${P.toFixed(6)}`,
+      draw:()=>drawD($('#calcCanvas'), t=>fPdf(t,nu1,nu2), 0, hi, [[x,hi]], x)};
+  }
+  if(key==='fq'){
+    const {p,nu1,nu2}=v, x=fQuantile(p,nu1,nu2);
+    R.push([`Cuantil F(${nu1}, ${nu2})`,x],['P(F > x)',1-p],
+           [`Recíproco: F_{${(1-p).toFixed(2)}}(${nu2}, ${nu1})`,1/fQuantile(1-p,nu2,nu1)]);
+    const hi=fQuantile(0.9995,nu1,nu2);
+    return {results:R,
+      tex:`F_{${(1-p).toFixed(4)}}(${nu1},\\,${nu2}) = ${x.toFixed(4)}`,
+      draw:()=>drawD($('#calcCanvas'), t=>fPdf(t,nu1,nu2), 0, hi, [[x,hi]], x)};
+  }
+  if(key==='var2'){
+    const {s1,n1,s2,n2}=v, d1=n1-1, d2=n2-1, F=(s1*s1)/(s2*s2);
+    const p=2*Math.min(fCdf(F,d1,d2), 1-fCdf(F,d1,d2));
+    const crit=fQuantile(1-alpha/2,d1,d2);
+    const hi=Math.max(F,crit)*1.35+1;
+    R.push(['Estadístico F',F],[`Valor crítico F(${d1}, ${d2}) al 1−α/2`,crit],
+           ['Valor P (bilateral)',p],
+           ['Decisión (α = '+(alpha*100)+'%)', p<alpha? 'Rechazar H₀':'No rechazar H₀',1, p<alpha?'dec-ok':'dec-no']);
+    return {results:R,
+      tex:`F=\\dfrac{s_1^2}{s_2^2}=\\dfrac{${fmt(s1*s1)}}{${fmt(s2*s2)}}=${F.toFixed(3)},\\;\\nu_1=${d1},\\,\\nu_2=${d2}`,
+      draw:()=>drawD($('#calcCanvas'), t=>fPdf(t,d1,d2), 0, hi, [[crit,hi]], F)};
+  }
+  if(key==='gof'){
+    const obs=parseList(v.obs), k=obs.length;
+    if(k<2) throw 'Ingresa al menos dos categorías.';
+    const N=obs.reduce((a,b)=>a+b,0);
+    if(N<=0) throw 'La suma de observados debe ser positiva.';
+    let probs;
+    if(v.pr.trim()===''){ probs=Array(k).fill(1/k); }
+    else{
+      probs=parseList(v.pr);
+      if(probs.length!==k) throw `Las probabilidades deben ser ${k} valores (una por categoría).`;
+      const s=probs.reduce((a,b)=>a+b,0);
+      if(Math.abs(s-1)>0.001) throw `Las probabilidades deben sumar 1 (suman ${s.toFixed(4)}).`;
+    }
+    const E=probs.map(p=>N*p);
+    const chi2=obs.reduce((s,o,i)=>s+(o-E[i])*(o-E[i])/E[i],0);
+    const gl=k-1, pv=1-chi2Cdf(chi2,gl);
+    const crit=chi2Quantile(1-alpha,gl);
+    const hi=Math.max(chi2,crit)*1.35+2;
+    const warn=E.some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: agrupa categorías si es posible.' : null;
+    const rows=obs.map((o,i)=>`<tr><td class="center">${i+1}</td><td class="center">${fmtNum(o)}</td><td class="center">${fmtNum(E[i])}</td><td class="center">${fmtNum((o-E[i])*(o-E[i])/E[i])}</td></tr>`).join('');
+    const html=`<table class="tbl"><thead><tr><th class="center">Cat.</th><th class="center">Observado</th><th class="center">Esperado</th><th class="center">(O−E)²/E</th></tr></thead><tbody>${rows}</tbody></table>`;
+    R.push(['Estadístico χ²',chi2],[`Valor crítico χ² (gl = ${gl})`,crit],['Valor P',pv],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no']);
+    return {results:R, warn, html,
+      tex:`\\chi^2=\\sum\\frac{(O_i-E_i)^2}{E_i}=${chi2.toFixed(3)},\\;\\nu=${gl}`,
+      draw:()=>drawD($('#calcCanvas'), t=>chi2Pdf(t,gl), 0, hi, [[crit,hi]], chi2)};
+  }
+  if(key==='indep'){
+    const rows=v.tab.split(';').map(r=>r.split(',').map(s=>parseFloat(s.trim())));
+    const r=rows.length, c=rows[0].length;
+    if(r<2||c<2) throw 'La tabla necesita al menos 2 filas y 2 columnas.';
+    if(rows.some(row=>row.length!==c || row.some(v2=>isNaN(v2)||v2<0))) throw 'Revisa la tabla: todas las filas deben tener la misma cantidad de valores no negativos.';
+    const rowT=rows.map(row=>row.reduce((a,b)=>a+b,0));
+    const colT=Array(c).fill(0);
+    rows.forEach(row=>row.forEach((v2,j)=>colT[j]+=v2));
+    const N=rowT.reduce((a,b)=>a+b,0);
+    if(N<=0) throw 'La tabla debe contener frecuencias positivas.';
+    const E=rows.map((row,i)=>row.map((_,j)=>rowT[i]*colT[j]/N));
+    let chi2=0;
+    rows.forEach((row,i)=>row.forEach((o,j)=>{ chi2+=(o-E[i][j])*(o-E[i][j])/E[i][j]; }));
+    const gl=(r-1)*(c-1), pv=1-chi2Cdf(chi2,gl);
+    const crit=chi2Quantile(1-alpha,gl);
+    const hi=Math.max(chi2,crit)*1.35+2;
+    const warn=E.flat().some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: considera agrupar categorías.' : null;
+    const V=Math.sqrt(chi2/(N*Math.min(r-1,c-1)));
+    const head='<tr><th></th>'+colT.map((_,j)=>`<th class="center">Col. ${j+1}</th>`).join('')+'</tr>';
+    const body=rows.map((row,i)=>`<tr><td><strong>Fila ${i+1}</strong></td>${row.map((o,j)=>`<td class="center">${fmtNum(o)}<br><small style="color:var(--muted)">E=${fmtNum(E[i][j])}</small></td>`).join('')}</tr>`).join('');
+    const html=`<table class="tbl"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+    R.push(['Estadístico χ²',chi2],[`gl = (${r}−1)(${c}−1)`,gl,1],[`Valor crítico χ² (gl = ${gl})`,crit],
+           ['Valor P',pv],['V de Cramér (fuerza de asociación)',V],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no']);
+    return {results:R, warn, html,
+      tex:`\\chi^2=\\sum_{i,j}\\frac{(O_{ij}-E_{ij})^2}{E_{ij}}=${chi2.toFixed(3)},\\;\\nu=${gl},\\;V=${V.toFixed(3)}`,
+      draw:()=>drawD($('#calcCanvas'), t=>chi2Pdf(t,gl), 0, hi, [[crit,hi]], chi2)};
+  }
+  if(key==='anova'){
+    const groups=v.data.split(';').map(g=>g.split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x)));
+    const k=groups.length;
+    if(k<2) throw 'Ingresa al menos dos grupos (separados por «;»).';
+    if(groups.some(g=>g.length<2)) throw 'Cada grupo necesita al menos 2 observaciones.';
+    const N=groups.reduce((s,g)=>s+g.length,0);
+    const means=groups.map(g=>g.reduce((a,b)=>a+b,0)/g.length);
+    const gmean=groups.flat().reduce((a,b)=>a+b,0)/N;
+    const sctr=groups.reduce((s,g)=>s+g.length*(means[groups.indexOf(g)]-gmean)*(means[groups.indexOf(g)]-gmean),0);
+    const sce=groups.reduce((s,g)=>{ const m=g.reduce((a,b)=>a+b,0)/g.length; return s+g.reduce((a,b)=>a+(b-m)*(b-m),0); },0);
+    const gl1=k-1, gl2=N-k;
+    if(gl2<1) throw 'No hay grados de libertad del error: usa más observaciones.';
+    const mstr=sctr/gl1, mse=sce/gl2;
+    if(mse<=0) throw 'Los grupos no tienen variabilidad interna: revisa los datos.';
+    const F=mstr/mse, pv=1-fCdf(F,gl1,gl2);
+    const crit=fQuantile(1-alpha,gl1,gl2);
+    const hi=Math.max(F,crit)*1.35+1;
+    const warn=groups.some(g=>g.length!==groups[0].length)? 'ℹ Los grupos tienen tamaños distintos: el ANOVA lo admite (diseño desbalanceado).' : null;
+    const head='<tr><th>Fuente</th><th class="center">SC</th><th class="center">gl</th><th class="center">CM</th><th class="center">F</th></tr>';
+    const body=`<tr><td>Entre tratamientos</td><td class="center">${fmtNum(sctr)}</td><td class="center">${gl1}</td><td class="center">${fmtNum(mstr)}</td><td class="center"><strong>${F.toFixed(3)}</strong></td></tr>
+      <tr><td>Error (dentro)</td><td class="center">${fmtNum(sce)}</td><td class="center">${gl2}</td><td class="center">${fmtNum(mse)}</td><td class="center"></td></tr>
+      <tr><td>Total</td><td class="center">${fmtNum(sctr+sce)}</td><td class="center">${N-1}</td><td colspan="2" class="center" style="color:var(--muted)">crítico F = ${crit.toFixed(3)}</td></tr>`;
+    const grows=groups.map((g,i)=>`<tr><td>Grupo ${i+1}</td><td class="center">${g.length}</td><td class="center">${fmtNum(means[i])}</td><td class="center">${fmtNum(Math.sqrt(g.reduce((a,b)=>a+(b-means[i])*(b-means[i]),0)/(g.length-1)))}</td></tr>`).join('');
+    const html=`<table class="tbl"><thead>${head}</thead><tbody>${body}</tbody></table>
+      <p class="note" style="border:none;margin-top:6px"><strong>Resumen por grupo:</strong></p>
+      <table class="tbl"><thead><tr><th>Grupo</th><th class="center">n</th><th class="center">Media</th><th class="center">Desv. est.</th></tr></thead><tbody>${grows}</tbody></table>`;
+    R.push(['Estadístico F',F],[`Valor crítico F(${gl1}, ${gl2})`,crit],['Valor P',pv],
+           ['Decisión (α = '+(alpha*100)+'%)', pv<alpha? 'Rechazar H₀':'No rechazar H₀',1, pv<alpha?'dec-ok':'dec-no']);
+    return {results:R, warn, html,
+      tex:`F=\\dfrac{\\text{MSTR}}{\\text{MSE}}=\\dfrac{${fmtNum(mstr)}}{${fmtNum(mse)}}=${F.toFixed(3)},\\;\\nu_1=${gl1},\\,\\nu_2=${gl2}`,
+      draw:()=>drawD($('#calcCanvas'), t=>fPdf(t,gl1,gl2), 0, hi, [[crit,hi]], F)};
+  }
+}
+
+let calcState=null;
+ $('#btnCalc').addEventListener('click',()=>{
+  const key=$('#calcDist').value, alpha=+$('#calcLevel').value;
+  let v,out;
+  try{ v=readVals(key); out=computeCalc(key,v,alpha); }
+  catch(e){ toast(typeof e==='string'? e : 'Parámetros inválidos.','err'); return; }
+  calcState=out;
+  $('#calcResults').innerHTML =
+    `<div class="calc-formula" id="calcTex"></div>` +
+    (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
+    out.results.map(([lab,val,isTxt,cls])=>`
+      <div class="res-row"><span class="res-label">${lab}</span>
+      <span class="res-val mono ${cls||''}">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('') +
+    (out.html? `<div style="margin-top:14px">${out.html}</div>`:'');
+  try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
+  out.draw();
+  toast(`${CALC_NAMES[key]} calculado.`);
+});
+function redrawCalc(){ if(calcState) calcState.draw(); }
+buildParams();
+
+/* ============================================================
+   QUIZ (guarda el mejor intento para la boleta)
+============================================================ */
+const QUIZ=[
+ {q:'Si \(Z_1,\\dots,Z_\\nu\) son normales estándar independientes, \(Z_1^2+\\cdots+Z_\\nu^2\\) sigue…',
+  opts:['Una normal con media \\(\\nu\\)','Una \\(\\chi^2\\) con \\(\\nu\\) grados de libertad','Una F con \\(\\nu\\) grados de libertad','Una t de Student con \\(\\nu\\) grados de libertad'],
+  ans:1, why:'Esa es la definición de la ji-cuadrada: suma de cuadrados de normales estándar independientes. De ahí que \\(E=\\nu\\) y \\(\\mathrm{Var}=2\\nu\\).'},
+ {q:'Si \(X\\sim\\chi^2(8)\\) e \(Y\\sim\\chi^2(7)\\) son independientes, entonces \(X+Y\\)…',
+  opts:['Sigue \\(\\chi^2(15)\\) por la aditividad','Sigue \\(\\chi^2(56)\\) por multiplicar gl','Sigue una F(8,7)','No tiene distribución conocida'],
+  ans:0, why:'Las sumas de cuadrados independientes se acumulan sumando grados de libertad: \\(8+7=15\\). Es la razón por la que las tablas ANOVA «suman» sus fuentes.'},
+ {q:'La distribución F de Snedecor se construye como…',
+  opts:['La diferencia de dos normales estándar','El cociente de dos χ² independientes, cada una dividida entre sus grados de libertad','El cuadrado de una t de Student con gl cualesquiera','La suma de dos proporciones muestrales'],
+  ans:1, why:'\\(F=(U/\\nu_1)/(V/\\nu_2)\\) con \\(U,V\\) chi-cuadradas independientes. El orden de los grados de libertad importa: \\(F(5,20)\\ne F(20,5)\\).'},
+ {q:'En un ANOVA con \(k=4\) grupos y \(N=24\\) observaciones, los grados de libertad son…',
+  opts:['3 y 20','4 y 24','3 y 21','4 y 20'],
+  ans:0, why:'Entre tratamientos: \\(k-1=3\\); error: \\(N-k=20\\); total: \\(N-1=23\\). Los cuadrados medios dividen cada SC entre su gl.'},
+ {q:'Un ANOVA rechaza \(H_0\\). La conclusión correcta es…',
+  opts:['Todas las medias son diferentes dos a dos','La media del primer grupo es la mayor','Al menos una media difiere de las demás; falta identificar cuáles con comparaciones múltiples','Las varianzas de los grupos son diferentes'],
+  ans:2, why:'El ANOVA es una prueba global: el rechazo solo dice que no todas las medias son iguales. Ubicar las diferencias exige métodos posteriores (Tukey, Bonferroni).'},
+ {q:'En una tabla de contingencia, la frecuencia esperada de cada celda bajo independencia se calcula…',
+  opts:['Como el promedio de toda la tabla','Como (total de fila × total de columna)/N','Como la raíz de los observados','Como N dividido entre el número de celdas'],
+  ans:1, why:'\\(E_{ij}=\\dfrac{(\\text{fila}_i)(\\text{col}_j)}{N}\\): los totales marginales son la mejor estimación de las frecuencias si no hubiera asociación.'},
+ {q:'La relación entre la t de Student y la F de Snedecor es que…',
+  opts:['Son independientes entre sí','\\(T^2 \\sim F(1,\\nu)\\): el cuadrado de una t es una F con 1 gl en el numerador','\\(T + F = \\chi^2\\)','La F es la raíz cuadrada de la t'],
+  ans:1, why:'Por eso una prueba t bilateral equivale a una F de cola derecha con \\(\\nu_1=1\\) — y el ANOVA con dos grupos es la generalización natural de la t.'}
+];
+function renderQuiz(){
+  $('#quizList').innerHTML = QUIZ.map((it,i)=>`
+    <article class="quiz-q">
+      <header><span class="qnum">P${i+1}</span><p class="q-text">${it.q}</p></header>
+      <div class="opts">${it.opts.map((o,j)=>`
+        <label class="opt"><input type="radio" name="q${i}" value="${j}">
+        <span class="opt-key">${'ABCD'[j]}</span><span>${o}</span></label>`).join('')}
+      </div>
+      <p class="explain" hidden><strong>Retroalimentación:</strong> ${it.why}</p>
+    </article>`).join('');
+  $('#quizResult').innerHTML='';
+  try{ renderMathInElement($('#quizList'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+}
+ $('#btnGrade').addEventListener('click',()=>{
+  const unanswered = QUIZ.some((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
+  if(unanswered){ toast('Responde todas las preguntas antes de calificar.','err'); return; }
+  let score=0;
+  $$('#quizList .quiz-q').forEach((art,i)=>{
+    const sel=document.querySelector(`input[name="q${i}"]:checked`);
+    if(+sel.value===QUIZ[i].ans) score++;
+    art.querySelectorAll('.opt').forEach(l=>{
+      const inp=l.querySelector('input'); inp.disabled=true; l.classList.add('locked');
+      if(+inp.value===QUIZ[i].ans) l.classList.add('is-correct');
+      else if(+inp.value===+sel.value) l.classList.add('is-wrong');
+    });
+    art.querySelector('.explain').hidden=false;
+  });
+  const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
+  if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
+  const msg = score===QUIZ.length?'Dominio excelente de la unidad.':score>=5?'Muy bien: revisa los puntos marcados en naranja.':
+              score>=3?'Repasa las secciones 4.1 a 4.3 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
+  $('#quizResult').innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
+  toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
+});
+ $('#btnQuizReset').addEventListener('click',()=>{ renderQuiz(); toast('Quiz reiniciado.'); });
+renderQuiz();
+
+/* ============================================================
+   TAREA: avance de los 8 problemas
+============================================================ */
+const PROBLEMAS=['10.2','10.6','10.11','10.16','10.21','10.26','10.31','10.38'];
+const dl=new Date(Date.now()+7*864e5);
+ $('#taskDeadline').textContent = dl.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+
+function renderTaskList(){
+  const T=act()[CURSO].tarea;
+  $('#taskList').innerHTML = PROBLEMAS.map(p=>`
+    <label class="chk ${T[p]?'done':''}">
+      <input type="checkbox" data-p="${p}" ${T[p]?'checked':''}>
+      <span>Problema <strong>${p}</strong> del Larsen &amp; Marx</span>
+    </label>`).join('');
+  updateTaskBar();
+}
+function updateTaskBar(){
+  const T=act()[CURSO].tarea;
+  const done=PROBLEMAS.filter(p=>T[p]).length, pct=Math.round(done/PROBLEMAS.length*100);
+  $('#taskBar').style.width=pct+'%';
+  $('#taskPct').textContent=`${done} / ${PROBLEMAS.length} · ${pct}%`;
+}
+let progToastTimer=null;
+ $('#taskList').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-p]'); if(!cb) return;
+  const p=cb.dataset.p;
+  const a=act(); a[CURSO].tarea[p]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  updateTaskBar(); renderBoleta();
+  clearTimeout(progToastTimer);
+  progToastTimer=setTimeout(()=>{
+    const T=act()[CURSO].tarea, done=PROBLEMAS.filter(q=>T[q]).length;
+    if(done===PROBLEMAS.length) toast('¡Tarea completa! No olvides entregar tu PDF.');
+    else toast(`Avance guardado: ${done} de ${PROBLEMAS.length} problemas.`);
+  },500);
+});
+
+/* ============================================================
+   EJERCICIOS GUIADOS: casillas "ya lo resolví"
+============================================================ */
+const EJ_KEYS=['e1','e2','e3','e4'];
+function syncEjChecks(){
+  const EJ=act()[CURSO].ej;
+  $$('#ejBlock .chk-ej input').forEach(cb=>{
+    cb.checked=!!EJ[cb.dataset.ej];
+    cb.closest('.chk').classList.toggle('done', cb.checked);
+  });
+}
+ $('#ejBlock').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-ej]'); if(!cb) return;
+  const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  renderBoleta();
+  const n=EJ_KEYS.filter(k=>a[CURSO].ej[k]).length;
+  toast(`Ejercicio marcado como resuelto (${n} de ${EJ_KEYS.length}).`);
+});
+
+/* ============================================================
+   EDITOR DE REDACCIÓN (ejercicios de refuerzo e5–e8)
+============================================================ */
+const REDACS=['e5','e6','e7','e8'];
+const redTimers={};
+
+const MANUAL=[
+  {code:'\\( … \\)',      help:'Fórmula en línea (obligatoria para renderizar)', tex:'\\lambda=3', snip:String.raw`\(|\)`},
+  {code:'\\chi^2',        help:'Chi cuadrada',              tex:'\\chi^2=\\sum\\frac{(O-E)^2}{E}', snip:String.raw`\chi^2`},
+  {code:'F_{\\alpha}(\\nu_1,\\nu_2)', help:'Valor crítico F', tex:'F_{0.05}(2,\\,12)=3.89', snip:String.raw`F_{\alpha}(|)`},
+  {code:'\\bar{x}',       help:'Media muestral (x barra)',  tex:'\\bar{x}=\\frac{1}{n}\\sum x_i', snip:String.raw`\bar{|}`},
+  {code:'H_0  H_1',       help:'Hipótesis nula y alternativa', tex:'H_0:\\ \\mu_1=\\cdots=\\mu_k', snip:String.raw`H_{0}:\ |`},
+  {code:'\\alpha  \\beta',help:'Nivel y error tipo II',     tex:'\\alpha=0.05', snip:String.raw`\alpha`},
+  {code:'x^2   x_i',      help:'Potencias e índices',       tex:'Z_1^2+\\cdots+Z_\\nu^2', snip:String.raw`x^{|}`},
+  {code:'\\frac{a}{b}',   help:'Fracciones',                tex:'\\frac{\\text{MSTR}}{\\text{MSE}}', snip:String.raw`\frac{|}{}`},
+  {code:'\\sqrt{x}',      help:'Raíces',                    tex:'V=\\sqrt{\\frac{\\chi^2}{N}}', snip:String.raw`\sqrt{|}`},
+  {code:'\\sum_x',        help:'Sumatoria',                 tex:'\\sum_{i,j}\\frac{(O_{ij}-E_{ij})^2}{E_{ij}}', snip:String.raw`\sum_{|}`},
+  {code:'P(X \\ge x)',    help:'Probabilidad',              tex:'P(\\chi^2_{15} > 25)', snip:String.raw`P(|)`},
+  {code:'E(X)  \\mathrm{Var}', help:'Esperanza y varianza', tex:'E(X)=\\nu,\\ \\mathrm{Var}(X)=2\\nu', snip:String.raw`E(|)`},
+  {code:'\\le \\ge \\ne \\approx', help:'Comparadores',     tex:'F > F_{0.05} \\;\\Rightarrow\\; \\text{rechazar}', snip:String.raw`\approx`},
+  {code:'\\lambda \\mu \\sigma \\nu', help:'Griegos',       tex:'\\lambda,\\ \\mu,\\ \\sigma,\\ \\nu', snip:String.raw`\lambda`},
+  {code:'\\Rightarrow',   help:'Implica / por lo tanto',    tex:'P<\\alpha \\Rightarrow \\text{rechazar } H_0', snip:String.raw`\Rightarrow`},
+  {code:'\\cdot',         help:'Multiplicación',            tex:'N \\cdot \\min(r-1,\\,c-1)', snip:String.raw`\cdot`},
+  {code:'\\text{…}',      help:'Texto dentro de fórmula',   tex:'\\text{valor P}', snip:String.raw`\text{|}`},
+  {code:'\\boxed{…}',     help:'Respuesta final destacada', tex:'\\boxed{\\text{Se rechaza } H_0}', snip:String.raw`\boxed{|}`},
+  {code:'cases (por tramos)', help:'Funciones a tramos',
+   tex:'\\delta(c)=\\begin{cases} \\text{rechazar}, & F>c\\\\ \\text{no rechazar}, & F\\le c\\end{cases}',
+   snip:String.raw`\begin{cases} \text{rechazar}, & F > c \\ \text{no rechazar}, & F \le c \end{cases}`}
+];
+const NOTE_DELIM = String.raw`<strong>Fórmulas:</strong> escríbelas entre <code>\( … \)</code> o <code>$ … $</code>; lo demás queda como texto normal. Pulsa <b>+</b> para insertar un comando en el cursor (si hay texto seleccionado, lo envuelve).`;
+const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 1) hipótesis \\(H_0\\) y \\(H_1\\) · 2) distribución que sostiene la prueba (χ² o F) y sus grados de libertad · 3) cálculo del estadístico · 4) valor crítico o valor P · 5) decisión y conclusión en lenguaje del problema, con la respuesta en <code>\boxed{}</code>.`;
+
+function buildEditors(){
+  $$('.ed-box').forEach(box=>{
+    const k=box.dataset.ed;
+    box.innerHTML=`
+      <div class="ed-toolbar">
+        <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
+        <span class="ed-status" id="st_${k}"><span class="dot"></span>Sin guardar</span>
+      </div>
+      <div class="ed-grid">
+        <div class="ed-main">
+          <textarea id="ta_${k}" class="ed-ta" spellcheck="false"
+            placeholder="Hipótesis → distribución (χ² o F) → cálculo → decisión.&#10;Ej.: \( \chi^2 = \sum \frac{(O-E)^2}{E} = 24.68 \) con \( \nu = (3-1)(2-1) = 2 \)…"></textarea>
+          <div class="ed-preview-wrap">
+            <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
+            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
+          </div>
+        </div>
+        <aside class="ed-manual" data-for="${k}"></aside>
+      </div>
+      <div class="ed-foot">
+        <span class="ed-count" id="cn_${k}">0 palabras</span>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn ghost sm" data-redclear="${k}">Limpiar</button>
+          <button type="button" class="btn sm" data-redsave="${k}"><i data-lucide="save"></i>Guardar</button>
+        </div>
+      </div>`;
+  });
+  buildManuals();
+  refreshIcons();
+}
+function buildManuals(){
+  $$('.ed-manual').forEach(box=>{
+    const views=[];
+    const rows=MANUAL.map(m=>{
+      views.push(m);
+      return `
+      <div class="cmd-row">
+        <div><span class="cmd-code">${esc(m.code)}</span><span class="cmd-help">${m.help}</span></div>
+        <span class="cmd-view"></span>
+        <button type="button" class="cmd-add" data-snip="${esc(m.snip)}" title="Insertar en el cursor">+</button>
+      </div>`;
+    }).join('');
+    box.innerHTML=`<p class="ed-note">${NOTE_DELIM}</p>
+      <p class="ed-cmd-title">Comandos esenciales</p>
+      ${rows}
+      <p class="ed-note" style="margin-top:12px">${NOTE_STRUCT}</p>`;
+    box.querySelectorAll('.cmd-view').forEach((el,i)=>{
+      try{ katex.render(views[i].tex, el, {throwOnError:false}); }
+      catch(e){ el.textContent=views[i].code; }
+    });
+  });
+}
+function insertSnippet(ta, snip){
+  const s=ta.selectionStart ?? ta.value.length, e=ta.selectionEnd ?? s;
+  const before=ta.value.slice(0,s), sel=ta.value.slice(s,e), after=ta.value.slice(e);
+  const caret=snip.indexOf('|');
+  let text, pos;
+  if(caret>=0){
+    const clean=snip.replace('|','');
+    if(sel){ text=clean.slice(0,caret)+sel+clean.slice(caret); pos=s+caret+sel.length; }
+    else   { text=clean; pos=s+caret; }
+  }else{
+    text=snip+(sel||''); pos=s+snip.length;
+  }
+  ta.value=before+text+after;
+  ta.selectionStart=ta.selectionEnd=pos;
+  ta.focus();
+  ta.dispatchEvent(new Event('input'));
+}
+function setStatus(k, txt, saved){
+  const st=$('#st_'+k); if(!st) return;
+  st.classList.toggle('saved', !!saved);
+  st.innerHTML='<span class="dot"></span>'+txt;
+}
+function redPreview(k){
+  const ta=$('#ta_'+k), pv=$('#pv_'+k);
+  const raw=ta.value;
+  $('#cn_'+k).textContent=(raw.trim()? raw.trim().split(/\s+/).length:0)+' palabras';
+  if(!raw.trim()){
+    pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    return;
+  }
+  pv.innerHTML=esc(raw).replace(/\n/g,'<br>');
+  if(typeof renderMathInElement==='function'){
+    try{
+      renderMathInElement(pv,{delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\(',right:'\\)',display:false},
+        {left:'$',right:'$',display:false}],throwOnError:false});
+    }catch(e){}
+  }
+}
+function redSave(k, announce){
+  const a=act(); a[CURSO].red[k]=$('#ta_'+k).value; saveAct(a);
+  setStatus(k,'Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}), true);
+  if(announce) toast('Redacción guardada en este navegador.');
+}
+function redInput(k){
+  setStatus(k,'Escribiendo…', false);
+  clearTimeout(redTimers[k+'p']);
+  redTimers[k+'p']=setTimeout(()=>redPreview(k),250);
+  clearTimeout(redTimers[k+'s']);
+  redTimers[k+'s']=setTimeout(()=>redSave(k,false),1100);
+}
+function initRedacs(){
+  const R=act()[CURSO].red||{};
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(!ta) return;
+    if(R[k]){ ta.value=R[k]; setStatus(k,'Guardado en este navegador', true); redPreview(k); }
+    ta.addEventListener('input',()=>redInput(k));
+  });
+  $$('.ed-manual').forEach(m=>m.addEventListener('click',e=>{
+    const b=e.target.closest('.cmd-add'); if(!b) return;
+    insertSnippet($('#ta_'+m.dataset.for), b.dataset.snip);
+  }));
+  $$('[data-redsave]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redsave; redSave(k,true); redPreview(k);
+  }));
+  $$('[data-redclear]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redclear;
+    if(!b.classList.contains('confirm')){
+      b.classList.add('confirm'); b.textContent='¿Borrar todo?';
+      setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm'); b.textContent='Limpiar'; } },2800);
+      return;
+    }
+    b.classList.remove('confirm'); b.textContent='Limpiar';
+    $('#ta_'+k).value=''; redPreview(k); setStatus(k,'Sin guardar',false);
+    const a=act(); a[CURSO].red[k]=''; saveAct(a);
+    toast('Redacción borrada.');
+  }));
+}
+function resetRedacs(){
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(ta) ta.value='';
+    const pv=$('#pv_'+k); if(pv) pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    setStatus(k,'Sin guardar',false);
+    const cn=$('#cn_'+k); if(cn) cn.textContent='0 palabras';
+  });
+}
+
+/* ============================================================
+   REGISTRO INDIVIDUAL + BOLETA DE RESULTADOS
+============================================================ */
+const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
+                 ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
+function initials(name){
+  const p=name.trim().split(/\s+/);
+  return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
+}
+function avColor(name){ return AV_COLORS[[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COLORS.length]; }
+
+function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1?20 : 0; }
+
+function progresoCurso(){
+  const c=act()[CURSO];
+  const rolls=c.sim.rolls||0;
+  const ejOk=EJ_KEYS.filter(k=>c.ej[k]).length;
+  const tOk=PROBLEMAS.filter(p=>c.tarea[p]).length;
+  return {
+    rolls,
+    sim:   simPct(rolls),
+    ej:    ejOk/EJ_KEYS.length*100, ejOk,
+    quiz:  (c.quiz && c.quiz.score!=null)? c.quiz.score/c.quiz.total*100 : 0,
+    quizScore: (c.quiz && c.quiz.score!=null)? c.quiz.score : null,
+    tarea: tOk/PROBLEMAS.length*100, tOk
+  };
+}
+function notaFinal(){
+  const p=progresoCurso();
+  return (p.sim*0.15 + p.ej*0.25 + p.quiz*0.30 + p.tarea*0.30)/10;
+}
+function updateHomeStat(){
+  const est=loadEst();
+  $('#statNota').textContent = est? notaFinal().toFixed(1) : '—';
+}
+function renderBoleta(){
+  const est=loadEst();
+  $('#regEmpty').hidden = !!est;
+  $('#boletaWrap').hidden = !est;
+  updateHomeStat();
+  if(!est) return;
+
+  const [bg,fg]=avColor(est.nombre);
+  const av=$('#bAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
+  $('#bName').textContent=est.nombre;
+  $('#bMeta').textContent=`Matrícula ${est.matricula} · ${est.correo}`;
+  $('#bSince').textContent=new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+
+  const p=progresoCurso();
+  const defs=[
+    {nombre:'Simulador — distribuciones y ANOVA', pct:p.sim, w:1.5, det:`${p.rolls.toLocaleString('es-MX')} ejecuciones acumuladas`},
+    {nombre:'Ejercicios guiados resueltos', pct:p.ej, w:2.5, det:`${p.ejOk} de ${EJ_KEYS.length} marcados como resueltos`},
+    {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 7 aciertos`},
+    {nombre:'Tarea — problemas del Larsen & Marx', pct:p.tarea, w:3.0, det:`${p.tOk} de ${PROBLEMAS.length} problemas marcados`}
+  ];
+  $('#bRows').innerHTML=defs.map(d=>`
+    <div class="b-row">
+      <div><div class="b-rubname">${d.nombre}</div><div class="b-rubdet">${d.det}</div></div>
+      <div class="b-bar"><div style="width:${d.pct.toFixed(0)}%"></div></div>
+      <div class="b-pts mono">${(d.pct/100*d.w).toFixed(2)} <small>/ ${d.w.toFixed(1)}</small></div>
+    </div>`).join('');
+  $('#bNota').textContent=notaFinal().toFixed(1);
+  $('#bEmit').textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+}
+
+let editMode=false;
+function setFormMode(edit){
+  editMode=edit;
+  $('#btnEstSave').innerHTML = edit? '<i data-lucide="save"></i><span>Guardar cambios</span>'
+                                   : '<i data-lucide="user-plus"></i><span>Registrarme</span>';
+  $('#btnEstCancel').hidden=!edit;
+  refreshIcons();
+}
+ $('#formEst').addEventListener('submit', e=>{
+  e.preventDefault();
+  const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
+  if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
+  if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
+  if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
+  const prev=loadEst();
+  saveEst({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()});
+  e.target.reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList();
+  toast(prev? 'Datos actualizados correctamente.' : `¡Listo, ${nombre.split(' ')[0]}! Tu avance quedará registrado a tu nombre.`);
+});
+ $('#btnEstEdit').addEventListener('click', ()=>{
+  const est=loadEst(); if(!est) return;
+  $('#alNombre').value=est.nombre; $('#alMat').value=est.matricula; $('#alMail').value=est.correo;
+  $('#regEmpty').hidden=false; $('#boletaWrap').hidden=true;
+  setFormMode(true); $('#alNombre').focus();
+});
+ $('#btnEstCancel').addEventListener('click', ()=>{ $('#formEst').reset(); setFormMode(false); renderBoleta(); });
+
+ $('#btnEstDel').addEventListener('click', ()=>{
+  const b=$('#btnEstDel');
+  if(!b.classList.contains('confirm')){
+    b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar todo?</span>'; refreshIcons();
+    setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
+      b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar registro y avance</span>'; refreshIcons(); } },3000);
+    return;
+  }
+  localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
+  $('#formEst').reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetFactory(); resetAnova();
+  toast('Registro y avance borrados de este navegador.');
+});
+
+ $('#btnBoletaPng').addEventListener('click', ()=>{
+  if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
+  toast('Generando imagen de tu boleta…');
+  html2canvas($('#boletaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
+    const est=loadEst();
+    const a=document.createElement('a');
+    a.download=`boleta-inf7-tema4-${est? est.matricula : 'alumno'}.png`;
+    a.href=cv.toDataURL('image/png'); a.click();
+    toast('Boleta descargada como PNG.');
+  }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+});
+
+/* ============================================================
+   RENDER MATEMÁTICO + ARRANQUE
+============================================================ */
+function initMath(){
+  if(typeof renderMathInElement==='function'){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('resize', ()=>{ drawSim(); redrawCalc(); animateHero(); });
+
+refreshIcons();
+initMath();
+buildEditors();
+initRedacs();
+renderTaskList();
+syncEjChecks();
+renderBoleta();
+updateFactory(); updateAnova();
+setMode('factory');
+animateHero();
+</script>
+</body>
+</html>
