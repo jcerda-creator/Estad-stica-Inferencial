@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad VI · Pruebas de hipótesis — Estadística Inferencial</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+/* ============================================================
+   VARIABLES Y BASE
+============================================================ */
+:root{
+  --paper:#f7f3eb;
+  --card:#fffdf8;
+  --ink:#1c2b25;
+  --pine:#1e4636;
+  --pine-soft:#2c5e49;
+  --terra:#c2542f;
+  --terra-soft:#f3e0d6;
+  --gold:#c9a227;
+  --line:rgba(28,43,37,.16);
+  --line-strong:rgba(28,43,37,.4);
+  --muted:rgba(28,43,37,.62);
+  --ok-bg:#e7efe6;
+  --err-bg:#f7e6dd;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+[id]{scroll-margin-top:150px}
+[hidden]{display:none!important}
+body{
+  font-family:'Instrument Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  background-image:radial-gradient(rgba(30,70,54,.075) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+.overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
+.mono{font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--pine)}
+svg.lucide{width:16px;height:16px;stroke-width:2}
+
+/* ============================================================
+   HEADER / NAV
+============================================================ */
+header.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(247,243,235,.93);
+  backdrop-filter:blur(10px);
+  border-bottom:1.5px solid var(--ink);
+}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
+.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
+.brand .brand-ico svg{width:17px;height:17px}
+.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:6px;border-top:1px solid var(--line);padding:10px 0;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  border:1px solid transparent;background:transparent;color:var(--pine);
+  font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;
+  transition:all .18s ease;
+}
+.nav-btn svg{width:15px;height:15px}
+.nav-btn:hover{border-color:var(--line-strong)}
+.nav-btn.active{background:var(--ink);color:var(--paper)}
+
+/* ============================================================
+   VISTAS
+============================================================ */
+.view{padding:0 0 80px}
+.view-head{border-bottom:2px solid var(--ink);padding:52px 0 26px;margin-bottom:36px}
+.view-head h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:8px 0 10px}
+.view-head p.sub{max-width:680px;color:var(--muted)}
+
+/* ============================================================
+   BOTONES / FORMULARIOS
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);border-radius:10px;
+  padding:11px 18px;font-weight:600;font-size:14px;
+  transition:all .18s ease;
+}
+.btn:hover{background:var(--pine);border-color:var(--pine);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:rgba(28,43,37,.06);transform:translateY(-1px)}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field textarea{
+  font:inherit;font-size:14px;color:var(--ink);
+  background:var(--card);border:1px solid var(--line-strong);
+  border-radius:8px;padding:10px 12px;width:100%;resize:vertical;
+  transition:border-color .15s, box-shadow .15s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.hint{font-size:12px;color:var(--muted)}
+.mode-row{display:flex;gap:8px;margin-bottom:16px}
+.mode-row .btn{flex:1;justify-content:center}
+
+/* ============================================================
+   INICIO / HERO
+============================================================ */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:64px 0 56px}
+.hero h1{font-size:clamp(2.3rem,4.6vw,3.7rem);margin:14px 0 18px}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero .lead{font-size:1.05rem;color:var(--muted);max-width:520px}
+.hero-actions{display:flex;gap:12px;margin:26px 0 30px;flex-wrap:wrap}
+.meta-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line-strong);max-width:520px}
+.meta-grid>div{padding:12px 14px 12px 0;border-bottom:1px solid var(--line)}
+.meta-grid dt{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.meta-grid dd{font-weight:600;font-size:14.5px}
+.hero-fig{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:6px 6px 0 rgba(28,43,37,.12)}
+.hero-fig canvas{display:block;width:100%;height:320px}
+.hero-fig figcaption{padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.home-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:44px;border-top:1.5px solid var(--ink);padding-top:38px}
+.route-item{display:grid;grid-template-columns:86px 1fr auto;gap:18px;align-items:center;border-top:1px solid var(--line);padding:22px 4px;cursor:pointer;transition:background .15s}
+.route-item:first-child{border-top:none}
+.route-item:hover{background:rgba(28,43,37,.045)}
+.route-no{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:400;color:rgba(30,70,54,.28)}
+.route-item h3{font-size:1.2rem;margin-bottom:4px}
+.route-item p{font-size:13.5px;color:var(--muted)}
+.route-go{width:38px;height:38px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--ink);transition:all .18s}
+.route-item:hover .route-go{background:var(--ink);color:var(--paper)}
+.side-stats{display:flex;flex-direction:column;gap:12px}
+.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px}
+.stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1}
+.stat .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ============================================================
+   TEORÍA
+============================================================ */
+.theory{display:grid;grid-template-columns:250px 1fr;gap:52px;align-items:start}
+.toc{position:sticky;top:150px;border-left:1.5px solid var(--ink);display:flex;flex-direction:column}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 0 10px 16px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink);padding:9px 16px;font-size:13.5px;font-weight:500;border-left:3px solid transparent;margin-left:-1.5px;transition:all .15s}
+.toc a span{font-family:'Fraunces',serif;color:var(--terra);font-weight:600;min-width:30px}
+.toc a:hover{border-left-color:var(--pine);background:rgba(28,43,37,.05)}
+.sec{border-top:1px solid var(--line);padding:44px 0}
+.sec:first-child{border-top:none;padding-top:0}
+.sec-no{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:rgba(30,70,54,.22);line-height:1}
+.sec h3{font-size:1.55rem;margin:6px 0 16px}
+.prose p{margin:0 0 14px;max-width:70ch}
+.prose ul,.prose ol{margin:0 0 14px 22px;max-width:70ch}
+.prose li{margin-bottom:6px}
+.def{background:#ecf1ea;border:1px solid rgba(30,70,54,.28);border-radius:0 10px 10px 0;border-left:4px solid var(--pine);padding:18px 22px;margin:20px 0}
+.def .def-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--pine)}
+.def p{margin:6px 0 0}
+.ex{background:var(--card);border:1px solid var(--line-strong);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin:20px 0}
+.ex .ex-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a6d10}
+.formula-hero{display:flex;justify-content:center;padding:16px 0;font-size:1.15rem}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.tbl th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line)}
+.tbl tbody tr:hover{background:rgba(28,43,37,.04)}
+.tbl td.center,.tbl th.center{text-align:center}
+.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
+.tag.d{color:var(--pine);border-color:rgba(30,70,54,.45);background:#ecf1ea}
+.tag.c{color:var(--terra);border-color:rgba(194,84,47,.45);background:var(--terra-soft)}
+.tag.g{color:#8a6d10;border-color:rgba(201,162,39,.5);background:#f6eecf}
+.spec-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:18px;align-items:center;border-top:1px solid var(--line);padding:18px 6px;transition:background .15s}
+.spec-row:hover{background:rgba(28,43,37,.04)}
+.spec-row:last-child{border-bottom:1px solid var(--line)}
+.spec-id{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.spec-id .no{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--muted)}
+.spec-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600}
+.spec-use{font-size:13px;color:var(--muted);margin-top:2px}
+.spec-math{text-align:right;font-size:1rem;overflow-x:auto}
+
+/* ============================================================
+   PANELES / LABORATORIOS
+============================================================ */
+.panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.panel-body{padding:20px 18px}
+.lab-grid{display:grid;grid-template-columns:350px 1fr;gap:28px;align-items:start}
+.sim-controls{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-2 .stat{padding:11px 14px}
+.stat-2 .num{font-size:1.35rem}
+.conv{margin-top:18px}
+.conv-bar{height:8px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper);margin-top:6px}
+.conv-bar>div{height:100%;background:var(--terra);width:0%;transition:width .4s ease}
+.note{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line-strong);margin-top:18px;padding-top:12px}
+.graph-frame canvas{display:block;width:100%;height:340px}
+.graph-cap{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+
+/* Resultados calculadora */
+.res-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding:10px 2px}
+.res-row:last-child{border-bottom:none}
+.res-label{font-size:13.5px;font-weight:600}
+.res-val{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--pine)}
+.res-val.dec-ok{color:var(--pine)}
+.res-val.dec-no{color:var(--terra)}
+.calc-formula{border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;margin-bottom:14px;text-align:center;overflow-x:auto}
+.calc-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:46px 20px;color:var(--muted);text-align:center}
+.calc-empty svg{width:30px;height:30px;stroke-width:1.5}
+.warn-box{border:1px solid rgba(194,84,47,.5);background:var(--terra-soft);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--terra);margin-bottom:12px}
+
+/* ============================================================
+   ACTIVIDADES
+============================================================ */
+.act-block{margin-bottom:52px}
+.act-block>h3{font-size:1.45rem;margin:8px 0 6px}
+.act-block>.act-desc{color:var(--muted);max-width:70ch;margin-bottom:20px}
+.rub-row{display:grid;grid-template-columns:280px 1fr 60px;gap:16px;align-items:center;border-top:1px solid var(--line);padding:14px 4px}
+.rub-row:last-child{border-bottom:1px solid var(--line)}
+.rub-row .rub-name{font-weight:600;font-size:14.5px}
+.rub-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+.rub-bar>div{height:100%;background:var(--pine)}
+.rub-pct{text-align:right;font-family:'Fraunces',serif;font-weight:600}
+details.sol{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);margin-bottom:14px;overflow:hidden}
+details.sol summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;font-weight:600;transition:background .15s}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary:hover{background:rgba(28,43,37,.04)}
+.sol-marker{flex:none;width:24px;height:24px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;transition:transform .2s;margin-top:1px}
+details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);color:var(--paper)}
+.sol-body{border-top:1px dashed var(--line-strong);padding:16px 20px;font-size:14.5px}
+.sol-body p{margin-bottom:10px;max-width:75ch}
+.prob-tag{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:4px}
+.quiz-q{border-top:1px solid var(--line);padding:24px 4px}
+.quiz-q header{display:flex;gap:14px;margin-bottom:14px}
+.qnum{flex:none;font-family:'Fraunces',serif;font-weight:700;color:var(--terra);border:1.5px solid var(--terra);border-radius:8px;padding:2px 9px;height:fit-content}
+.quiz-q .q-text{font-weight:600;font-size:15.5px;padding-top:4px}
+.opts{display:grid;gap:9px;margin-left:56px}
+.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--card);transition:all .15s;font-size:14.5px}
+.opt:hover{border-color:var(--pine)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt-key{flex:none;width:26px;height:26px;border:1.5px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .15s}
+.opt.is-correct{border-color:var(--pine);background:var(--ok-bg)}
+.opt.is-correct .opt-key{background:var(--pine);border-color:var(--pine);color:var(--paper)}
+.opt.is-wrong{border-color:var(--terra);background:var(--err-bg)}
+.opt.is-wrong .opt-key{background:var(--terra);border-color:var(--terra);color:var(--paper)}
+.opt.locked{cursor:default}
+.explain{margin:12px 0 0 56px;font-size:13.5px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 14px;background:var(--card)}
+.quiz-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;border-top:1.5px solid var(--ink);padding-top:20px}
+.quiz-result{font-size:15px}
+.quiz-result strong{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--pine);margin-right:8px}
+.task-panel{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.chk{display:flex;align-items:center;gap:11px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card);padding:10px 14px;margin-bottom:9px;cursor:pointer;transition:all .15s;font-size:14.5px}
+.chk:hover{border-color:var(--pine)}
+.chk input{width:16px;height:16px;accent-color:var(--pine)}
+.chk.done{background:var(--ok-bg);border-color:var(--pine)}
+
+/* ============================================================
+   EDITOR DE REDACCIÓN
+============================================================ */
+.ed-box{border:1.5px solid var(--ink);border-radius:10px;margin-top:18px;overflow:hidden;background:var(--card)}
+.ed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);background:#ecf1ea;flex-wrap:wrap}
+.ed-title{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--pine)}
+.ed-title svg{width:13px;height:13px}
+.ed-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.ed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ed-status.saved{color:var(--pine);font-weight:600}
+.ed-status.saved .dot{background:#4a8a5c}
+.ed-grid{display:grid;grid-template-columns:1fr 330px}
+.ed-main{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ed-ta{width:100%;min-height:200px;resize:vertical;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink)}
+.ed-ta:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.ed-preview-wrap{border:1px dashed var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper)}
+.ed-preview-head{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 12px;background:rgba(28,43,37,.04);border-bottom:1px dashed var(--line)}
+.ed-preview{padding:12px 14px;font-size:14.5px;min-height:56px;overflow-x:auto}
+.ed-preview .katex-display{margin:6px 0}
+.ed-ph{color:var(--muted);font-size:13px}
+.ed-manual{border-left:1px solid var(--line);padding:12px 14px;background:rgba(28,43,37,.03);max-height:460px;overflow:auto}
+.ed-note{font-size:12px;color:var(--muted);margin-bottom:10px}
+.ed-note code{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px}
+.ed-cmd-title{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);margin:12px 0 4px}
+.cmd-row{display:grid;grid-template-columns:minmax(0,1fr) auto 26px;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.cmd-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--ink);overflow-x:auto;white-space:nowrap;display:block}
+.cmd-help{display:block;font-size:10.5px;color:var(--muted);font-family:'Instrument Sans'}
+.cmd-view{font-size:13px;text-align:right;max-width:130px;overflow-x:auto;padding:2px 0}
+.cmd-add{width:26px;height:26px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);display:grid;place-items:center;font-weight:700;color:var(--pine);transition:all .15s;font-size:14px;flex:none}
+.cmd-add:hover{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+.ed-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px dashed var(--line-strong);flex-wrap:wrap}
+.ed-count{font-size:12px;color:var(--muted)}
+details.mini-check{border:1px dashed var(--line-strong);border-radius:8px;background:var(--terra-soft);margin-top:14px}
+details.mini-check summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;list-style:none}
+details.mini-check summary::-webkit-details-marker{display:none}
+details.mini-check summary:hover{color:var(--terra)}
+details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-top:8px;font-size:13.5px}
+
+/* ============================================================
+   REGISTRO Y BOLETA
+============================================================ */
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.del-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;transition:all .15s}
+.del-btn:hover{border-color:var(--terra);color:var(--terra)}
+.del-btn.confirm{background:var(--terra);border-color:var(--terra);color:#fff}
+.boleta-card{position:relative;max-width:700px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 rgba(28,43,37,.12);overflow:hidden}
+.b-head{display:flex;align-items:center;gap:16px;padding:22px 24px;border-bottom:1.5px solid var(--ink)}
+.b-head .avatar{width:52px;height:52px;font-size:17px;border:1.5px solid var(--ink)}
+.b-head>div{flex:1;min-width:0}
+.b-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--terra);margin-bottom:3px}
+.b-name{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;line-height:1.15}
+.b-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.b-seal{flex:none;width:76px;height:76px;border:2px solid var(--terra);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.85;line-height:1.25}
+.b-seal span{font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.b-seal strong{font-family:'Fraunces',serif;font-size:1.05rem}
+.b-body{padding:8px 24px 18px}
+.b-row{display:grid;grid-template-columns:1fr 150px 92px;gap:14px;align-items:center;border-top:1px solid var(--line);padding:13px 0}
+.b-row:first-child{border-top:none}
+.b-rubname{font-weight:600;font-size:14.5px}
+.b-rubdet{font-size:12px;color:var(--muted);margin-top:1px}
+.b-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper)}
+.b-bar>div{height:100%;background:var(--pine);transition:width .4s ease}
+.b-pts{text-align:right;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+.b-pts small{font-weight:400;color:var(--muted);font-size:.75em}
+.b-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#ecf1ea;padding:16px 24px}
+.b-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem}
+.b-total-det{font-size:11.5px;color:var(--muted);margin-top:2px}
+.b-score{display:flex;align-items:baseline;gap:6px}
+.b-score .big{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;color:var(--pine);line-height:1}
+.b-score .den{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--muted)}
+.b-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line-strong);padding:11px 24px;font-size:11.5px;color:var(--muted)}
+.boleta-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:700px}
+
+/* ============================================================
+   TOASTS / FOOTER
+============================================================ */
+#toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(28,43,37,.28);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
+.toast svg{flex:none;width:17px;height:17px}
+.toast.ok svg{color:#8fd0a5}
+.toast.err svg{color:#f0a284}
+.toast.out{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
+footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.foot-row strong{color:var(--ink)}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr;gap:34px}
+  .home-grid{grid-template-columns:1fr}
+  .theory{grid-template-columns:1fr}
+  .toc{position:static;flex-direction:row;overflow-x:auto;border-left:none;border-bottom:1.5px solid var(--ink);gap:2px}
+  .toc-title{display:none}
+  .toc a{white-space:nowrap;border-left:none;border-bottom:3px solid transparent}
+  .toc a:hover{border-bottom-color:var(--pine)}
+  .lab-grid,.task-panel{grid-template-columns:1fr}
+  .spec-row{grid-template-columns:1fr;gap:8px}
+  .spec-math{text-align:left}
+  .rub-row{grid-template-columns:1fr;gap:8px}
+  .rub-pct{text-align:left}
+  .meta-grid{max-width:none}
+  .ed-grid{grid-template-columns:1fr}
+  .ed-manual{border-left:none;border-top:1px solid var(--line);max-height:none}
+}
+@media (max-width:640px){
+  .b-row{grid-template-columns:1fr 86px}
+  .b-bar{display:none}
+  .b-seal{display:none}
+  .b-total{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="topbar">
+  <div class="wrap topbar-row">
+    <div class="brand">
+      <span class="brand-ico"><i data-lucide="sigma"></i></span>
+      <span>Estadística Inferencial<small>Aula interactiva — Dr. Adrián Cerda</small></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" id="mainNav">
+      <button class="nav-btn active" data-view="inicio"><i data-lucide="home"></i>Inicio</button>
+      <button class="nav-btn" data-view="teoria"><i data-lucide="book-open"></i>Teoría</button>
+      <button class="nav-btn" data-view="simulador"><i data-lucide="target"></i>Simulador</button>
+      <button class="nav-btn" data-view="calculadora"><i data-lucide="calculator"></i>Calculadora</button>
+      <button class="nav-btn" data-view="actividades"><i data-lucide="clipboard-list"></i>Actividades</button>
+      <button class="nav-btn" data-view="boleta"><i data-lucide="badge-check"></i>Mi boleta</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== INICIO ==================== -->
+<section class="view" id="v-inicio">
+  <div class="wrap hero">
+    <div>
+      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, caps. 6 · 9 · 10</p>
+      <h1>Pruebas de hipótesis: <em>decidir</em> con evidencia</h1>
+      <p class="lead">La pregunta ya no es «¿cuánto vale θ?» sino «¿qué dicen los datos sobre una afirmación concreta?». Hipótesis nula y alternativa, los dos tipos de error, la potencia, el valor P — y el catálogo completo: medias, proporciones, varianzas, una y dos muestras, y las pruebas χ² para datos categóricos.</p>
+      <div class="hero-actions">
+        <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
+        <button class="btn ghost" data-view="simulador"><i data-lucide="target"></i>Probar el simulador</button>
+      </div>
+      <dl class="meta-grid">
+        <div><dt>Unidad</dt><dd>VI — Pruebas de hipótesis</dd></div>
+        <div><dt>Sesiones</dt><dd>5 · teórico-prácticas</dd></div>
+        <div><dt>Evaluación</dt><dd>Quiz + tareas + laboratorio</dd></div>
+        <div><dt>Requisitos</dt><dd>Estimación e IC (Unidad V)</dd></div>
+      </dl>
+    </div>
+    <figure class="hero-fig">
+      <canvas id="heroCanvas"></canvas>
+      <figcaption><strong>Los dos mundos del estadístico.</strong> La distribución de \(\bar X\) bajo \(H_0\) y bajo \(H_1\): la región de rechazo define \(\alpha\) en un mundo y \(\beta\) en el otro. Toda prueba es un equilibrio entre ambos.</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap home-grid">
+    <div>
+      <p class="overline" style="margin-bottom:14px">Ruta de la unidad</p>
+      <div class="route-item" data-view="teoria">
+        <span class="route-no">01</span>
+        <div><h3>Desarrollo de la teoría</h3><p>La lógica de la decisión estadística, pruebas para medias, proporciones y varianzas (una y dos muestras), y las pruebas χ² para datos categóricos.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="simulador">
+        <span class="route-no">02</span>
+        <div><h3>Laboratorio de simulación</h3><p>Comete miles de decisiones y mira de frente a los errores tipo I y II, la potencia y el comportamiento del χ² de Pearson.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="actividades">
+        <span class="route-no">03</span>
+        <div><h3>Evaluación y tareas</h3><p>Ejercicios guiados, redacción de soluciones en LaTeX, quiz de autoevaluación y la tarea de problemas del Larsen &amp; Marx.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+      <div class="route-item" data-view="boleta">
+        <span class="route-no">04</span>
+        <div><h3>Mi boleta</h3><p>Regístrate una sola vez y sigue tu nota: tu avance y tu calificación final, con descarga en imagen para compartir.</p></div>
+        <span class="route-go"><i data-lucide="arrow-right"></i></span>
+      </div>
+    </div>
+    <aside>
+      <p class="overline" style="margin-bottom:14px">En un vistazo</p>
+      <div class="side-stats">
+        <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
+        <div class="stat"><div class="num">12</div><div class="lbl">Pruebas en catálogo</div></div>
+        <div class="stat"><div class="num">6</div><div class="lbl">Preguntas del quiz</div></div>
+        <div class="stat"><div class="num">16</div><div class="lbl">Ejercicios y problemas</div></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TEORÍA ==================== -->
+<section class="view" id="v-teoria" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Desarrollo de la teoría</p>
+      <h2>Pruebas de hipótesis paramétricas y χ²</h2>
+      <p class="sub">Síntesis de Larsen, R. J. &amp; Marx, M. L., <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. — caps. 6 (fundamentos), 9 (dos muestras) y 10 (χ²). Cada sección combina definición formal, procedimiento y un ejemplo de finanzas, administración o marketing.</p>
+    </div>
+
+    <div class="theory">
+      <aside class="toc">
+        <p class="toc-title">Contenido</p>
+        <a href="#t61"><span>6.1</span>Fundamentos y errores</a>
+        <a href="#t62"><span>6.2</span>Una muestra</a>
+        <a href="#t63"><span>6.3</span>Dos muestras</a>
+        <a href="#t64"><span>6.4</span>Bondad de ajuste</a>
+        <a href="#t65"><span>6.5</span>Independencia y homogeneidad</a>
+        <a href="#t66"><span>6.6</span>Catálogo de pruebas</a>
+      </aside>
+
+      <div class="prose">
+
+        <!-- 6.1 -->
+        <article class="sec" id="t61">
+          <div class="sec-no">6.1</div>
+          <h3>Fundamentos: la lógica de la decisión estadística</h3>
+          <div class="def">
+            <span class="def-tag">Definición</span>
+            <p>Una <strong>prueba de hipótesis</strong> es un procedimiento que, a partir de una muestra, decide entre dos afirmaciones mutuamente excluyentes sobre un parámetro: la <strong>hipótesis nula</strong> \(H_0\) —el estado de things por defecto, lo que se asumiría sin evidencia en contra— y la <strong>hipótesis alternativa</strong> \(H_1\) —lo que el investigador sospecha y quiere evidenciar.</p>
+          </div>
+          <p>La analogía judicial es precisa: \(H_0\) es la presunción de inocencia. No se acepta \(H_0\) «porque sí»; se <em>rechaza</em> solo cuando los datos son improbables bajo ella. La carga de la prueba está en \(H_1\). Un procedimiento completo consta de cinco pasos:</p>
+          <ol>
+            <li>Formular \(H_0\) y \(H_1\) (el tipo de \(H_1\) —\(\ne\), \(&gt;\), \(&lt;\)— determina si la prueba es bilateral o unilateral).</li>
+            <li>Elegir el estadístico de prueba y su distribución bajo \(H_0\).</li>
+            <li>Fijar el nivel de significancia \( \alpha \) — la probabilidad de falso rechazo que se tolera.</li>
+            <li>Definir la <strong>región de rechazo</strong> (o, equivalentemente, calcular el valor P).</li>
+            <li>Decidir y <em>traducir la decisión al lenguaje del problema</em>.</li>
+          </ol>
+          <p>Como la decisión se toma con información muestral incompleta, existen dos errores posibles, y su matriz define el vocabulario de toda la unidad:</p>
+          <table class="tbl">
+            <thead><tr><th></th><th class="center">No rechazar \(H_0\)</th><th class="center">Rechazar \(H_0\)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>\(H_0\) es verdadera</strong></td><td class="center">Decisión correcta<br><span style="font-size:12px;color:var(--muted)">probabilidad \(1-\alpha\)</span></td><td class="center"><strong>Error tipo I</strong><br><span style="font-size:12px;color:var(--muted)">probabilidad \( \alpha \) — «falsa alarma»</span></td></tr>
+              <tr><td><strong>\(H_0\) es falsa</strong></td><td class="center"><strong>Error tipo II</strong><br><span style="font-size:12px;color:var(--muted)">probabilidad \( \beta \) — «omisión»</span></td><td class="center"><strong>Potencia</strong><br><span style="font-size:12px;color:var(--muted)">probabilidad \( 1-\beta \)</span></td></tr>
+            </tbody>
+          </table>
+          <p>Con \( \alpha \) fijado por el analista, \( \beta \) depende de tres cosas: de qué tan lejos está el valor verdadero del parámetro respecto a \(H_0\) (el <strong>tamaño del efecto</strong>), de \( \sigma \) y del tamaño de muestra \(n\). La <strong>potencia</strong> \( 1-\beta \) es la capacidad del procedimiento para detectar un efecto real cuando existe. Aumentar \(n\) con \( \alpha \) fijo reduce \( \beta \): más datos compran más poder de detección.</p>
+          <div class="def">
+            <span class="def-tag">Valor P</span>
+            <p>El <strong>valor P</strong> es la probabilidad, <em>calculada suponiendo \(H_0\) verdadera</em>, de observar un estadístico al menos tan extremo como el obtenido. Regla de decisión: se rechaza \(H_0\) si \( \text{valor P} &lt; \alpha \). Cuanto menor es el valor P, más «incómodos» están los datos con \(H_0\).</p>
+          </div>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — control de peso (administración)</span>
+            <p>Una empacadora declara paquetes de café de \( \mu = 500 \) g; por diseño, \( \sigma = 8 \) g. La gerencia sospecha sobrellenado (costo excedente) y plantea \( H_0\!: \mu = 500 \) vs. \( H_1\!: \mu &gt; 500 \), con \( \alpha = 0.05 \) y una muestra de \( n = 25 \) paquetes que da \( \bar x = 503 \) g.</p>
+            <p>\( z = \dfrac{503-500}{8/\sqrt{25}} = 1.875, \qquad \text{valor P} = P(Z \ge 1.875) = 0.0304. \)</p>
+            <p>Como \( 0.0304 &lt; 0.05 \), se rechaza \(H_0\): hay evidencia de sobrellenado sistemático. <em>Interpretación del valor P:</em> si la máquina realmente entregara 500 g de promedio, un resultado de 503 g o más ocurriría solo en un 3% de los muestreos — poco frecuente, incómodo para \(H_0\).</p>
+          </div>
+        </article>
+
+        <!-- 6.2 -->
+        <article class="sec" id="t62">
+          <div class="sec-no">6.2</div>
+          <h3>Pruebas con una muestra: media, proporción y varianza</h3>
+          <p><strong>Media, \( \sigma \) conocida.</strong> El estadístico \( Z = \dfrac{\bar X - \mu_0}{\sigma/\sqrt n} \) sigue \( N(0,1) \) bajo \(H_0\) (población normal o \(n\) grande). Regiones de rechazo: bilateral \( |Z| \ge z_{\alpha/2} \); unilateral derecha \( Z \ge z_\alpha \); izquierda \( Z \le -z_\alpha \).</p>
+          <p><strong>Media, \( \sigma \) desconocida.</strong> Se sustituye \( s \) y el pivote es la t de Student: \( T_{n-1} = \dfrac{\bar X - \mu_0}{s/\sqrt n} \). Misma estructura, cuantiles \( t_{\alpha,\,n-1} \); requiere población aproximadamente normal, sobre todo con \(n\) pequeño.</p>
+          <p><strong>Proporción.</strong> Para \( H_0\!: p = p_0 \), con condiciones \( n p_0 \ge 5 \) y \( n q_0 \ge 5 \):</p>
+          <div class="formula-hero">\( \displaystyle Z = \frac{\hat p - p_0}{\sqrt{p_0\,q_0/n}}. \)</div>
+          <p>El detalle fino: la desviación estándar se evalúa con \(p_0\) —el valor hipotético— y no con \( \hat p \), porque bajo \(H_0\) la única varianza admisible es la que \(p_0\) implica.</p>
+          <p><strong>Varianza.</strong> Para \( H_0\!: \sigma^2 = \sigma_0^2 \) con población normal, el estadístico</p>
+          <div class="formula-hero">\( \displaystyle \chi^2 = \frac{(n-1)\,s^2}{\sigma_0^2} \)</div>
+          <p>sigue una ji-cuadrada con \(n-1\) grados de libertad. La prueba bilateral usa las dos colas (\( \chi^2_{\alpha/2} \) y \( \chi^2_{1-\alpha/2} \)); la unilateral derecha detecta <em>exceso</em> de variabilidad — el caso práctico más común en control de calidad.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — llenado de envases (operaciones)</span>
+            <p>La especificación de un llenador exige \( \sigma = 2 \) ml (consistencia). En una auditoría, \( n = 20 \) envases dan \( s = 2.55 \) ml. ¿Evidencia de variabilidad excesiva? \( H_0\!: \sigma^2 = 4 \) vs. \( H_1\!: \sigma^2 &gt; 4 \), \( \alpha = 0.05 \):</p>
+            <p>\( \chi^2 = \dfrac{19 \times 6.5025}{4} = 30.89, \qquad \chi^2_{0.05,\,19} = 30.14. \)</p>
+            <p>Como \( 30.89 &gt; 30.14 \), se rechaza \(H_0\): el proceso es hoy <em>menos consistente</em> que la especificación. Obsérvese que la media puede estar perfecta y aun así fallar la prueba: varianza y media son parámetros independientes que exigen pruebas independientes.</p>
+          </div>
+        </article>
+
+        <!-- 6.3 -->
+        <article class="sec" id="t63">
+          <div class="sec-no">6.3</div>
+          <h3>Pruebas con dos muestras: comparar es decidir</h3>
+          <p><strong>Diferencia de medias, muestras independientes.</strong> Con \( \sigma_1, \sigma_2 \) desconocidas pero supuestas iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \) y se usa</p>
+          <div class="formula-hero">\( \displaystyle T = \frac{\bar X_1 - \bar X_2}{s_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}} \;\sim\; t_{n_1+n_2-2} \) bajo \( H_0\!: \mu_1 = \mu_2. \)</div>
+          <p>Si las varianzas no pueden asumirse iguales, la alternativa es la aproximación de <strong>Welch–Satterthwaite</strong>: mismo numerador con \( s_1^2/n_1 + s_2^2/n_2 \), y grados de libertad \( \nu = \dfrac{(s_1^2/n_1 + s_2^2/n_2)^2}{\dfrac{(s_1^2/n_1)^2}{n_1-1} + \dfrac{(s_2^2/n_2)^2}{n_2-1}} \).</p>
+          <p><strong>Datos pareados.</strong> Cuando cada observación de un grupo se empareja naturalmente con una del otro (antes/después sobre la misma unidad), la prueba correcta no compara dos muestras: construye las diferencias \( d_i = x_{1i} - x_{2i} \) y aplica una t de una muestra a \( \bar d \) con \( s_d \): \( T = \dfrac{\bar d}{s_d/\sqrt n} \), con \( n-1 \) gl. El pareado elimina la variabilidad entre unidades y suele ganar mucha potencia.</p>
+          <p><strong>Diferencia de proporciones.</strong> Para \( H_0\!: p_1 = p_2 \), el estimador agrupado \( \hat p = \dfrac{x_1+x_2}{n_1+n_2} \) alimenta el estadístico</p>
+          <div class="formula-hero">\( \displaystyle Z = \frac{\hat p_1 - \hat p_2}{\sqrt{\hat p\,\hat q\left(\tfrac{1}{n_1}+\tfrac{1}{n_2}\right)}}. \)</div>
+          <p><strong>Razón de varianzas.</strong> La comparación de consistencias entre dos procesos usa \( F = \dfrac{s_1^2}{s_2^2} \), que bajo \(H_0\) sigue una F de Fisher con \( \nu_1 = n_1 - 1 \) y \( \nu_2 = n_2 - 1 \) grados de libertad. Para la prueba bilateral se compara con \( F_{\alpha/2} \) colocando la varianza mayor en el numerador.</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — prueba A/B (marketing)</span>
+            <p>Una tienda prueba dos versiones de su página de pago. Versión A: 42 conversiones en 500 visitas; versión B: 61 en 500. ¿Convierte B más, al \( \alpha = 0.05 \)? \( H_0\!: p_A = p_B \) vs. \( H_1\!: p_B &gt; p_A \). Estimador agrupado: \( \hat p = 103/1000 = 0.103 \).</p>
+            <p>\( z = \dfrac{0.122 - 0.084}{\sqrt{0.103 \times 0.897 \times \left(\tfrac{2}{500}\right)}} = \dfrac{0.038}{0.0192} = 1.98, \qquad \text{valor P} = 0.024. \)</p>
+            <p>Se rechaza \(H_0\): la versión B convierte significativamente más. Esta estructura —dos proporciones, Z agrupado, decisión— es el motor estadístico de todo experimento A/B en marketing digital.</p>
+          </div>
+        </article>
+
+        <!-- 6.4 -->
+        <article class="sec" id="t64">
+          <div class="sec-no">6.4</div>
+          <h3>Bondad de ajuste: ¿encajan los datos con el modelo?</h3>
+          <div class="def">
+            <span class="def-tag">Estadístico de Pearson</span>
+            <p>Dadas \( k \) categorías con frecuencias observadas \( O_i \) y esperadas \( E_i = n\,p_{i0} \) bajo \(H_0\), el estadístico</p>
+            <p style="display:flex;justify-content:center;padding:6px 0">\( \displaystyle \chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i} \)</p>
+            <p>sigue aproximadamente una \( \chi^2 \) con \( k - 1 \) grados de libertad (uno menos porque las \(O_i\) deben sumar \(n\)). Se rechaza \(H_0\) con valores grandes: solo la cola derecha.</p>
+          </div>
+          <p>Cada término \( (O_i - E_i)^2 / E_i \) mide el desacuerdo «al cuadrado, escalado» entre lo observado y lo prometido por el modelo. La condición de validez exige <strong>esperados no demasiado pequeños</strong>: regla práctica \( E_i \ge 5 \) en todas las categorías (o al menos en casi todas, con ninguna menor que 1).</p>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — demanda semanal (administración)</span>
+            <p>¿Es la demanda de un restaurante uniforme de lunes a viernes? En 120 días se observan ventas altas: L 22, M 26, X 23, J 24, V 25. \(H_0\): uniforme ⇒ \(E_i = 120/5 = 24\):</p>
+            <p>\( \chi^2 = \tfrac{(22-24)^2 + (26-24)^2 + (23-24)^2 + (24-24)^2 + (25-24)^2}{24} = \tfrac{10}{24} = 0.417. \)</p>
+            <p>Con \( \text{gl} = 4 \), \( \chi^2_{0.05,4} = 9.488 \) y el valor P es \( \approx 0.98 \): los datos encajan notablemente bien con la uniformidad — no hay día «especial». Nótese la asimetría de la conclusión: no se <em>prueba</em> que la demanda es uniforme; solo que no hay evidencia suficiente contra ello.</p>
+          </div>
+        </article>
+
+        <!-- 6.5 -->
+        <article class="sec" id="t65">
+          <div class="sec-no">6.5</div>
+          <h3>Independencia y homogeneidad: tablas de contingencia</h3>
+          <p>Cuando cada elemento de la muestra se clasifica según <strong>dos criterios categóricos</strong> (filas \(r\), columnas \(c\)), los datos forman una tabla de contingencia. Bajo la hipótesis de no asociación, la frecuencia esperada de la celda \( (i,j) \) se estima con</p>
+          <div class="formula-hero">\( \displaystyle E_{ij} = \frac{(\text{total fila } i)\times(\text{total columna } j)}{N}, \qquad \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}, \quad \text{gl} = (r-1)(c-1). \)</div>
+          <p>Los grados de libertad cuentan cuántas celdas son «libres» una vez respetados los totales marginales. El estadístico y el cálculo son idénticos en dos diseños distintos, y conviene distinguirlos:</p>
+          <ul>
+            <li><strong>Prueba de independencia:</strong> una sola muestra se clasifica por dos variables. Pregunta: ¿están asociadas? Ej.: ¿depende la decisión de compra del canal de contacto?</li>
+            <li><strong>Prueba de homogeneidad:</strong> varias muestras (poblaciones predefinidas) se comparan en una misma variable categórica. Pregunta: ¿las poblaciones comparten la misma distribución? Ej.: ¿los tres grupos de edad tienen la misma preferencia de producto?</li>
+          </ul>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — canal de contacto y compra (marketing)</span>
+            <p>De 300 clientes contactados —100 por correo, 100 por redes, 100 en tienda— se registra si compraron: correo 30/70, redes 45/55, tienda 55/45. Totales: 130 compraron, 170 no. Esperados por celda (p. ej., correo-sí): \( 100 \times 130/300 = 43.3 \).</p>
+            <p>\( \chi^2 = \tfrac{(30-43.3)^2}{43.3} + \tfrac{(70-56.7)^2}{56.7} + \dots \approx 12.90, \qquad \text{gl} = (3-1)(2-1) = 2. \)</p>
+            <p>Con \( \chi^2_{0.05,2} = 5.99 \) y valor \( \text{P} \approx 0.0016 \), se rechaza la independencia: el canal y la compra están asociados — la tienda presencial convierte por encima de lo esperado. La prueba no dice <em>por qué</em>; el análisis de residuos por celda (aquí, mirar qué celdas aportan más al \( \chi^2 \)) orienta la lectura de negocio.</p>
+          </div>
+        </article>
+
+        <!-- 6.6 -->
+        <article class="sec" id="t66">
+          <div class="sec-no">6.6</div>
+          <h3>Catálogo de pruebas</h3>
+          <p>Las doce pruebas de la unidad en una sola vista, agrupadas por escenario: <span class="tag d">una muestra</span>, <span class="tag c">dos muestras</span> y <span class="tag g">categóricos</span>. Todas operan con la misma lógica: estadístico bajo \(H_0\), región de rechazo y valor P. Pruébalas en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
+
+          <div style="margin-top:22px">
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Una muestra</span><span class="no">T1</span></div>
+              <div><div class="spec-name">Media, \( \sigma \) conocida</div><div class="spec-use">Población normal o \(n\) grande; compara \( \mu \) contra \( \mu_0 \).</div></div>
+              <div class="spec-math">\( z = \dfrac{\bar x - \mu_0}{\sigma/\sqrt n} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Una muestra</span><span class="no">T2</span></div>
+              <div><div class="spec-name">Media, \( \sigma \) desconocida</div><div class="spec-use">Sustituye \( s \); exige población ≈ normal con \(n\) pequeño.</div></div>
+              <div class="spec-math">\( t = \dfrac{\bar x - \mu_0}{s/\sqrt n},\; \nu = n-1 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Una muestra</span><span class="no">T3</span></div>
+              <div><div class="spec-name">Proporción</div><div class="spec-use">Condiciones \( n p_0 \ge 5,\ n q_0 \ge 5 \); SE evaluada con \(p_0\).</div></div>
+              <div class="spec-math">\( z = \dfrac{\hat p - p_0}{\sqrt{p_0 q_0/n}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag d">Una muestra</span><span class="no">T4</span></div>
+              <div><div class="spec-name">Varianza</div><div class="spec-use">Consistencia de un proceso; población normal.</div></div>
+              <div class="spec-math">\( \chi^2 = \dfrac{(n-1)s^2}{\sigma_0^2},\; \nu = n-1 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Dos muestras</span><span class="no">T5</span></div>
+              <div><div class="spec-name">Medias, \( \sigma \) conocidas</div><div class="spec-use">Comparación con varianzas poblacionales conocidas.</div></div>
+              <div class="spec-math">\( z = \dfrac{\bar x_1 - \bar x_2}{\sqrt{\tfrac{\sigma_1^2}{n_1}+\tfrac{\sigma_2^2}{n_2}}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Dos muestras</span><span class="no">T6</span></div>
+              <div><div class="spec-name">Medias, varianzas iguales</div><div class="spec-use">t agrupada; \(s_p^2\) combina ambas muestras.</div></div>
+              <div class="spec-math">\( t = \dfrac{\bar x_1 - \bar x_2}{s_p\sqrt{\tfrac{1}{n_1}+\tfrac{1}{n_2}}},\; \nu = n_1+n_2-2 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Dos muestras</span><span class="no">T7</span></div>
+              <div><div class="spec-name">Medias, datos pareados</div><div class="spec-use">Antes/después en la misma unidad: t sobre las diferencias.</div></div>
+              <div class="spec-math">\( t = \dfrac{\bar d}{s_d/\sqrt n},\; \nu = n-1 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Dos muestras</span><span class="no">T8</span></div>
+              <div><div class="spec-name">Proporciones (A/B)</div><div class="spec-use">Conversión, aceptación, defectos entre dos grupos.</div></div>
+              <div class="spec-math">\( z = \dfrac{\hat p_1 - \hat p_2}{\sqrt{\hat p\hat q(\tfrac{1}{n_1}+\tfrac{1}{n_2})}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">Dos muestras</span><span class="no">T9</span></div>
+              <div><div class="spec-name">Varianzas (F de Fisher)</div><div class="spec-use">Comparar consistencia entre dos procesos.</div></div>
+              <div class="spec-math">\( F = \dfrac{s_1^2}{s_2^2},\; \nu_1 = n_1{-}1,\ \nu_2 = n_2{-}1 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Categóricos</span><span class="no">T10</span></div>
+              <div><div class="spec-name">Bondad de ajuste</div><div class="spec-use">¿Encajan los datos con una distribución teórica? Esperados \( \ge 5 \).</div></div>
+              <div class="spec-math">\( \chi^2 = \sum \dfrac{(O_i - E_i)^2}{E_i},\; \nu = k-1 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Categóricos</span><span class="no">T11</span></div>
+              <div><div class="spec-name">Independencia</div><div class="spec-use">Una muestra, dos variables: ¿están asociadas?</div></div>
+              <div class="spec-math">\( \chi^2, \; \nu = (r-1)(c-1) \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Categóricos</span><span class="no">T12</span></div>
+              <div><div class="spec-name">Homogeneidad</div><div class="spec-use">Varias poblaciones, una variable: ¿misma distribución?</div></div>
+              <div class="spec-math">\( \chi^2, \; \nu = (r-1)(c-1) \)</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SIMULADOR ==================== -->
+<section class="view" id="v-simulador" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de simulación · Actividad práctica</p>
+      <h2>Decisiones en serie: errores, potencia y el χ² en acción</h2>
+      <p class="sub">Dos experimentos complementarios: <strong>① los dos errores</strong> —decisiones repetidas en dos mundos, uno con \(H_0\) verdadera y otro con \(H_1\) verdadera— y <strong>② el χ² de Pearson</strong> —bondad de ajuste con desviación controlada, para ver \(\alpha\) y potencia directamente. La interpretación frecuentista de una prueba, hecha visible.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="target"></i>Controles del experimento</div>
+        <div class="panel-body">
+          <div class="mode-row">
+            <button class="btn sm" id="mErrs"><i data-lucide="crosshair"></i>Los dos errores (α y β)</button>
+            <button class="btn sm ghost" id="mGof"><i data-lucide="layout-grid"></i>χ² de bondad de ajuste</button>
+          </div>
+
+          <!-- Modo A: los dos errores -->
+          <div id="errsBlock">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simEN">n de cada muestra</label>
+                <select id="simEN">
+                  <option value="10">n = 10</option>
+                  <option value="25" selected>n = 25</option>
+                  <option value="50">n = 50</option>
+                  <option value="100">n = 100</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simEAlpha">Nivel α</label>
+                <select id="simEAlpha">
+                  <option value="0.01">1%</option>
+                  <option value="0.05" selected>5%</option>
+                  <option value="0.10">10%</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simEDelta">Efecto real (μ₁ − μ₀)</label>
+                <select id="simEDelta">
+                  <option value="0.5">0.5 σ (+4 g)</option>
+                  <option value="1">1 σ (+8 g)</option>
+                  <option value="1.5">1.5 σ (+12 g)</option>
+                  <option value="2">2 σ (+16 g)</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnE1"><i data-lucide="play"></i>+1 par</button>
+              <button class="btn ghost" id="btnE100"><i data-lucide="plus"></i>100</button>
+              <button class="btn ghost" id="btnE1000"><i data-lucide="plus"></i>1,000</button>
+              <button class="btn ghost" id="btnEReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="ePares">0</div><div class="lbl">Pares de muestras</div></div>
+              <div class="stat"><div class="num mono" id="eAlpha">—</div><div class="lbl">α empírico (falsas alarmas)</div></div>
+              <div class="stat"><div class="num mono" id="eBeta">—</div><div class="lbl">β empírico (omisiones)</div></div>
+              <div class="stat"><div class="num mono" id="ePot">—</div><div class="lbl">Potencia empírica</div></div>
+            </div>
+            <p class="note" id="eTheo">Teóricos: α = 5% · β = — · potencia = —</p>
+            <p class="note">Cada «par» toma una muestra de un mundo con \( \mu = \mu_0 = 500 \) g y otra de un mundo con \( \mu = \mu_1 \), y decide con la misma regla: rechazar si \( \bar x &gt; c \). El <strong>α empírico</strong> debe acercarse al nominal; la <strong>potencia</strong> crece con el efecto y con \(n\). Prueba: \(n=10\) con efecto 0.5σ vs. \(n=100\) con el mismo efecto.</p>
+          </div>
+
+          <!-- Modo B: chi-cuadrada -->
+          <div id="gofBlock" hidden>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simGD">Desviación real del 25%</label>
+                <select id="simGD">
+                  <option value="0" selected>Ninguna (H₀ verdadera)</option>
+                  <option value="0.03">±3 puntos</option>
+                  <option value="0.06">±6 puntos</option>
+                  <option value="0.10">±10 puntos</option>
+                  <option value="0.15">±15 puntos</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simGN">Clientes por experimento</label>
+                <select id="simGN">
+                  <option value="100">n = 100</option>
+                  <option value="200" selected>n = 200</option>
+                  <option value="400">n = 400</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simGAlpha">Nivel α</label>
+                <select id="simGAlpha">
+                  <option value="0.01">1%</option>
+                  <option value="0.05" selected>5%</option>
+                  <option value="0.10">10%</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnG1"><i data-lucide="play"></i>+1 experimento</button>
+              <button class="btn ghost" id="btnG50"><i data-lucide="plus"></i>50</button>
+              <button class="btn ghost" id="btnG200"><i data-lucide="plus"></i>200</button>
+              <button class="btn ghost" id="btnGReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="gExp">0</div><div class="lbl">Experimentos</div></div>
+              <div class="stat"><div class="num mono" id="gRej">0</div><div class="lbl">Rechazos de H₀</div></div>
+              <div class="stat"><div class="num mono" id="gPct">—</div><div class="lbl">% de rechazo</div></div>
+              <div class="stat"><div class="num mono" id="gLast" style="font-size:1.05rem">—</div><div class="lbl">Último χ² (valor P)</div></div>
+            </div>
+            <p class="note" id="gCrit">χ² crítico (gl = 3): —</p>
+            <p class="note">Con «ninguna desviación», \(H_0\) es verdadera: el % de rechazo debe acercarse a \( \alpha \) — así se ve una <strong>falsa alarma</strong> en frecuencia. Aumenta la desviación y el mismo porcentaje se convierte en la <strong>potencia</strong> del test: n más grande la sube, α más chico la baja.</p>
+          </div>
+
+          <p class="note">Cada experimento (par o χ²) se acumula a tu boleta: llevas <strong class="mono" id="simEver">0</strong> (1,000 o más alcanzan el 100% del rubro de laboratorio, que vale <strong>15%</strong>).</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head" id="simHead"><i data-lucide="crosshair"></i>Las dos distribuciones del estadístico</div>
+        <canvas id="simCanvas"></canvas>
+        <div class="graph-cap" id="capErrs">Curvas: densidad de \( \bar X \) bajo \(H_0\) (tinta) y bajo \(H_1\) (naranja). Línea: valor crítico \(c\). Sombra naranja (bajo \(H_0\)): probabilidad de error tipo I, \( \alpha \). Sombra dorada (bajo \(H_1\)): error tipo II, \( \beta \).</div>
+        <div class="graph-cap" id="capGof" hidden>Barras: valores χ² observados en cada experimento. Curva: modelo teórico \( \chi^2_3 \) bajo \(H_0\). Línea punteada: valor crítico. Toda barra a su derecha es un rechazo de \(H_0\).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CALCULADORA ==================== -->
+<section class="view" id="v-calculadora" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Laboratorio de cálculo</p>
+      <h2>Calculadora de pruebas de hipótesis</h2>
+      <p class="sub">Las diez pruebas de la unidad: estadístico, valor crítico, valor P, decisión y la gráfica del estadístico sobre su distribución nula con la región de rechazo sombreada.</p>
+    </div>
+
+    <div class="lab-grid">
+      <div class="panel">
+        <div class="panel-head"><i data-lucide="sliders-horizontal"></i>Parámetros</div>
+        <div class="panel-body">
+          <div style="display:grid;gap:14px;margin-bottom:16px">
+            <div class="field">
+              <label for="calcDist">Prueba</label>
+              <select id="calcDist">
+                <optgroup label="Una muestra">
+                  <option value="mediaZ" selected>Media — σ conocida (Z)</option>
+                  <option value="mediaT">Media — σ desconocida (t)</option>
+                  <option value="prop1">Proporción (Z)</option>
+                  <option value="var1">Varianza (χ²)</option>
+                </optgroup>
+                <optgroup label="Dos muestras">
+                  <option value="dmedias">Medias — muestras independientes (t)</option>
+                  <option value="pareada">Medias — datos pareados (t)</option>
+                  <option value="dprop">Proporciones — A/B (Z)</option>
+                  <option value="dvar">Varianzas — razón (F)</option>
+                </optgroup>
+                <optgroup label="Datos categóricos">
+                  <option value="gof">Bondad de ajuste (χ²)</option>
+                  <option value="indep">Independencia / homogeneidad (χ²)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label for="calcLevel">Nivel de significancia α</label>
+              <select id="calcLevel">
+                <option value="0.01">1%</option>
+                <option value="0.05" selected>5%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+            <div class="field" id="altRow">
+              <label for="calcAlt">Hipótesis alternativa</label>
+              <select id="calcAlt">
+                <option value="two">Bilateral — μ ≠ μ₀</option>
+                <option value="right">Unilateral derecha — μ &gt; μ₀</option>
+                <option value="left">Unilateral izquierda — μ &lt; μ₀</option>
+              </select>
+            </div>
+          </div>
+          <div id="calcParams" style="display:grid;gap:14px;margin-bottom:18px"></div>
+          <button class="btn" id="btnCalc" style="width:100%;justify-content:center"><i data-lucide="equal"></i>Calcular la prueba</button>
+          <p class="note" id="calcNote">Todas las pruebas entregan el valor P y la decisión «rechazar H₀ si valor P &lt; α». Los valores críticos de t, χ² y F se calculan numéricamente (sin tablas). Para datos categóricos, las entradas admiten listas separadas por comas.</p>
+        </div>
+      </div>
+
+      <div class="panel graph-frame">
+        <div class="panel-head"><i data-lucide="chart-line"></i>Resultado</div>
+        <canvas id="calcCanvas"></canvas>
+        <div class="panel-body" id="calcResults">
+          <div class="calc-empty">
+            <i data-lucide="calculator"></i>
+            <p>Elige la prueba, carga los datos y presiona <strong>Calcular</strong>.<br>Aquí aparecerán el estadístico, el valor P, la decisión y su gráfica.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ACTIVIDADES ==================== -->
+<section class="view" id="v-actividades" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Zona de evaluación</p>
+      <h2>Actividades de la unidad</h2>
+      <p class="sub">Instrumentos alineados a las secciones de teoría. Todo tu avance se guarda automáticamente en este dispositivo y se refleja en tu <a href="#" data-view="boleta">boleta de resultados</a>.</p>
+    </div>
+
+    <!-- Rúbrica -->
+    <div class="act-block">
+      <h3>Rúbrica de evaluación</h3>
+      <p class="act-desc">Ponderación de cada instrumento sobre la calificación de la unidad (nota final sobre 10).</p>
+      <div class="rub-row"><span class="rub-name">Participación en el simulador (reporte de errores y potencia)</span><div class="rub-bar"><div style="width:15%"></div></div><span class="rub-pct">15%</span></div>
+      <div class="rub-row"><span class="rub-name">Ejercicios guiados (solución detallada)</span><div class="rub-bar"><div style="width:25%"></div></div><span class="rub-pct">25%</span></div>
+      <div class="rub-row"><span class="rub-name">Quiz de autoevaluación</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <div class="rub-row"><span class="rub-name">Tarea: problemas del Larsen &amp; Marx</span><div class="rub-bar"><div style="width:30%"></div></div><span class="rub-pct">30%</span></div>
+      <p class="note">El registro es automático en <a href="#" data-view="boleta">Mi boleta</a>: el simulador por ejecuciones acumuladas, el quiz por tu mejor intento, y los ejercicios y la tarea por las casillas que marques al resolverlos.</p>
+    </div>
+
+    <!-- Ejercicios guiados -->
+    <div class="act-block" id="ejBlock">
+      <h3>Ejercicios guiados con solución</h3>
+      <p class="act-desc">Intenta resolverlos por escrito antes de desplegar la solución. En clase se revisará el procedimiento, no solo el resultado. Al terminar cada uno, márcalo como resuelto para que sume en tu boleta.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · t de una muestra — banca (finanzas)</span>El tiempo de aprobación de créditos de consumo debe ser, según la meta operativa, de 24 horas. En una muestra aleatoria de \(n=20\) expedientes (población ≈ normal) se obtiene \( \bar x = 26.4 \) h y \( s = 5.2 \) h. Con \( \alpha = 0.05 \), ¿hay evidencia de que el tiempo promedio <em>excede</em> la meta?</span></summary>
+        <div class="sol-body">
+          <p>\( \sigma \) desconocida, \(n\) pequeño, población ≈ normal ⇒ t de Student con \( \nu = 19 \). Hipótesis: \( H_0\!: \mu = 24 \) vs. \( H_1\!: \mu &gt; 24 \) (unilateral derecha).</p>
+          <p>\( t = \dfrac{26.4 - 24}{5.2/\sqrt{20}} = \dfrac{2.4}{1.163} = 2.06, \qquad t_{0.05,\,19} = 1.729. \)</p>
+          <p>Como \( 2.06 &gt; 1.729 \) (valor \( \text{P} \approx 0.027 &lt; 0.05 \)), se rechaza \(H_0\): hay evidencia de que el tiempo medio de aprobación excede las 24 horas de la meta. La decisión operativa: revisar el proceso, no la meta.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e1"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 2 · proporción — campaña digital (marketing)</span>La tasa de conversión objetivo de una campaña es 12%. En la última semana, 54 de 600 visitas convirtieron. Con \( \alpha = 0.05 \), ¿puede el equipo afirmar que la campaña rinde <em>por debajo</em> del objetivo?</span></summary>
+        <div class="sol-body">
+          <p>\( \hat p = 54/600 = 0.09 \). Condiciones: \( n p_0 = 72 \ge 5 \) y \( n q_0 = 528 \ge 5 \). ✓ Hipótesis: \( H_0\!: p = 0.12 \) vs. \( H_1\!: p &lt; 0.12 \).</p>
+          <p>\( z = \dfrac{0.09 - 0.12}{\sqrt{0.12 \times 0.88 / 600}} = \dfrac{-0.03}{0.01327} = -2.26. \)</p>
+          <p>\( \text{valor P} = P(Z \le -2.26) = 0.0118 &lt; 0.05 \) ⇒ se rechaza \(H_0\): hay evidencia de bajo rendimiento frente al objetivo. Ojo al detalle: la SE se evaluó con \(p_0 = 0.12\) —el valor bajo \(H_0\)—, no con \( \hat p\).</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e2"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 3 · dos proporciones — prueba A/B (marketing)</span>Una tienda prueba dos versiones de su página de pago: la variante A obtiene 42 conversiones en 500 visitas y la variante B, 61 en 500. Con \( \alpha = 0.05 \), ¿convierte B <em>más</em> que A?</span></summary>
+        <div class="sol-body">
+          <p>\( \hat p_A = 0.084, \ \hat p_B = 0.122 \). Hipótesis: \( H_0\!: p_A = p_B \) vs. \( H_1\!: p_B &gt; p_A \). Agrupado: \( \hat p = 103/1000 = 0.103 \).</p>
+          <p>\( z = \dfrac{0.122 - 0.084}{\sqrt{0.103 \times 0.897 \times \left(\tfrac{1}{500} + \tfrac{1}{500}\right)}} = \dfrac{0.038}{0.01922} = 1.98. \)</p>
+          <p>\( \text{valor P} = P(Z \ge 1.98) = 0.024 &lt; 0.05 \) ⇒ se rechaza \(H_0\): la variante B convierte significativamente más. Tamaño práctico del efecto: \( +3.8 \) puntos porcentuales; significancia y magnitud son lecturas complementarias.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e3"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 4 · bondad de ajuste — demanda semanal (administración)</span>En 120 días se registraron los siguientes días con ventas altas: lunes 22, martes 26, miércoles 23, jueves 24, viernes 25. ¿Es consistente la demanda con una distribución uniforme entre los días? Usa \( \alpha = 0.05 \).</span></summary>
+        <div class="sol-body">
+          <p>\( H_0\): uniforme ⇒ \( E_i = 120/5 = 24 \) para cada día. Estadístico de Pearson:</p>
+          <p>\( \chi^2 = \tfrac{(22-24)^2}{24} + \tfrac{(26-24)^2}{24} + \tfrac{(23-24)^2}{24} + \tfrac{(24-24)^2}{24} + \tfrac{(25-24)^2}{24} = \tfrac{10}{24} = 0.417. \)</p>
+          <p>Con \( \text{gl} = k - 1 = 4 \): \( \chi^2_{0.05,4} = 9.488 \) y valor \( \text{P} \approx 0.98 \). No se rechaza \(H_0\): los datos encajan muy bien con la uniformidad — ningún día es atípicamente fuerte. Todos los esperados valen 24 ≥ 5 ✓.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e4"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+    </div>
+
+    <!-- Refuerzo con redacción -->
+    <div class="act-block" id="redBlock">
+      <h3>Refuerzo: redacta tu solución</h3>
+      <p class="act-desc">Cuatro problemas adicionales —uno por tema— <strong>sin solución visible</strong>: tú escribes el procedimiento completo en el editor con fórmulas en LaTeX y vista previa instantánea. Tu texto se guarda automáticamente en este navegador. Estas redacciones <em>no alteran tu nota automática</em>, pero forman parte de tu trabajo y se revisarán en clase.</p>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 5 · Refuerzo — β y potencia</span>Una empacadora declara paquetes de 500 g con \( \sigma = 8 \) g. Se probará \( H_0\!: \mu = 500 \) vs. \( H_1\!: \mu &gt; 500 \) con \( n = 25 \), \( \alpha = 0.05 \) y \( \bar x \) aproximadamente normal. (a) Calcula el valor crítico \( \bar x_c \) en gramos. (b) Si el verdadero promedio fuera \( \mu_1 = 504 \) g, calcula \( \beta \) y la potencia. (c) ¿Qué \(n\) se necesitaría para detectar ese efecto con potencia de 90% manteniendo \( \alpha = 0.05 \)?</span></summary>
+        <div class="sol-body">
+          <p>Incluye en tu redacción: la construcción de la región de rechazo en escala de \( \bar x \), el cálculo de \( \beta = P(\bar X \le \bar x_c \mid \mu = \mu_1) \) normalizando con la SE correspondiente, y para (c) la fórmula \( n = \left[\dfrac{(z_{\alpha} + z_{\beta})\,\sigma}{\mu_1 - \mu_0}\right]^2 \) con \( z_{\beta} = z_{0.10} \).</p>
+          <div class="ed-box" data-ed="e5"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( \bar x_c = 500 + 1.645 \times 1.6 = 502.63 \) g. &nbsp; (b) Con \( SE = 1.6 \): \( \beta = \Phi\!\left(\tfrac{502.63 - 504}{1.6}\right) = \Phi(-0.855) \approx 0.196 \); potencia \( \approx 0.804 \).</p>
+              <p>(c) \( n = \left[\dfrac{(1.645 + 1.282)\times 8}{4}\right]^2 = (5.853)^2 = 34.3 \Rightarrow \mathbf{35} \) paquetes.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 6 · Refuerzo — varianza χ² con dos escenarios</span>La especificación de un llenador exige \( \sigma = 2 \) ml. Una auditoría de \( n = 20 \) envases reporta \( s = 2.55 \) ml (población ≈ normal). (a) Prueba \( H_0\!: \sigma^2 = 4 \) vs. \( H_1\!: \sigma^2 &gt; 4 \) con \( \alpha = 0.05 \) y decide. (b) Supón que la misma \( s \) se hubiera obtenido con solo \( n = 10 \) envases: repite la prueba y comenta por qué cambia la conclusión.</span></summary>
+        <div class="sol-body">
+          <p>Aplica \( \chi^2 = (n-1)s^2/\sigma_0^2 \) en cada escenario y compara contra \( \chi^2_{0.05,\,n-1} \). La moraleja de (b) conecta con la potencia: misma evidencia muestral, distinto tamaño de muestra.</p>
+          <div class="ed-box" data-ed="e6"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>(a) \( \chi^2 = 19 \times 6.5025/4 = 30.89 &gt; \chi^2_{0.05,19} = 30.14 \) ⇒ se rechaza \(H_0\) (valor \( \text{P} \approx 0.042 \)).</p>
+              <p>(b) \( \chi^2 = 9 \times 6.5025/4 = 14.63 &lt; \chi^2_{0.05,9} = 16.92 \) ⇒ no se rechaza. Con menos datos, la misma desviación muestral ya no alcanza como evidencia: la potencia cayó.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — datos pareados (administración)</span>Tras digitalizar un trámite interno, se midió el tiempo de proceso (en días) en los mismos 12 expedientes, antes y después. Las diferencias (después − antes) tienen \( \bar d = -2.1 \) días y \( s_d = 2.8 \) días. Con \( \alpha = 0.05 \), ¿la digitalización <em>redujo</em> el tiempo medio? Justifica por qué el diseño pareado es el correcto aquí.</span></summary>
+        <div class="sol-body">
+          <p>Plantea \( H_0\!: \mu_d = 0 \) vs. \( H_1\!: \mu_d &lt; 0 \), usa \( t = \bar d/(s_d/\sqrt{n}) \) con \( n-1 = 11 \) gl, y en la justificación explica qué variabilidad elimina el pareado (la entre expedientes) y por qué eso gana potencia frente a dos muestras independientes.</p>
+          <div class="ed-box" data-ed="e7"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>\( t = -2.1/(2.8/\sqrt{12}) = -2.60 \), con \( t_{0.05,11} = -1.796 \) para la cola izquierda ⇒ se rechaza \(H_0\) (valor \( \text{P} \approx 0.012 \)): la digitalización redujo el tiempo medio en cerca de 2 días.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 8 · Refuerzo — independencia en tabla 3×2 (marketing)</span>Una campaña se midió por segmento de edad: de 100 clientes de 18–34 años respondieron 40; de 120 de 35–54, respondieron 55; de 80 de 55+, respondieron 25. Con \( \alpha = 0.05 \), ¿está asociada la respuesta con el segmento de edad? Construye la tabla de esperados, calcula el χ² y concluye.</span></summary>
+        <div class="sol-body">
+          <p>Totales por fila: 100, 120, 80; respondieron: 120 sí, 180 no; \( N = 300 \). Esperados: \( E_{ij} = (\text{fila}_i \times \text{col}_j)/300 \) — p. ej., 18–34 sí: \( 100 \times 120/300 = 40 \). Grados de libertad \( (3-1)(2-1) = 2 \).</p>
+          <div class="ed-box" data-ed="e8"></div>
+          <details class="mini-check">
+            <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
+            <div class="sol-body">
+              <p>\( \chi^2 = 0 + 1.02 + 1.53 + 0 + 0.68 + 1.02 = 4.25 \). Con \( \chi^2_{0.05,2} = 5.99 \) y valor \( \text{P} \approx 0.119 \): <strong>no se rechaza</strong> la independencia — no hay evidencia de asociación entre edad y respuesta. El segmento 55+ muestra la mayor desviación relativa, pero no alcanza para significancia con estos tamaños.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+    </div>
+
+    <!-- Quiz -->
+    <div class="act-block">
+      <h3>Quiz de autoevaluación</h3>
+      <p class="act-desc">Seis preguntas de opción múltiple. Al calificar recibirás la retroalimentación de cada respuesta; tu <strong>mejor intento</strong> se registra en tu boleta.</p>
+      <div id="quizList"></div>
+      <div class="quiz-foot">
+        <button class="btn" id="btnGrade"><i data-lucide="check-check"></i>Calificar quiz</button>
+        <button class="btn ghost" id="btnQuizReset"><i data-lucide="rotate-ccw"></i>Reintentar</button>
+        <div class="quiz-result" id="quizResult"></div>
+      </div>
+    </div>
+
+    <!-- Tarea -->
+    <div class="act-block" style="margin-bottom:0">
+      <h3>Tarea de la unidad — problemas del Larsen &amp; Marx</h3>
+      <p class="act-desc">Resuelve los ejercicios seleccionados de los capítulos 6, 9 y 10 (verifica la numeración en tu edición) y registra tu avance. Fecha límite: <strong id="taskDeadline"></strong>.</p>
+      <div class="task-panel">
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="list-checks"></i>Avance de la tarea</div>
+          <div class="panel-body">
+            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">
+              <span>Progreso</span><span id="taskPct">0 / 8 · 0%</span>
+            </div>
+            <div class="conv-bar" style="margin-bottom:18px"><div id="taskBar" style="background:var(--pine)"></div></div>
+            <div id="taskList"></div>
+            <p class="note">Tu avance se guarda en este navegador y se refleja en <a href="#" data-view="boleta">Mi boleta</a>.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><i data-lucide="file-text"></i>Instrucciones de entrega</div>
+          <div class="panel-body">
+            <ol style="margin-left:20px;font-size:14.5px">
+              <li style="margin-bottom:9px">En cada problema sigue los cinco pasos: hipótesis, estadístico y su distribución, α, región de rechazo (o valor P) y decisión.</li>
+              <li style="margin-bottom:9px">Verifica siempre las condiciones del test (normalidad aproximada, \( n p_0 \ge 5 \), esperados \( \ge 5 \)) y termina con la <em>conclusión en lenguaje del problema</em>, no solo «se rechaza \(H_0\)».</li>
+              <li style="margin-bottom:9px">Marca aquí cada problema terminado; el avance se guarda automáticamente en este dispositivo.</li>
+              <li>Entrega el PDF en la plataforma de la clase el día de la sesión 5.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MI BOLETA ==================== -->
+<section class="view" id="v-boleta" hidden>
+  <div class="wrap">
+    <div class="view-head">
+      <p class="overline">Expediente individual</p>
+      <h2>Mi boleta de resultados</h2>
+      <p class="sub">Regístrate una sola vez en este dispositivo: tu progreso y tu nota final quedan a tu nombre, y podrás descargar tu boleta como imagen para compartirla. Los datos nunca salen de tu navegador.</p>
+    </div>
+
+    <div class="panel" id="regEmpty" style="max-width:560px">
+      <div class="panel-head"><i data-lucide="user-plus"></i>Ficha de registro individual</div>
+      <div class="panel-body">
+        <form id="formEst" style="display:grid;gap:14px" novalidate>
+          <div class="field">
+            <label for="alNombre">Nombre completo</label>
+            <input id="alNombre" type="text" placeholder="Ej. Ana Sofía Delgado Ruiz" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMat">Matrícula</label>
+            <input id="alMat" type="text" placeholder="Ej. 20240315" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="alMail">Correo electrónico</label>
+            <input id="alMail" type="email" placeholder="nombre@universidad.edu.mx" autocomplete="off">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn" type="submit" id="btnEstSave"><i data-lucide="user-plus"></i><span>Registrarme</span></button>
+            <button class="btn ghost" type="button" id="btnEstCancel" hidden>Cancelar</button>
+          </div>
+        </form>
+        <p class="hint" style="margin-top:12px">Tu registro y todo tu avance se guardan únicamente en este navegador. Si ya marcaste actividades, aparecerán automáticamente en tu boleta al registrarte.</p>
+      </div>
+    </div>
+
+    <div id="boletaWrap" hidden>
+      <div class="boleta-card" id="boletaCard">
+        <div class="b-head">
+          <span class="avatar" id="bAvatar">··</span>
+          <div>
+            <div class="b-title">Boleta de evaluación · Unidad VI — Pruebas de hipótesis · Estadística Inferencial</div>
+            <div class="b-name" id="bName">—</div>
+            <div class="b-meta" id="bMeta">—</div>
+          </div>
+          <div class="b-seal"><span>Aula<br>Interactiva</span><strong>Un. VI</strong></div>
+        </div>
+        <div class="b-body" id="bRows"></div>
+        <div class="b-total">
+          <div>
+            <div class="b-total-lbl">Nota final de la unidad</div>
+            <div class="b-total-det">Simulador 15% · Ejercicios 25% · Quiz 30% · Tarea 30%</div>
+          </div>
+          <div class="b-score"><span class="big" id="bNota">0.0</span><span class="den">/ 10</span></div>
+        </div>
+        <div class="b-foot">
+          <span>Emitida: <strong id="bEmit">—</strong></span>
+          <span>Registro desde: <strong id="bSince">—</strong></span>
+          <span>Estadística Inferencial · Dr. Adrián Cerda</span>
+        </div>
+      </div>
+
+      <div class="boleta-actions">
+        <button class="btn" id="btnBoletaPng"><i data-lucide="download"></i>Descargar boleta (PNG)</button>
+        <button class="btn ghost" id="btnEstEdit"><i data-lucide="pencil"></i>Editar datos</button>
+        <button class="del-btn" id="btnEstDel"><i data-lucide="trash-2"></i><span>Borrar registro y avance</span></button>
+      </div>
+      <p class="note" style="max-width:700px"><strong>Criterios de la nota.</strong> <em>Simulador:</em> 20% del rubro por cada nivel de ejecuciones acumuladas — 1, 25, 100, 500 y 1,000 o más. <em>Quiz:</em> proporción de tu mejor intento (0–6 aciertos). <em>Ejercicios y tarea:</em> casillas marcadas en Actividades. Las redacciones de refuerzo se guardan por separado y se revisan en clase. Al borrar el registro se elimina también todo el avance guardado en este navegador.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <div><strong>Referencia:</strong> Larsen, R. J. &amp; Marx, M. L. — <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. — caps. 6 (Hypothesis Testing), 9 (Two-Sample Inferences) y 10 (Goodness-of-Fit).</div>
+    <div>Universidad Panamericana · Escuela de Ciencias Empresariales · uso educativo · los datos se guardan solo en este navegador.</div>
+  </div>
+</footer>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+/* ============================================================
+   UTILIDADES
+============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const INK='#1c2b25', PINE='#1e4636', TERRA='#c2542f', PAPER='#fffdf8';
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtP(v){ if(!isFinite(v)) return '—'; if(v!==0 && Math.abs(v)<1e-6) return v.toExponential(3); return String(parseFloat(v.toFixed(6))); }
+function fmtNum(v){ if(v===0) return '0'; const a=Math.abs(v); if(a>=1e5||a<1e-4) return v.toExponential(1); if(a<1) return String(parseFloat(v.toFixed(4))); return String(parseFloat(v.toPrecision(4))); }
+function fmt(x){ return String(parseFloat(x.toPrecision(6))); }
+function toast(msg, type='ok'){
+  const box=$('#toasts'), t=document.createElement('div');
+  t.className='toast '+type;
+  t.innerHTML = `<i data-lucide="${type==='ok'?'check-circle-2':'alert-circle'}"></i><span>${msg}</span>`;
+  box.appendChild(t); lucide.createIcons();
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ============================================================
+   PERSISTENCIA: registro individual + actividades por curso
+============================================================ */
+const LS_EST='aula_estudiante';
+const LS_ACT='aula_actividades';
+const CURSO='inf6';
+
+function loadEst(){ try{ return JSON.parse(localStorage.getItem(LS_EST)); }catch(e){ return null; } }
+function saveEst(e){ localStorage.setItem(LS_EST, JSON.stringify(e)); }
+function loadAct(){ try{ return JSON.parse(localStorage.getItem(LS_ACT)||'{}'); }catch(e){ return {}; } }
+function act(){
+  const a=loadAct();
+  a[CURSO]=a[CURSO]||{ sim:{rolls:0}, ej:{}, quiz:null, tarea:{}, red:{} };
+  a[CURSO].sim=a[CURSO].sim||{rolls:0};
+  a[CURSO].ej=a[CURSO].ej||{};
+  a[CURSO].tarea=a[CURSO].tarea||{};
+  a[CURSO].red=a[CURSO].red||{};
+  return a;
+}
+function saveAct(a){ localStorage.setItem(LS_ACT, JSON.stringify(a)); }
+
+/* ============================================================
+   NAVEGACIÓN DE VISTAS
+============================================================ */
+function showView(v){
+  $$('.view').forEach(s => s.hidden = true);
+  $('#v-'+v).hidden = false;
+  $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(v==='inicio')      animateHero();
+  if(v==='simulador')   requestAnimationFrame(drawSim);
+  if(v==='calculadora') redrawCalc();
+  if(v==='boleta')      renderBoleta();
+}
+ $$('[data-view]').forEach(el => el.addEventListener('click', e => {
+  if(el.tagName==='A'){ e.preventDefault(); }
+  showView(el.dataset.view);
+}));
+
+/* ============================================================
+   MATEMÁTICAS: gamma, normal, t, χ², F y cuantiles
+============================================================ */
+function logGamma(z){ // Lanczos
+  const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
+           12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5) return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
+  z-=1; let x=0.99999999999980993;
+  for(let i=0;i<8;i++) x+=g[i]/(z+i+1);
+  const t=z+7.5;
+  return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+}
+function erf(x){
+  const s = x<0?-1:1; x=Math.abs(x);
+  const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;
+  const t=1/(1+p*x), y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+const Phi = z => 0.5*(1+erf(z/Math.SQRT2));
+function normPdf(x,m,s){ return Math.exp(-Math.pow(x-m,2)/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
+function zQuantile(p){
+  let lo=-12, hi=12;
+  for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(Phi(m)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+function tPdf(t,v){
+  return Math.exp(logGamma((v+1)/2)-logGamma(v/2))/Math.sqrt(v*Math.PI)
+       * Math.pow(1+t*t/v, -(v+1)/2);
+}
+function tCdf(t,v){
+  const a=Math.abs(t); if(a===0) return .5;
+  const N=600, h=a/N; let s=0;
+  for(let i=0;i<=N;i++){ let y=tPdf(i*h,v); if(i!==0&&i!==N) y*=(i%2?4:2); s+=y; }
+  s*=h/3;
+  return t>=0? .5+s : .5-s;
+}
+function tQuantile(p,v){
+  let lo=0, hi=30;
+  for(let i=0;i<90;i++){ const m=(lo+hi)/2; if(tCdf(m,v)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+/* Gamma incompleta regularizada P(s,x) → CDF de χ² */
+function gammaincP(s,x){
+  if(x<=0) return 0;
+  if(x < s+1){
+    let ap=s, sum=1/s, del=sum;
+    for(let n=1;n<300;n++){ ap++; del*=x/ap; sum+=del; if(Math.abs(del)<Math.abs(sum)*1e-13) break; }
+    return sum*Math.exp(-x + s*Math.log(x) - logGamma(s));
+  }
+  const FPMIN=1e-300;
+  let b=x+1-s, c=1/FPMIN, d=1/b, h=d;
+  for(let i=1;i<300;i++){
+    const an=-i*(i-s);
+    b+=2;
+    d=an*d+b; if(Math.abs(d)<FPMIN) d=FPMIN;
+    c=b+an/c; if(Math.abs(c)<FPMIN) c=FPMIN;
+    d=1/d;
+    const del=d*c; h*=del;
+    if(Math.abs(del-1)<1e-13) break;
+  }
+  const q=Math.exp(-x + s*Math.log(x) - logGamma(s))*h;
+  return 1-q;
+}
+function chi2Pdf(x,k){
+  if(x<=0) return 0;
+  return Math.exp((k/2-1)*Math.log(x) - x/2 - (k/2)*Math.LN2 - logGamma(k/2));
+}
+const chi2Cdf=(x,k)=>gammaincP(k/2, x/2);
+function chi2Quantile(p,k){
+  let lo=0, hi=1;
+  while(chi2Cdf(hi,k)<p) hi*=2;
+  for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(chi2Cdf(m,k)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+/* F de Fisher: pdf, cdf (Simpson) y cuantil */
+function fPdf(x,d1,d2){
+  if(x<=0) return 0;
+  const lc=logGamma((d1+d2)/2)-logGamma(d1/2)-logGamma(d2/2)+(d1/2)*Math.log(d1/d2);
+  return Math.exp(lc + (d1/2-1)*Math.log(x) - ((d1+d2)/2)*Math.log(1+d1*x/d2));
+}
+function fCdf(x,d1,d2){
+  if(x<=0) return 0;
+  const N=500, h=x/N; let s=0;
+  for(let i=0;i<=N;i++){ let y=fPdf(i*h,d1,d2); if(i!==0&&i!==N) y*=(i%2?4:2); s+=y; }
+  return s*h/3;
+}
+function fQuantile(p,d1,d2){
+  let lo=0, hi=1;
+  while(fCdf(hi,d1,d2)<p) hi*=2;
+  for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(fCdf(m,d1,d2)<p) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+function niceStep(range,n){ const raw=range/n, mag=Math.pow(10,Math.floor(Math.log10(raw))), q=raw/mag;
+  return (q<1.5?1:q<3?2:q<7?5:10)*mag; }
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+/* ============================================================
+   DIBUJO EN CANVAS
+============================================================ */
+function setupCanvas(cv){
+  const dpr = window.devicePixelRatio||1;
+  const r = cv.getBoundingClientRect();
+  cv.width = Math.max(10, r.width*dpr); cv.height = Math.max(10, r.height*dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width, h:r.height};
+}
+function axes(ctx,m){
+  ctx.strokeStyle=INK; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l, m.t-8); ctx.lineTo(m.l, m.t+m.ph); ctx.lineTo(m.l+m.pw+8, m.t+m.ph); ctx.stroke();
+}
+function makeMargins(w,h){ return {l:48,r:14,t:22,b:36, pw:w-48-14, ph:h-22-36}; }
+function yTicks(ctx,m,yMax){
+  const s=niceStep(yMax,4);
+  ctx.font='11px Instrument Sans'; ctx.textAlign='right';
+  for(let v=s; v<=yMax; v+=s){
+    const y=m.t+m.ph-(v/yMax)*m.ph;
+    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4);
+  }
+}
+function xTicks(ctx,m,lo,hi){
+  const s=niceStep(hi-lo,5);
+  ctx.font='11px Instrument Sans'; ctx.textAlign='center';
+  for(let v=Math.ceil(lo/s)*s; v<=hi; v+=s){
+    ctx.fillStyle='rgba(28,43,37,.7)'; ctx.fillText(fmtNum(v), m.l+(v-lo)/(hi-lo)*m.pw, m.t+m.ph+17);
+  }
+}
+/* Curva de densidad con regiones de rechazo sombreadas y estadístico marcado */
+function drawTest(cv, pdf, lo, hi, regions, stat, statLab){
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const N=360, xs=[]; let maxV=0;
+  for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N, v=Math.max(0,pdf(x)); xs.push([x,v]); if(v>maxV)maxV=v; }
+  const yMax=maxV*1.15||1;
+  const X=x=>m.l+(x-lo)/(hi-lo)*m.pw, Y=v=>m.t+m.ph-(v/yMax)*m.ph;
+  (regions||[]).forEach(([a,b])=>{
+    const a2=Math.max(a,lo), b2=Math.min(b,hi);
+    if(b2<=a2) return;
+    ctx.beginPath(); ctx.moveTo(X(a2),Y(0));
+    const steps=140;
+    for(let i=0;i<=steps;i++){ const x=a2+(b2-a2)*i/steps; ctx.lineTo(X(x),Y(Math.max(0,pdf(x)))); }
+    ctx.lineTo(X(b2),Y(0)); ctx.closePath();
+    ctx.fillStyle='rgba(194,84,47,.24)'; ctx.fill();
+  });
+  ctx.strokeStyle=INK; ctx.lineWidth=2; ctx.beginPath();
+  xs.forEach(([x,v],i)=> i? ctx.lineTo(X(x),Y(v)) : ctx.moveTo(X(x),Y(v)));
+  ctx.stroke();
+  if(stat!=null && stat>lo && stat<hi){
+    ctx.strokeStyle=PINE; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(X(stat), m.t+m.ph); ctx.lineTo(X(stat), m.t+10); ctx.stroke();
+    ctx.fillStyle=PINE; ctx.font='700 11.5px Instrument Sans';
+    ctx.textAlign = X(stat) > m.l+m.pw-90 ? 'right' : (X(stat) < m.l+90 ? 'left' : 'center');
+    ctx.fillText(statLab || ('estadístico = '+fmtNum(stat)), X(stat), m.t+6);
+  }
+  axes(ctx,m); xTicks(ctx,m,lo,hi);
+  const s=niceStep(yMax,4); ctx.font='11px Instrument Sans'; ctx.textAlign='right';
+  for(let v=s; v<=yMax; v+=s){ const y=Y(v);
+    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
+}
+
+/* ============================================================
+   HERO: dos mundos, α y β (animado)
+============================================================ */
+let heroAnim=null;
+function drawHero(t){
+  const cv=$('#heroCanvas'); if(!cv || cv.offsetParent===null) return;
+  const {ctx,w,h}=setupCanvas(cv);
+  const m={l:22,r:22,t:30,b:26}, pw=w-m.l-m.r, ph=h-m.t-m.b;
+  const d=2.15, c=1.645, lo=-3.4, hi=5.6;
+  const X=x=>m.l+(x-lo)/(hi-lo)*pw;
+  const f0=x=>normPdf(x,0,1), f1=x=>normPdf(x,d,1);
+  const yMax=0.42, Y=v=>m.t+ph-(v/yMax)*ph;
+  function area(pdf,a,b,color){
+    ctx.beginPath(); ctx.moveTo(X(Math.max(a,lo)),Y(0));
+    const steps=90;
+    for(let i=0;i<=steps;i++){ const x=Math.max(a,lo)+(Math.min(b,hi)-Math.max(a,lo))*i/steps; ctx.lineTo(X(x),Y(pdf(x))); }
+    ctx.lineTo(X(Math.min(b,hi)),Y(0)); ctx.closePath();
+    ctx.fillStyle=color; ctx.fill();
+  }
+  const p1=Math.min(1,Math.max(0,(t-0.42)/0.58));
+  if(p1>0) area(f0, c, hi, 'rgba(194,84,47,'+(0.30*p1)+')');       // α bajo H0
+  if(p1>0) area(f1, lo, c, 'rgba(201,162,39,'+(0.32*p1)+')');      // β bajo H1
+  // curvas
+  const fA=Math.min(1,t/0.45);
+  ctx.strokeStyle=INK; ctx.lineWidth=2.2; ctx.beginPath();
+  let upto=Math.floor(220*fA);
+  for(let i=0;i<=upto;i++){ const x=lo+(c-lo)*i/140; const y=f0(x);
+    const px=X(Math.min(x,c)); i? ctx.lineTo(px,Y(y)) : ctx.moveTo(px,Y(y)); if(x>=c) break; }
+  ctx.stroke();
+  if(t>0.45){
+    ctx.strokeStyle=INK; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let i=0;i<=160;i++){ const x=c+(hi-c)*i/160; i? ctx.lineTo(X(x),Y(f0(x))) : ctx.moveTo(X(x),Y(f0(x))); }
+    ctx.stroke();
+  }
+  const fB=Math.min(1,Math.max(0,(t-0.42)/0.4));
+  if(fB>0){
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
+    const steps=220, upto2=Math.floor(steps*fB);
+    for(let i=0;i<=upto2;i++){ const x=lo+(hi-lo)*i/steps; i? ctx.lineTo(X(x),Y(f1(x))) : ctx.moveTo(X(x),Y(f1(x))); }
+    ctx.stroke();
+  }
+  // línea crítica
+  if(t>0.3){
+    ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(X(c),m.t+ph); ctx.lineTo(X(c),m.t-2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('c', X(c), m.t+ph+16);
+  }
+  // eje
+  ctx.strokeStyle=INK; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(m.l, m.t+ph); ctx.lineTo(w-m.r, m.t+ph); ctx.stroke();
+  // etiquetas
+  if(t>0.5){
+    ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillStyle=TERRA; ctx.fillText('α', X(c+0.85), m.t+ph-14);
+    ctx.fillStyle='#8a6d10'; ctx.fillText('β', X(d-1.9), m.t+ph-14);
+  }
+  ctx.font='600 11px Instrument Sans'; ctx.textAlign='left';
+  ctx.fillStyle=INK; ctx.fillText('X̄ bajo H₀', m.l, m.t-10);
+  if(t>0.55){ ctx.fillStyle=TERRA; ctx.textAlign='right'; ctx.fillText('X̄ bajo H₁ (μ₁)', w-m.r, m.t-10); }
+}
+function animateHero(){
+  cancelAnimationFrame(heroAnim);
+  const t0=performance.now();
+  (function loop(now){
+    const t=Math.min(1,(now-t0)/1600);
+    drawHero(1-Math.pow(1-t,3));
+    if(t<1) heroAnim=requestAnimationFrame(loop);
+  })(t0);
+}
+
+/* ============================================================
+   SIMULADOR: los dos errores + χ² de bondad de ajuste
+============================================================ */
+const M0=500, SIG=8;
+let simMode='errs';
+const simE={n0:0, rej0:0, n1:0, rej1:0};
+const simG={list:[], total:0, rej:0};
+
+function bumpRolls(k){
+  const a=act(); a[CURSO].sim.rolls=(a[CURSO].sim.rolls||0)+k; saveAct(a);
+  $('#simEver').textContent=(a[CURSO].sim.rolls).toLocaleString('es-MX');
+}
+function eParams(){
+  const n=+$('#simEN').value, alpha=+$('#simEAlpha').value, delta=+$('#simEDelta').value;
+  const SE=SIG/Math.sqrt(n), c=M0+zQuantile(1-alpha)*SE, mu1=M0+delta*SIG;
+  return {n,alpha,delta,SE,c,mu1,beta:Phi((c-mu1)/SE)};
+}
+function setMode(m){
+  simMode=m;
+  $('#mErrs').classList.toggle('ghost', m!=='errs');
+  $('#mGof').classList.toggle('ghost', m!=='gof');
+  $('#errsBlock').hidden = m!=='errs';
+  $('#gofBlock').hidden  = m!=='gof';
+  $('#capErrs').hidden = m!=='errs';
+  $('#capGof').hidden  = m!=='gof';
+  $('#simHead').innerHTML = m==='errs'
+    ? '<i data-lucide="crosshair"></i>Las dos distribuciones del estadístico'
+    : '<i data-lucide="layout-grid"></i>Distribución del χ² bajo H₀';
+  refreshIcons(); drawSim();
+}
+function addErrs(k){
+  const P=eParams();
+  for(let i=0;i<k;i++){
+    const x0=M0+P.SE*randn(), x1=P.mu1+P.SE*randn();
+    simE.n0++; if(x0>P.c) simE.rej0++;
+    simE.n1++; if(x1>P.c) simE.rej1++;
+  }
+  bumpRolls(k); updateErrs(); drawSim();
+}
+function resetErrs(){ simE.n0=0; simE.rej0=0; simE.n1=0; simE.rej1=0; updateErrs(); drawSim(); }
+function updateErrs(){
+  const P=eParams();
+  $('#ePares').textContent=simE.n0.toLocaleString('es-MX');
+  $('#eAlpha').textContent = simE.n0? (100*simE.rej0/simE.n0).toFixed(1)+'%' : '—';
+  $('#eBeta').textContent  = simE.n1? (100*(simE.n1-simE.rej1)/simE.n1).toFixed(1)+'%' : '—';
+  $('#ePot').textContent   = simE.n1? (100*simE.rej1/simE.n1).toFixed(1)+'%' : '—';
+  $('#eTheo').innerHTML = `Teóricos: α = ${Math.round(100*P.alpha)}% · β = ${(100*P.beta).toFixed(1)}% · potencia = ${(100*(1-P.beta)).toFixed(1)}%`;
+}
+function gParams(){
+  const d=+$('#simGD').value, n=+$('#simGN').value, alpha=+$('#simGAlpha').value;
+  const p=[0.25+d, 0.25-d, 0.25, 0.25];
+  return {d,n,alpha,p,crit:chi2Quantile(1-alpha,3)};
+}
+function addGof(k){
+  const P=gParams();
+  for(let e=0;e<k;e++){
+    const counts=[0,0,0,0];
+    for(let i=0;i<P.n;i++){
+      const u=Math.random(); let acc=0, cat=0;
+      for(let j=0;j<4;j++){ acc+=P.p[j]; if(u<acc){ cat=j; break; } cat=j; }
+      counts[cat]++;
+    }
+    const E=P.n/4;
+    const chi2=counts.reduce((s,o)=>s+(o-E)*(o-E)/E, 0);
+    simG.list.push(chi2); if(simG.list.length>6000) simG.list.shift();
+    simG.total++; if(chi2>P.crit) simG.rej++;
+  }
+  bumpRolls(k); updateGof(); drawSim();
+}
+function resetGof(){ simG.list.length=0; simG.total=0; simG.rej=0; updateGof(); drawSim(); }
+function updateGof(){
+  const P=gParams();
+  $('#gExp').textContent=simG.total.toLocaleString('es-MX');
+  $('#gRej').textContent=simG.rej.toLocaleString('es-MX');
+  $('#gPct').textContent = simG.total? (100*simG.rej/simG.total).toFixed(1)+'%' : '—';
+  const last=simG.list[simG.list.length-1];
+  $('#gLast').textContent = last!=null? `${last.toFixed(1)} (${(1-chi2Cdf(last,3)).toFixed(3)})` : '—';
+  $('#gCrit').innerHTML = `χ² crítico (gl = 3, α = ${Math.round(100*P.alpha)}%): <strong class="mono">${P.crit.toFixed(3)}</strong>`;
+}
+function drawErrs(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const P=eParams();
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const lo=M0-4.4*P.SE, hi=Math.max(P.mu1,P.c)+4.4*P.SE;
+  const X=x=>m.l+(x-lo)/(hi-lo)*m.pw;
+  const f0=x=>normPdf(x,M0,P.SE), f1=x=>normPdf(x,P.mu1,P.SE);
+  let yMax=1/(P.SE*Math.sqrt(2*Math.PI))*1.18;
+  const Y=v=>m.t+m.ph-(v/yMax)*m.ph;
+  function area(pdf,a,b,color){
+    const a2=Math.max(a,lo), b2=Math.min(b,hi); if(b2<=a2) return;
+    ctx.beginPath(); ctx.moveTo(X(a2),Y(0));
+    const steps=120;
+    for(let i=0;i<=steps;i++){ const x=a2+(b2-a2)*i/steps; ctx.lineTo(X(x),Y(pdf(x))); }
+    ctx.lineTo(X(b2),Y(0)); ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+  }
+  area(f0, P.c, hi, 'rgba(194,84,47,.28)');
+  area(f1, lo, P.c, 'rgba(201,162,39,.30)');
+  // curvas
+  [[f0,INK],[f1,TERRA]].forEach(([f,col])=>{
+    ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.beginPath();
+    const N=260;
+    for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N; i? ctx.lineTo(X(x),Y(f(x))) : ctx.moveTo(X(x),Y(f(x))); }
+    ctx.stroke();
+  });
+  // línea crítica
+  ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(X(P.c),m.t+2); ctx.lineTo(X(P.c),m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+  ctx.fillText('c = '+P.c.toFixed(1), X(P.c), m.t+m.ph+30>h? m.t-4 : m.t+m.ph+16);
+  axes(ctx,m); xTicks(ctx,m,lo,hi);
+  const sy=niceStep(yMax,4); ctx.font='11px Instrument Sans'; ctx.textAlign='right';
+  for(let v=sy;v<=yMax;v+=sy){ const y=Y(v);
+    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
+  // leyenda
+  ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
+  ctx.strokeStyle=INK; ctx.lineWidth=2.2;
+  ctx.beginPath(); ctx.moveTo(m.l+6,m.t-3); ctx.lineTo(m.l+22,m.t-3); ctx.stroke();
+  ctx.fillStyle=INK; ctx.fillText('bajo H₀ (μ₀ = 500)', m.l+27, m.t+1);
+  ctx.strokeStyle=TERRA;
+  ctx.beginPath(); ctx.moveTo(m.l+150,m.t-3); ctx.lineTo(m.l+166,m.t-3); ctx.stroke();
+  ctx.fillStyle=TERRA; ctx.fillText('bajo H₁ (μ₁ = '+P.mu1.toFixed(0)+')', m.l+171, m.t+1);
+}
+function drawGof(){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
+  const P=gParams();
+  const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
+  const hi=P.crit*2.4, B=46, bw=hi/B, counts=Array(B).fill(0);
+  let out=0;
+  for(const v of simG.list){ const b=Math.floor(v/bw); if(b<0||b>=B) out++; else counts[b]++; }
+  const maxC=Math.max(1,...counts), yMax=Math.ceil(maxC*1.18);
+  axes(ctx,m); xTicks(ctx,m,0,hi); yTicks(ctx,m,yMax);
+  const slot=m.pw/B, bar=slot*0.9;
+  counts.forEach((c,i)=>{
+    if(!c) return;
+    const bh=(c/yMax)*m.ph;
+    ctx.fillStyle='rgba(30,70,54,.78)';
+    ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
+  });
+  // curva teórica escalada
+  if(simG.total>0){
+    ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
+    const N=280;
+    for(let i=0;i<=N;i++){
+      const x=hi*i/N, y=chi2Pdf(x,3)*simG.total*bw;
+      i? ctx.lineTo(m.l+(x/hi)*m.pw, m.t+m.ph-Math.min(y,yMax)*m.ph/yMax) : ctx.moveTo(m.l+(x/hi)*m.pw, m.t+m.ph-Math.min(y,yMax)*m.ph/yMax);
+    }
+    ctx.stroke();
+    // región de rechazo
+    ctx.fillStyle='rgba(194,84,47,.14)';
+    ctx.fillRect(m.l+(P.crit/hi)*m.pw, m.t, m.pw-(P.crit/hi)*m.pw, m.ph);
+  }
+  // línea crítica
+  ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(m.l+(P.crit/hi)*m.pw, m.t+2); ctx.lineTo(m.l+(P.crit/hi)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
+  ctx.fillText('crítico = '+P.crit.toFixed(2), m.l+(P.crit/hi)*m.pw, m.t+m.ph+30>h? m.t-4 : m.t+m.ph+16);
+  if(!simG.total){
+    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillText('Genera experimentos para construir el histograma', m.l+m.pw/2, m.t+m.ph/2);
+  } else if(out>0){
+    ctx.fillStyle='rgba(28,43,37,.55)'; ctx.textAlign='right'; ctx.font='600 11px Instrument Sans';
+    ctx.fillText(out.toLocaleString('es-MX')+' fuera de rango', w-m.r-4, m.t+1);
+  }
+}
+function drawSim(){ simMode==='errs'? drawErrs() : drawGof(); }
+
+ $('#mErrs').addEventListener('click',()=>setMode('errs'));
+ $('#mGof').addEventListener('click',()=>setMode('gof'));
+ $('#btnE1').addEventListener('click',()=>addErrs(1));
+ $('#btnE100').addEventListener('click',()=>addErrs(100));
+ $('#btnE1000').addEventListener('click',()=>addErrs(1000));
+ $('#btnEReset').addEventListener('click',()=>{ resetErrs(); toast('Contadores reiniciados (tu acumulado se conserva).'); });
+ $('#btnG1').addEventListener('click',()=>addGof(1));
+ $('#btnG50').addEventListener('click',()=>addGof(50));
+ $('#btnG200').addEventListener('click',()=>addGof(200));
+ $('#btnGReset').addEventListener('click',()=>{ resetGof(); toast('Experimentos reiniciados (tu acumulado se conserva).'); });
+['simEN','simEAlpha','simEDelta'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetErrs(); }));
+['simGD','simGN','simGAlpha'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetGof(); }));
+
+/* ============================================================
+   CALCULADORA DE PRUEBAS DE HIPÓTESIS
+============================================================ */
+const PDEFS={
+  mediaZ:[
+    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:503},
+    {k:'mu0',label:'μ₀ — media bajo H₀',min:-1e7,max:1e7,step:0.1,val:500},
+    {k:'sg',label:'σ — desviación estándar poblacional',min:1e-6,max:1e7,step:0.1,val:8},
+    {k:'n',label:'n — tamaño de muestra',min:2,max:100000,step:1,val:25}],
+  mediaT:[
+    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:26.4},
+    {k:'mu0',label:'μ₀ — media bajo H₀',min:-1e7,max:1e7,step:0.1,val:24},
+    {k:'s',label:'s — desviación estándar muestral',min:1e-6,max:1e7,step:0.1,val:5.2},
+    {k:'n',label:'n — tamaño de muestra',min:2,max:2000,step:1,val:20}],
+  prop1:[
+    {k:'x',label:'x — éxitos en la muestra',min:0,max:1e7,step:1,val:54},
+    {k:'n',label:'n — tamaño de la muestra',min:5,max:1e7,step:1,val:600},
+    {k:'p0',label:'p₀ — proporción bajo H₀',min:0.001,max:0.999,step:0.01,val:0.12}],
+  var1:[
+    {k:'s2',label:'s² — varianza muestral',min:1e-9,max:1e9,step:0.01,val:6.5025},
+    {k:'n',label:'n — tamaño de muestra',min:2,max:5000,step:1,val:20},
+    {k:'v0',label:'σ₀² — varianza bajo H₀',min:1e-9,max:1e9,step:0.01,val:4}],
+  dmedias:[
+    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:8.2},
+    {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:2.1},
+    {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:12},
+    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:6.5},
+    {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:1.9},
+    {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:12},
+    {k:'pool',type:'check',label:'Asumir varianzas iguales (t agrupada); desmarcar usa Welch',val:true}],
+  pareada:[
+    {k:'dbar',label:'d̄ — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:-2.1},
+    {k:'sd',label:'s_d — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:2.8},
+    {k:'n',label:'n — número de pares',min:2,max:5000,step:1,val:12}],
+  dprop:[
+    {k:'x1',label:'x₁ — éxitos grupo 1',min:0,max:1e7,step:1,val:42},
+    {k:'n1',label:'n₁ — tamaño grupo 1',min:5,max:1e7,step:1,val:500},
+    {k:'x2',label:'x₂ — éxitos grupo 2',min:0,max:1e7,step:1,val:61},
+    {k:'n2',label:'n₂ — tamaño grupo 2',min:5,max:1e7,step:1,val:500}],
+  dvar:[
+    {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:6},
+    {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:13},
+    {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:4},
+    {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:17}],
+  gof:[
+    {k:'obs',type:'textarea',label:'Frecuencias observadas (separadas por comas)',val:'22, 26, 23, 24, 25'},
+    {k:'pr',type:'textarea',label:'Probabilidades bajo H₀ (opcional; vacío = uniforme)',val:'',opt:true}],
+  indep:[
+    {k:'tab',type:'textarea',label:'Tabla de contingencia: filas separadas por «;» y celdas por «,»',val:'30, 70; 45, 55; 55, 45'}]
+};
+const CALC_NAMES={mediaZ:'Media — Z (σ conocida)',mediaT:'Media — t (σ desconocida)',prop1:'Proporción — Z',
+  var1:'Varianza — χ²',dmedias:'Medias independientes — t',pareada:'Datos pareados — t',
+  dprop:'Proporciones A/B — Z',dvar:'Razón de varianzas — F',gof:'Bondad de ajuste — χ²',indep:'Independencia/homogeneidad — χ²'};
+const ALT_OK={mediaZ:1,mediaT:1,prop1:1,var1:1,dmedias:1,pareada:1,dprop:1,dvar:0,gof:0,indep:0};
+
+function buildParams(){
+  const key=$('#calcDist').value, box=$('#calcParams');
+  box.innerHTML = PDEFS[key].map(p=>{
+    if(p.type==='check'){
+      return `<label class="chk"><input type="checkbox" id="cp_${p.k}" ${p.val?'checked':''}><span>${p.label}</span></label>`;
+    }
+    if(p.type==='textarea'){
+      return `<div class="field"><label for="cp_${p.k}">${p.label}</label>
+        <textarea id="cp_${p.k}" rows="3">${esc(p.val||'')}</textarea></div>`;
+    }
+    return `<div class="field">
+      <label for="cp_${p.k}">${p.label}</label>
+      <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
+    </div>`;
+  }).join('');
+  $('#altRow').style.display = ALT_OK[key]? '' : 'none';
+}
+ $('#calcDist').addEventListener('change',()=>{
+  buildParams();
+  $('#calcResults').innerHTML=`<div class="calc-empty"><i data-lucide="calculator"></i>
+    <p>Prueba seleccionada: <strong>${CALC_NAMES[$('#calcDist').value]}</strong>.<br>Presiona <strong>Calcular la prueba</strong>.</p></div>`;
+  refreshIcons();
+  const cv=$('#calcCanvas'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+});
+
+function readVals(key){
+  const out={};
+  for(const p of PDEFS[key]){
+    if(p.type==='check'){ out[p.k]=$('#cp_'+p.k).checked; continue; }
+    const raw=$('#cp_'+p.k).value.trim();
+    if(p.type==='textarea'){ out[p.k]=raw; continue; }
+    const v=parseFloat(raw);
+    if(isNaN(v)) throw `Revisa el campo «${p.label.split('—')[0].trim()}».`;
+    if(v<p.min||v>p.max) throw `«${p.label.split('—')[0].trim()}» debe estar entre ${p.min} y ${p.max}.`;
+    out[p.k]=v;
+  }
+  return out;
+}
+function parseList(raw){
+  const arr=raw.split(',').map(s=>parseFloat(s.trim()));
+  if(arr.some(v=>isNaN(v)||v<0)) throw 'Revisa la lista: solo números no negativos separados por comas.';
+  return arr;
+}
+function decideTxt(p,alpha){ return p<alpha? 'Rechazar H₀' : 'No rechazar H₀'; }
+
+function computeTest(key,v,alpha,alt){
+  const R=[];
+  const stat=(v2,dist,gl,p,regions,lo,hi,warn,extraHtml)=>{
+    R.push(['Estadístico de prueba',v2],['Distribución bajo H₀',dist,1],['Valor P',p],
+           ['Decisión (α = '+(alpha*100)+'%)',decideTxt(p,alpha),1,decideTxt(p,alpha)==='Rechazar H₀'?'dec-ok':'dec-no']);
+    return {results:R, warn, html:extraHtml,
+      draw:()=>drawTest($('#calcCanvas'),dist==='Z'? x=>normPdf(x,0,1)
+        : dist.startsWith('t')? x=>tPdf(x,gl)
+        : dist.startsWith('χ²')? x=>chi2Pdf(x,gl)
+        : x=>fPdf(x,gl[0],gl[1]),
+        lo,hi,regions,v2)};
+  };
+  if(key==='mediaZ'){
+    const {xb,mu0,sg,n}=v, SE=sg/Math.sqrt(n), z=(xb-mu0)/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=zQuantile(1-alpha/2); p=2*(1-Phi(Math.abs(z))); regions=[[-4.2,-c],[c,5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
+    else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
+    R.push(['Valor crítico z',cr,1]);
+    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5));
+    s.tex=`z=\\dfrac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(sg)}/\\sqrt{${n}}}=${z.toFixed(3)}`;
+    return s;
+  }
+  if(key==='mediaT'){
+    const {xb,mu0,s,n}=v, nu=n-1, SE=s/Math.sqrt(n), t=(xb-mu0)/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=tQuantile(1-alpha/2,nu); p=2*(1-tCdf(Math.abs(t),nu)); regions=[[-5.5,-c],[c,5.5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
+    else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
+    R.push([`Valor crítico t (${nu} gl)`,cr,1]);
+    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
+    s.tex=`t=\\dfrac{\\bar{x}-\\mu_0}{s/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(s)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return s;
+  }
+  if(key==='prop1'){
+    const {x,n,p0}=v, ph=x/n;
+    const warn=(n*p0<5||n*(1-p0)<5)? '⚠ La condición n·p₀ ≥ 5 y n·q₀ ≥ 5 no se cumple: la aproximación normal puede ser poco confiable.' : null;
+    const SE=Math.sqrt(p0*(1-p0)/n), z=(ph-p0)/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=zQuantile(1-alpha/2); p=2*(1-Phi(Math.abs(z))); regions=[[-4.2,-c],[c,5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
+    else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
+    R.push(['Proporción muestral p̂',ph],['Valor crítico z',cr,1]);
+    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
+    s.tex=`z=\\dfrac{\\hat{p}-p_0}{\\sqrt{p_0q_0/n}}=\\dfrac{${fmt(ph)}-${fmt(p0)}}{\\sqrt{${fmt(p0)}\\cdot${fmt(1-p0)}/${n}}}=${z.toFixed(3)}`;
+    return s;
+  }
+  if(key==='var1'){
+    const {s2,n,v0}=v, nu=n-1, chi2=(n-1)*s2/v0;
+    let p, regions, cr;
+    const hi=Math.max(chi2, chi2Quantile(1-alpha/2,nu))*1.35+2;
+    if(alt==='two'){ const q1=chi2Quantile(alpha/2,nu), q2=chi2Quantile(1-alpha/2,nu);
+      p=2*Math.min(chi2Cdf(chi2,nu),1-chi2Cdf(chi2,nu)); regions=[[0,q1],[q2,hi]]; cr=`${q1.toFixed(2)} y ${q2.toFixed(2)}`; }
+    else if(alt==='right'){ const q=chi2Quantile(1-alpha,nu); p=1-chi2Cdf(chi2,nu); regions=[[q,hi]]; cr=q.toFixed(3); }
+    else { const q=chi2Quantile(alpha,nu); p=chi2Cdf(chi2,nu); regions=[[0,q]]; cr=q.toFixed(3); }
+    R.push([`Valor crítico χ² (${nu} gl)`,cr,1]);
+    const s=stat(chi2,'χ²',nu,p,regions,0,hi);
+    s.tex=`\\chi^2=\\dfrac{(n-1)s^2}{\\sigma_0^2}=\\dfrac{${nu}\\cdot${fmt(s2)}}{${fmt(v0)}}=${chi2.toFixed(3)},\\;\\nu=${nu}`;
+    return s;
+  }
+  if(key==='dmedias'){
+    const {xb1,s1,n1,xb2,s2,n2,pool}=v;
+    let SE,nu,tag;
+    if(pool){
+      const sp2=((n1-1)*s1*s1+(n2-1)*s2*s2)/(n1+n2-2);
+      SE=Math.sqrt(sp2*(1/n1+1/n2)); nu=n1+n2-2; tag='t agrupada';
+    }else{
+      const v1=s1*s1/n1, v2=s2*s2/n2;
+      SE=Math.sqrt(v1+v2);
+      nu=Math.floor(Math.pow(v1+v2,2)/((v1*v1)/(n1-1)+(v2*v2)/(n2-1)));
+      tag='Welch–Satterthwaite';
+    }
+    const t=(xb1-xb2)/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=tQuantile(1-alpha/2,nu); p=2*(1-tCdf(Math.abs(t),nu)); regions=[[-5.5,-c],[c,5.5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
+    else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
+    R.push([`Método`,tag,1],[`Valor crítico t (${nu} gl)`,cr,1]);
+    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
+    s.tex=`t=\\dfrac{\\bar{x}_1-\\bar{x}_2}{SE}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return s;
+  }
+  if(key==='pareada'){
+    const {dbar,sd,n}=v, nu=n-1, SE=sd/Math.sqrt(n), t=dbar/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=tQuantile(1-alpha/2,nu); p=2*(1-tCdf(Math.abs(t),nu)); regions=[[-5.5,-c],[c,5.5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
+    else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
+    R.push([`Valor crítico t (${nu} gl)`,cr,1]);
+    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
+    s.tex=`t=\\dfrac{\\bar{d}}{s_d/\\sqrt{n}}=\\dfrac{${fmt(dbar)}}{${fmt(sd)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return s;
+  }
+  if(key==='dprop'){
+    const {x1,n1,x2,n2}=v, p1h=x1/n1, p2h=x2/n2, pp=(x1+x2)/(n1+n2);
+    const warn=(n1*pp<5||n1*(1-pp)<5||n2*pp<5||n2*(1-pp)<5)? '⚠ La condición de éxitos esperados ≥ 5 en ambos grupos no se cumple: la aproximación normal puede ser poco confiable.' : null;
+    const SE=Math.sqrt(pp*(1-pp)*(1/n1+1/n2)), z=(p1h-p2h)/SE;
+    let p, regions, cr;
+    if(alt==='two'){ const c=zQuantile(1-alpha/2); p=2*(1-Phi(Math.abs(z))); regions=[[-4.2,-c],[c,5]]; cr=`±${c.toFixed(3)}`; }
+    else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
+    else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
+    R.push(['p̂₁',p1h],['p̂₂',p2h],['p̂ agrupado',pp],['Valor crítico z',cr,1]);
+    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
+    s.tex=`z=\\dfrac{\\hat{p}_1-\\hat{p}_2}{\\sqrt{\\hat{p}\\hat{q}\\left(\\tfrac{1}{n_1}+\\tfrac{1}{n_2}\\right)}}=${z.toFixed(3)}`;
+    return s;
+  }
+  if(key==='dvar'){
+    const {s1,n1,s2,n2}=v, d1=n1-1, d2=n2-1, F=(s1*s1)/(s2*s2);
+    const p=2*Math.min(fCdf(F,d1,d2), 1-fCdf(F,d1,d2));
+    const crit=fQuantile(1-alpha/2,d1,d2);
+    const hi=Math.max(F,crit)*1.35+1;
+    R.push([`Valor crítico F(${d1}, ${d2}) al 1−α/2`,crit]);
+    const s=stat(F,'F',[d1,d2],p,[[crit,hi]],0,hi);
+    s.tex=`F=\\dfrac{s_1^2}{s_2^2}=\\dfrac{${fmt(s1*s1)}}{${fmt(s2*s2)}}=${F.toFixed(3)}`;
+    return s;
+  }
+  if(key==='gof'){
+    const obs=parseList(v.obs);
+    const k=obs.length;
+    if(k<2) throw 'Ingresa al menos dos categorías.';
+    const N=obs.reduce((a,b)=>a+b,0);
+    if(N<=0) throw 'La suma de observados debe ser positiva.';
+    let probs;
+    if(v.pr.trim()===''){ probs=Array(k).fill(1/k); }
+    else{
+      probs=parseList(v.pr);
+      if(probs.length!==k) throw `Las probabilidades esperadas deben ser ${k} valores (una por categoría).`;
+      const s=probs.reduce((a,b)=>a+b,0);
+      if(Math.abs(s-1)>0.001) throw `Las probabilidades deben sumar 1 (suman ${s.toFixed(4)}).`;
+    }
+    const E=probs.map(p=>N*p);
+    const chi2=obs.reduce((s,o,i)=>s+(o-E[i])*(o-E[i])/E[i],0);
+    const gl=k-1, p=1-chi2Cdf(chi2,gl);
+    const crit=chi2Quantile(1-alpha,gl);
+    const hi=Math.max(chi2,crit)*1.35+2;
+    const warn=E.some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: la aproximación χ² puede ser poco confiable; agrupa categorías si es posible.' : null;
+    const rows=obs.map((o,i)=>`<tr><td class="center">${i+1}</td><td class="center">${fmtNum(o)}</td><td class="center">${fmtNum(E[i])}</td><td class="center">${fmtNum((o-E[i])*(o-E[i])/E[i])}</td></tr>`).join('');
+    const html=`<table class="tbl"><thead><tr><th class="center">Cat.</th><th class="center">Observado</th><th class="center">Esperado</th><th class="center">(O−E)²/E</th></tr></thead><tbody>${rows}</tbody></table>`;
+    R.push(['Categorías (k)',k],['Valor crítico χ² (gl = '+gl+')',crit]);
+    const s=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
+    s.tex=`\\chi^2=\\sum\\frac{(O_i-E_i)^2}{E_i}=${chi2.toFixed(3)},\\;\\nu=${gl}`;
+    return s;
+  }
+  if(key==='indep'){
+    const rows=v.tab.split(';').map(r=>r.split(',').map(s=>parseFloat(s.trim())));
+    const r=rows.length, c=rows[0].length;
+    if(r<2||c<2) throw 'La tabla necesita al menos 2 filas y 2 columnas.';
+    if(rows.some(row=>row.length!==c || row.some(v2=>isNaN(v2)||v2<0))) throw 'Revisa la tabla: todas las filas deben tener la misma cantidad de valores no negativos.';
+    const rowT=rows.map(row=>row.reduce((a,b)=>a+b,0));
+    const colT=Array(c).fill(0);
+    rows.forEach(row=>row.forEach((v2,j)=>colT[j]+=v2));
+    const N=rowT.reduce((a,b)=>a+b,0);
+    if(N<=0) throw 'La tabla debe contener frecuencias positivas.';
+    const E=rows.map((row,i)=>row.map((_,j)=>rowT[i]*colT[j]/N));
+    let chi2=0;
+    rows.forEach((row,i)=>row.forEach((o,j)=>{ chi2+=(o-E[i][j])*(o-E[i][j])/E[i][j]; }));
+    const gl=(r-1)*(c-1), p=1-chi2Cdf(chi2,gl);
+    const crit=chi2Quantile(1-alpha,gl);
+    const hi=Math.max(chi2,crit)*1.35+2;
+    const flatE=E.flat();
+    const warn=flatE.some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: considera agrupar categorías.' : null;
+    const head='<tr><th></th>'+colT.map((_,j)=>`<th class="center">Col. ${j+1}</th>`).join('')+'</tr>';
+    const body=rows.map((row,i)=>`<tr><td><strong>Fila ${i+1}</strong></td>${row.map((o,j)=>`<td class="center">${fmtNum(o)}<br><small style="color:var(--muted)">E=${fmtNum(E[i][j])}</small></td>`).join('')}</tr>`).join('');
+    const html=`<table class="tbl"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+    R.push([`Tabla ${r}×${c}`,`gl = ${gl}`,1],['Valor crítico χ² (gl = '+gl+')',crit]);
+    const s=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
+    s.tex=`\\chi^2=\\sum_{i,j}\\frac{(O_{ij}-E_{ij})^2}{E_{ij}}=${chi2.toFixed(3)},\\;\\nu=(${r}{-}1)(${c}{-}1)=${gl}`;
+    return s;
+  }
+}
+
+let calcState=null;
+ $('#btnCalc').addEventListener('click',()=>{
+  const key=$('#calcDist').value, alpha=+$('#calcLevel').value, alt=$('#calcAlt').value;
+  let v,out;
+  try{ v=readVals(key); out=computeTest(key,v,alpha,alt); }
+  catch(e){ toast(typeof e==='string'? e : 'Parámetros inválidos.','err'); return; }
+  calcState=out;
+  $('#calcResults').innerHTML =
+    `<div class="calc-formula" id="calcTex"></div>` +
+    (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
+    out.results.map(([lab,val,isTxt,cls])=>`
+      <div class="res-row"><span class="res-label">${lab}</span>
+      <span class="res-val mono ${cls||''}">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('') +
+    (out.html? `<div style="margin-top:14px">${out.html}</div>`:'');
+  try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
+  out.draw();
+  toast(`${CALC_NAMES[key]} calculada.`);
+});
+function redrawCalc(){ if(calcState) calcState.draw(); }
+buildParams();
+
+/* ============================================================
+   QUIZ (guarda el mejor intento para la boleta)
+============================================================ */
+const QUIZ=[
+ {q:'El valor P de una prueba es…',
+  opts:['La probabilidad de que H₀ sea verdadera','La probabilidad, suponiendo H₀ verdadera, de observar un estadístico al menos tan extremo como el obtenido','La probabilidad de cometer un error tipo II','El tamaño del efecto observado'],
+  ans:1, why:'El valor P se calcula <em>bajo H₀</em>: mide qué tan compatibles son los datos con la hipótesis nula. No es la probabilidad de que H₀ sea cierta — confundir esto es el error de interpretación más común.'},
+ {q:'Rechazar H₀ cuando en realidad es verdadera constituye…',
+  opts:['Un error tipo II','Un error tipo I','Una decisión correcta con probabilidad 1 − β','Un fallo de muestreo'],
+  ans:1, why:'Error tipo I = falso rechazo, con probabilidad \\(\\alpha\\) (el nivel de significancia). El tipo II es lo contrario: no rechazar siendo \\(H_0\\) falsa.'},
+ {q:'La potencia de una prueba es…',
+  opts:['\\(P(\\text{no rechazar } H_0)\\)','\\(\\alpha + \\beta\\)','\\(P(\\text{rechazar } H_0 \\mid H_0 \\text{ es falsa}) = 1-\\beta\\)','Lo mismo que el nivel de significancia'],
+  ans:2, why:'La potencia es la capacidad de <em>detectar</em> un efecto real: \\(1-\\beta\\). Crece con el tamaño del efecto, con \\(n\\) y con \\(\\alpha\\).'},
+ {q:'Con σ desconocida, población ≈ normal y n = 12, la prueba para μ usa…',
+  opts:['z = 1.96 porque n &gt; 10','t con 11 grados de libertad','t con 12 grados de libertad','χ² con 11 grados de libertad'],
+  ans:1, why:'σ desconocida ⇒ se sustituye por \\(s\\) y el pivote sigue una t de Student con \\(\\nu = n-1 = 11\\) grados de libertad.'},
+ {q:'En una tabla de contingencia 4×3, los grados de libertad del χ² de independencia son…',
+  opts:['12','7','6','5'],
+  ans:2, why:'\\(\\nu = (r-1)(c-1) = (4-1)(3-1) = 6\\): son las celdas «libres» una vez fijados los totales marginales.'},
+ {q:'Si se mantiene α fijo y se aumenta el tamaño de muestra n, entonces…',
+  opts:['α aumenta','β disminuye y la potencia aumenta','β y la potencia no cambian','El valor P siempre se hace cero'],
+  ans:1, why:'Con más datos, el error estándar baja: la distribución bajo \\(H_1\\) se aleja del valor crítico y \\(\\beta\\) se reduce. El simulador «Los dos errores» permite verificarlo empíricamente.'}
+];
+function renderQuiz(){
+  $('#quizList').innerHTML = QUIZ.map((it,i)=>`
+    <article class="quiz-q">
+      <header><span class="qnum">P${i+1}</span><p class="q-text">${it.q}</p></header>
+      <div class="opts">${it.opts.map((o,j)=>`
+        <label class="opt"><input type="radio" name="q${i}" value="${j}">
+        <span class="opt-key">${'ABCD'[j]}</span><span>${o}</span></label>`).join('')}
+      </div>
+      <p class="explain" hidden><strong>Retroalimentación:</strong> ${it.why}</p>
+    </article>`).join('');
+  $('#quizResult').innerHTML='';
+  try{ renderMathInElement($('#quizList'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+}
+ $('#btnGrade').addEventListener('click',()=>{
+  const unanswered = QUIZ.some((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
+  if(unanswered){ toast('Responde todas las preguntas antes de calificar.','err'); return; }
+  let score=0;
+  $$('#quizList .quiz-q').forEach((art,i)=>{
+    const sel=document.querySelector(`input[name="q${i}"]:checked`);
+    if(+sel.value===QUIZ[i].ans) score++;
+    art.querySelectorAll('.opt').forEach(l=>{
+      const inp=l.querySelector('input'); inp.disabled=true; l.classList.add('locked');
+      if(+inp.value===QUIZ[i].ans) l.classList.add('is-correct');
+      else if(+inp.value===+sel.value) l.classList.add('is-wrong');
+    });
+    art.querySelector('.explain').hidden=false;
+  });
+  const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
+  if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
+  const msg = score===6?'Dominio excelente de la unidad.':score>=4?'Muy bien: revisa los puntos marcados en naranja.':
+              score>=2?'Repasa las secciones 6.1 a 6.3 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
+  $('#quizResult').innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
+  toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
+});
+ $('#btnQuizReset').addEventListener('click',()=>{ renderQuiz(); toast('Quiz reiniciado.'); });
+renderQuiz();
+
+/* ============================================================
+   TAREA: avance de los 8 problemas
+============================================================ */
+const PROBLEMAS=['6.2','6.5','6.9','6.14','9.3','9.9','10.5','10.11'];
+const dl=new Date(Date.now()+7*864e5);
+ $('#taskDeadline').textContent = dl.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+
+function renderTaskList(){
+  const T=act()[CURSO].tarea;
+  $('#taskList').innerHTML = PROBLEMAS.map(p=>`
+    <label class="chk ${T[p]?'done':''}">
+      <input type="checkbox" data-p="${p}" ${T[p]?'checked':''}>
+      <span>Problema <strong>${p}</strong> del Larsen &amp; Marx</span>
+    </label>`).join('');
+  updateTaskBar();
+}
+function updateTaskBar(){
+  const T=act()[CURSO].tarea;
+  const done=PROBLEMAS.filter(p=>T[p]).length, pct=Math.round(done/PROBLEMAS.length*100);
+  $('#taskBar').style.width=pct+'%';
+  $('#taskPct').textContent=`${done} / ${PROBLEMAS.length} · ${pct}%`;
+}
+let progToastTimer=null;
+ $('#taskList').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-p]'); if(!cb) return;
+  const p=cb.dataset.p;
+  const a=act(); a[CURSO].tarea[p]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  updateTaskBar(); renderBoleta();
+  clearTimeout(progToastTimer);
+  progToastTimer=setTimeout(()=>{
+    const T=act()[CURSO].tarea, done=PROBLEMAS.filter(q=>T[q]).length;
+    if(done===PROBLEMAS.length) toast('¡Tarea completa! No olvides entregar tu PDF.');
+    else toast(`Avance guardado: ${done} de ${PROBLEMAS.length} problemas.`);
+  },500);
+});
+
+/* ============================================================
+   EJERCICIOS GUIADOS: casillas "ya lo resolví"
+============================================================ */
+function syncEjChecks(){
+  const EJ=act()[CURSO].ej;
+  $$('#ejBlock .chk-ej input').forEach(cb=>{
+    cb.checked=!!EJ[cb.dataset.ej];
+    cb.closest('.chk').classList.toggle('done', cb.checked);
+  });
+}
+ $('#ejBlock').addEventListener('change', e=>{
+  const cb=e.target.closest('input[data-ej]'); if(!cb) return;
+  const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
+  cb.closest('.chk').classList.toggle('done', cb.checked);
+  renderBoleta();
+  const n=Object.values(a[CURSO].ej).filter(Boolean).length;
+  toast(`Ejercicio marcado como resuelto (${n} de 4).`);
+});
+
+/* ============================================================
+   EDITOR DE REDACCIÓN (ejercicios de refuerzo e5–e8)
+============================================================ */
+const REDACS=['e5','e6','e7','e8'];
+const redTimers={};
+
+const MANUAL=[
+  {code:'\\( … \\)',      help:'Fórmula en línea (obligatoria para renderizar)', tex:'\\lambda=3', snip:String.raw`\(|\)`},
+  {code:'\\bar{x}',       help:'Media muestral (x barra)',  tex:'\\bar{x}=\\frac{1}{n}\\sum x_i', snip:String.raw`\bar{|}`},
+  {code:'H_0  H_1',       help:'Hipótesis nula y alternativa', tex:'H_0:\\ \\mu=\\mu_0', snip:String.raw`H_{0}:\ |`},
+  {code:'\\alpha  \\beta',help:'Nivel y error tipo II',     tex:'\\alpha=0.05,\\ \\beta', snip:String.raw`\alpha`},
+  {code:'\\pm',           help:'Más/menos',                 tex:'\\bar{x}\\pm E', snip:String.raw`\pm`},
+  {code:'x^2   x_i',      help:'Potencias e índices',       tex:'x^{2}\\;\\;x_{i}', snip:String.raw`x^{|}`},
+  {code:'\\frac{a}{b}',   help:'Fracciones',                tex:'\\frac{\\bar{x}-\\mu_0}{s/\\sqrt{n}}', snip:String.raw`\frac{|}{}`},
+  {code:'\\sqrt{x}',      help:'Raíces',                    tex:'\\sqrt{\\frac{p_0q_0}{n}}', snip:String.raw`\sqrt{|}`},
+  {code:'\\sum_x',        help:'Sumatoria',                 tex:'\\sum_{i=1}^{n} x_i', snip:String.raw`\sum_{|}`},
+  {code:'P(X \\ge x)',    help:'Probabilidad',              tex:'P(Z \\ge 1.96)', snip:String.raw`P(|)`},
+  {code:'z_{\\alpha/2}',  help:'Valor crítico normal',      tex:'z_{0.025}=1.960', snip:String.raw`z_{\alpha/2}`},
+  {code:'t_{\\alpha,\\nu}', help:'Valor crítico t (ν gl)',  tex:'t_{0.05,\\,19}=1.729', snip:String.raw`t_{\alpha,\,|}`},
+  {code:'\\chi^2',        help:'Chi cuadrada',              tex:'\\chi^2=\\sum\\frac{(O-E)^2}{E}', snip:String.raw`\chi^2`},
+  {code:'F_{\\alpha}(\\nu_1,\\nu_2)', help:'Valor crítico F', tex:'F_{0.05}(12,16)', snip:String.raw`F_{\alpha}(|)`},
+  {code:'\\le \\ge \\ne \\approx', help:'Comparadores',     tex:'P < \\alpha \\;\\Rightarrow\\; \\text{rechazar}', snip:String.raw`\approx`},
+  {code:'\\lambda \\mu \\sigma \\nu', help:'Griegos',       tex:'\\lambda,\\ \\mu,\\ \\sigma,\\ \\nu', snip:String.raw`\lambda`},
+  {code:'\\Rightarrow',   help:'Implica / por lo tanto',    tex:'P<\\alpha \\Rightarrow \\text{rechazar } H_0', snip:String.raw`\Rightarrow`},
+  {code:'\\cdot',         help:'Multiplicación',            tex:'z \\cdot \\frac{\\sigma}{\\sqrt{n}}', snip:String.raw`\cdot`},
+  {code:'\\text{…}',      help:'Texto dentro de fórmula',   tex:'\\text{valor P}', snip:String.raw`\text{|}`},
+  {code:'\\boxed{…}',     help:'Respuesta final destacada', tex:'\\boxed{\\text{Se rechaza } H_0}', snip:String.raw`\boxed{|}`},
+  {code:'cases (por tramos)', help:'Funciones a tramos',
+   tex:'\\delta(c)=\\begin{cases} \\text{rechazar}, & \\bar{x}>c\\\\ \\text{no rechazar}, & \\bar{x}\\le c\\end{cases}',
+   snip:String.raw`\begin{cases} \text{rechazar}, & \bar{x} > c \\ \text{no rechazar}, & \bar{x} \le c \end{cases}`}
+];
+const NOTE_DELIM = String.raw`<strong>Fórmulas:</strong> escríbelas entre <code>\( … \)</code> o <code>$ … $</code>; lo demás queda como texto normal. Pulsa <b>+</b> para insertar un comando en el cursor (si hay texto seleccionado, lo envuelve).`;
+const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 1) hipótesis \\(H_0\\) y \\(H_1\\) · 2) estadístico y su distribución bajo \\(H_0\\) · 3) cálculo del estadístico · 4) región de rechazo o valor P · 5) decisión y conclusión en lenguaje del problema, con la respuesta en <code>\boxed{}</code>.`;
+
+function buildEditors(){
+  $$('.ed-box').forEach(box=>{
+    const k=box.dataset.ed;
+    box.innerHTML=`
+      <div class="ed-toolbar">
+        <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
+        <span class="ed-status" id="st_${k}"><span class="dot"></span>Sin guardar</span>
+      </div>
+      <div class="ed-grid">
+        <div class="ed-main">
+          <textarea id="ta_${k}" class="ed-ta" spellcheck="false"
+            placeholder="Hipótesis → estadístico → cálculo → decisión.&#10;Ej.: \( H_0: \mu = 24 \) vs. \( H_1: \mu > 24 \). El estadístico es&#10;\( t = \dfrac{\bar{x}-\mu_0}{s/\sqrt{n}} = 2.06 \) con 19 gl…"></textarea>
+          <div class="ed-preview-wrap">
+            <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
+            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
+          </div>
+        </div>
+        <aside class="ed-manual" data-for="${k}"></aside>
+      </div>
+      <div class="ed-foot">
+        <span class="ed-count" id="cn_${k}">0 palabras</span>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn ghost sm" data-redclear="${k}">Limpiar</button>
+          <button type="button" class="btn sm" data-redsave="${k}"><i data-lucide="save"></i>Guardar</button>
+        </div>
+      </div>`;
+  });
+  buildManuals();
+  refreshIcons();
+}
+function buildManuals(){
+  $$('.ed-manual').forEach(box=>{
+    const views=[];
+    const rows=MANUAL.map(m=>{
+      views.push(m);
+      return `
+      <div class="cmd-row">
+        <div><span class="cmd-code">${esc(m.code)}</span><span class="cmd-help">${m.help}</span></div>
+        <span class="cmd-view"></span>
+        <button type="button" class="cmd-add" data-snip="${esc(m.snip)}" title="Insertar en el cursor">+</button>
+      </div>`;
+    }).join('');
+    box.innerHTML=`<p class="ed-note">${NOTE_DELIM}</p>
+      <p class="ed-cmd-title">Comandos esenciales</p>
+      ${rows}
+      <p class="ed-note" style="margin-top:12px">${NOTE_STRUCT}</p>`;
+    box.querySelectorAll('.cmd-view').forEach((el,i)=>{
+      try{ katex.render(views[i].tex, el, {throwOnError:false}); }
+      catch(e){ el.textContent=views[i].code; }
+    });
+  });
+}
+function insertSnippet(ta, snip){
+  const s=ta.selectionStart ?? ta.value.length, e=ta.selectionEnd ?? s;
+  const before=ta.value.slice(0,s), sel=ta.value.slice(s,e), after=ta.value.slice(e);
+  const caret=snip.indexOf('|');
+  let text, pos;
+  if(caret>=0){
+    const clean=snip.replace('|','');
+    if(sel){ text=clean.slice(0,caret)+sel+clean.slice(caret); pos=s+caret+sel.length; }
+    else   { text=clean; pos=s+caret; }
+  }else{
+    text=snip+(sel||''); pos=s+snip.length;
+  }
+  ta.value=before+text+after;
+  ta.selectionStart=ta.selectionEnd=pos;
+  ta.focus();
+  ta.dispatchEvent(new Event('input'));
+}
+function setStatus(k, txt, saved){
+  const st=$('#st_'+k); if(!st) return;
+  st.classList.toggle('saved', !!saved);
+  st.innerHTML='<span class="dot"></span>'+txt;
+}
+function redPreview(k){
+  const ta=$('#ta_'+k), pv=$('#pv_'+k);
+  const raw=ta.value;
+  $('#cn_'+k).textContent=(raw.trim()? raw.trim().split(/\s+/).length:0)+' palabras';
+  if(!raw.trim()){
+    pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    return;
+  }
+  pv.innerHTML=esc(raw).replace(/\n/g,'<br>');
+  if(typeof renderMathInElement==='function'){
+    try{
+      renderMathInElement(pv,{delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\(',right:'\\)',display:false},
+        {left:'$',right:'$',display:false}],throwOnError:false});
+    }catch(e){}
+  }
+}
+function redSave(k, announce){
+  const a=act(); a[CURSO].red[k]=$('#ta_'+k).value; saveAct(a);
+  setStatus(k,'Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}), true);
+  if(announce) toast('Redacción guardada en este navegador.');
+}
+function redInput(k){
+  setStatus(k,'Escribiendo…', false);
+  clearTimeout(redTimers[k+'p']);
+  redTimers[k+'p']=setTimeout(()=>redPreview(k),250);
+  clearTimeout(redTimers[k+'s']);
+  redTimers[k+'s']=setTimeout(()=>redSave(k,false),1100);
+}
+function initRedacs(){
+  const R=act()[CURSO].red||{};
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(!ta) return;
+    if(R[k]){ ta.value=R[k]; setStatus(k,'Guardado en este navegador', true); redPreview(k); }
+    ta.addEventListener('input',()=>redInput(k));
+  });
+  $$('.ed-manual').forEach(m=>m.addEventListener('click',e=>{
+    const b=e.target.closest('.cmd-add'); if(!b) return;
+    insertSnippet($('#ta_'+m.dataset.for), b.dataset.snip);
+  }));
+  $$('[data-redsave]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redsave; redSave(k,true); redPreview(k);
+  }));
+  $$('[data-redclear]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.redclear;
+    if(!b.classList.contains('confirm')){
+      b.classList.add('confirm'); b.textContent='¿Borrar todo?';
+      setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm'); b.textContent='Limpiar'; } },2800);
+      return;
+    }
+    b.classList.remove('confirm'); b.textContent='Limpiar';
+    $('#ta_'+k).value=''; redPreview(k); setStatus(k,'Sin guardar',false);
+    const a=act(); a[CURSO].red[k]=''; saveAct(a);
+    toast('Redacción borrada.');
+  }));
+}
+function resetRedacs(){
+  REDACS.forEach(k=>{
+    const ta=$('#ta_'+k); if(ta) ta.value='';
+    const pv=$('#pv_'+k); if(pv) pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
+    setStatus(k,'Sin guardar',false);
+    const cn=$('#cn_'+k); if(cn) cn.textContent='0 palabras';
+  });
+}
+
+/* ============================================================
+   REGISTRO INDIVIDUAL + BOLETA DE RESULTADOS
+============================================================ */
+const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
+                 ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
+function initials(name){
+  const p=name.trim().split(/\s+/);
+  return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
+}
+function avColor(name){ return AV_COLORS[[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COLORS.length]; }
+
+function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1?20 : 0; }
+
+function progresoCurso(){
+  const c=act()[CURSO];
+  const rolls=c.sim.rolls||0;
+  const ejOk=['e1','e2','e3','e4'].filter(k=>c.ej[k]).length;
+  const tOk=PROBLEMAS.filter(p=>c.tarea[p]).length;
+  return {
+    rolls,
+    sim:   simPct(rolls),
+    ej:    ejOk/4*100, ejOk,
+    quiz:  (c.quiz && c.quiz.score!=null)? c.quiz.score/c.quiz.total*100 : 0,
+    quizScore: (c.quiz && c.quiz.score!=null)? c.quiz.score : null,
+    tarea: tOk/PROBLEMAS.length*100, tOk
+  };
+}
+function notaFinal(){
+  const p=progresoCurso();
+  return (p.sim*0.15 + p.ej*0.25 + p.quiz*0.30 + p.tarea*0.30)/10;
+}
+function updateHomeStat(){
+  const est=loadEst();
+  $('#statNota').textContent = est? notaFinal().toFixed(1) : '—';
+}
+function renderBoleta(){
+  const est=loadEst();
+  $('#regEmpty').hidden = !!est;
+  $('#boletaWrap').hidden = !est;
+  updateHomeStat();
+  if(!est) return;
+
+  const [bg,fg]=avColor(est.nombre);
+  const av=$('#bAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
+  $('#bName').textContent=est.nombre;
+  $('#bMeta').textContent=`Matrícula ${est.matricula} · ${est.correo}`;
+  $('#bSince').textContent=new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+
+  const p=progresoCurso();
+  const defs=[
+    {nombre:'Simulador — decisiones y χ²', pct:p.sim, w:1.5, det:`${p.rolls.toLocaleString('es-MX')} ejecuciones acumuladas`},
+    {nombre:'Ejercicios guiados resueltos', pct:p.ej, w:2.5, det:`${p.ejOk} de 4 marcados como resueltos`},
+    {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 6 aciertos`},
+    {nombre:'Tarea — problemas del Larsen & Marx', pct:p.tarea, w:3.0, det:`${p.tOk} de ${PROBLEMAS.length} problemas marcados`}
+  ];
+  $('#bRows').innerHTML=defs.map(d=>`
+    <div class="b-row">
+      <div><div class="b-rubname">${d.nombre}</div><div class="b-rubdet">${d.det}</div></div>
+      <div class="b-bar"><div style="width:${d.pct.toFixed(0)}%"></div></div>
+      <div class="b-pts mono">${(d.pct/100*d.w).toFixed(2)} <small>/ ${d.w.toFixed(1)}</small></div>
+    </div>`).join('');
+  $('#bNota').textContent=notaFinal().toFixed(1);
+  $('#bEmit').textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+}
+
+let editMode=false;
+function setFormMode(edit){
+  editMode=edit;
+  $('#btnEstSave').innerHTML = edit? '<i data-lucide="save"></i><span>Guardar cambios</span>'
+                                   : '<i data-lucide="user-plus"></i><span>Registrarme</span>';
+  $('#btnEstCancel').hidden=!edit;
+  refreshIcons();
+}
+ $('#formEst').addEventListener('submit', e=>{
+  e.preventDefault();
+  const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
+  if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
+  if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
+  if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
+  const prev=loadEst();
+  saveEst({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()});
+  e.target.reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList();
+  toast(prev? 'Datos actualizados correctamente.' : `¡Listo, ${nombre.split(' ')[0]}! Tu avance quedará registrado a tu nombre.`);
+});
+ $('#btnEstEdit').addEventListener('click', ()=>{
+  const est=loadEst(); if(!est) return;
+  $('#alNombre').value=est.nombre; $('#alMat').value=est.matricula; $('#alMail').value=est.correo;
+  $('#regEmpty').hidden=false; $('#boletaWrap').hidden=true;
+  setFormMode(true); $('#alNombre').focus();
+});
+ $('#btnEstCancel').addEventListener('click', ()=>{ $('#formEst').reset(); setFormMode(false); renderBoleta(); });
+
+ $('#btnEstDel').addEventListener('click', ()=>{
+  const b=$('#btnEstDel');
+  if(!b.classList.contains('confirm')){
+    b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar todo?</span>'; refreshIcons();
+    setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
+      b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar registro y avance</span>'; refreshIcons(); } },3000);
+    return;
+  }
+  localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
+  $('#formEst').reset(); setFormMode(false);
+  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetErrs(); resetGof();
+  toast('Registro y avance borrados de este navegador.');
+});
+
+ $('#btnBoletaPng').addEventListener('click', ()=>{
+  if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
+  toast('Generando imagen de tu boleta…');
+  html2canvas($('#boletaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
+    const est=loadEst();
+    const a=document.createElement('a');
+    a.download=`boleta-inf6-unidad6-${est? est.matricula : 'alumno'}.png`;
+    a.href=cv.toDataURL('image/png'); a.click();
+    toast('Boleta descargada como PNG.');
+  }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+});
+
+/* ============================================================
+   RENDER MATEMÁTICO + ARRANQUE
+============================================================ */
+function initMath(){
+  if(typeof renderMathInElement==='function'){
+    renderMathInElement(document.body,{delimiters:[
+      {left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  }
+}
+window.addEventListener('resize', ()=>{ drawSim(); redrawCalc(); animateHero(); });
+
+refreshIcons();
+initMath();
+buildEditors();
+initRedacs();
+renderTaskList();
+syncEjChecks();
+renderBoleta();
+updateErrs(); updateGof();
+setMode('errs');
+animateHero();
+</script>
+</body>
+</html>
