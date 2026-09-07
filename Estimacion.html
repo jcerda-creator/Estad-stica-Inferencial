@@ -207,6 +207,7 @@ nav.tabs::-webkit-scrollbar{display:none}
 .calc-formula{border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;margin-bottom:14px;text-align:center;overflow-x:auto}
 .calc-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:46px 20px;color:var(--muted);text-align:center}
 .calc-empty svg{width:30px;height:30px;stroke-width:1.5}
+.warn-box{border:1px solid rgba(194,84,47,.5);background:var(--terra-soft);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--terra);margin-bottom:12px}
 
 /* ============================================================
    ACTIVIDADES
@@ -399,7 +400,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     <div>
       <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, Capítulo 5</p>
       <h1>Estimación: de la muestra al <em>parámetro</em></h1>
-      <p class="lead">La inferencia empieza aquí: cómo un estimador puntual resume la muestra, por qué la máxima verosimilitud es el principio de construcción más poderoso, y cómo el intervalo de confianza cuantifica con honestidad la incertidumbre de toda decisión empresarial.</p>
+      <p class="lead">La inferencia empieza aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
       <div class="hero-actions">
         <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
         <button class="btn ghost" data-view="simulador"><i data-lucide="flask-conical"></i>Probar el simulador</button>
@@ -422,7 +423,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <p class="overline" style="margin-bottom:14px">Ruta de la unidad</p>
       <div class="route-item" data-view="teoria">
         <span class="route-no">01</span>
-        <div><h3>Desarrollo de la teoría</h3><p>Estimadores y sus propiedades, máxima verosimilitud, intervalos de confianza para medias y proporciones, tamaño de muestra.</p></div>
+        <div><h3>Desarrollo de la teoría</h3><p>Tipos y propiedades de estimadores, máxima verosimilitud, IC para una y dos muestras (medias, pareadas, proporciones) y tamaño de muestra.</p></div>
         <span class="route-go"><i data-lucide="arrow-right"></i></span>
       </div>
       <div class="route-item" data-view="simulador">
@@ -445,9 +446,9 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <p class="overline" style="margin-bottom:14px">En un vistazo</p>
       <div class="side-stats">
         <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
-        <div class="stat"><div class="num">10</div><div class="lbl">Fórmulas en catálogo</div></div>
-        <div class="stat"><div class="num">6</div><div class="lbl">Preguntas del quiz</div></div>
-        <div class="stat"><div class="num">16</div><div class="lbl">Ejercicios y problemas</div></div>
+        <div class="stat"><div class="num">14</div><div class="lbl">Fórmulas en catálogo</div></div>
+        <div class="stat"><div class="num">7</div><div class="lbl">Preguntas del quiz</div></div>
+        <div class="stat"><div class="num">17</div><div class="lbl">Ejercicios y problemas</div></div>
       </div>
     </aside>
   </div>
@@ -459,37 +460,51 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     <div class="view-head">
       <p class="overline">Desarrollo de la teoría</p>
       <h2>Estimación de parámetros</h2>
-      <p class="sub">Síntesis del Capítulo 5 de Larsen, R. J. &amp; Marx, M. L., <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. Cada sección combina definición formal, propiedades y un ejemplo de finanzas, administración o marketing.</p>
+      <p class="sub">Síntesis del Capítulo 5 de Larsen, R. J. &amp; Marx, M. L., <em>An Introduction to Mathematical Statistics and Its Applications</em>, 2.ª ed. Cubre el programa de la unidad: tipos de estimadores (2.1), propiedades (2.2), estimación puntual (2.3), estimación por intervalo (2.4), IC una y dos muestras (2.5) e IC para la proporción (2.6).</p>
     </div>
 
     <div class="theory">
       <aside class="toc">
         <p class="toc-title">Contenido</p>
-        <a href="#t51"><span>5.1</span>Estimación puntual</a>
+        <a href="#t51"><span>5.1</span>Tipos y propiedades</a>
         <a href="#t52"><span>5.2</span>Máxima verosimilitud</a>
-        <a href="#t53"><span>5.3</span>IC para la media</a>
-        <a href="#t54"><span>5.4</span>Proporciones y n</a>
-        <a href="#t55"><span>5.5</span>Catálogo de fórmulas</a>
+        <a href="#t53"><span>5.3</span>IC una muestra</a>
+        <a href="#t54"><span>5.4</span>IC dos muestras</a>
+        <a href="#t55"><span>5.5</span>Tamaño de muestra</a>
+        <a href="#t56"><span>5.6</span>Catálogo de fórmulas</a>
       </aside>
 
       <div class="prose">
 
+        <div class="def" style="border-left-color:var(--gold)">
+          <span class="def-tag" style="color:#8a6d10">Correspondencia con el programa</span>
+          <p><strong>2.1 Tipos de estimadores</strong> → 5.1 y 5.2 · <strong>2.2 Propiedades</strong> → 5.1 · <strong>2.3 Estimación puntual</strong> → 5.1 y 5.2 · <strong>2.4 Estimación por intervalo</strong> → 5.3 · <strong>2.5 IC para una y dos muestras</strong> → 5.3 y 5.4 · <strong>2.6 IC para la proporción</strong> → 5.3 y 5.5.</p>
+        </div>
+
         <!-- 5.1 -->
         <article class="sec" id="t51">
           <div class="sec-no">5.1</div>
-          <h3>Estimación puntual y sus propiedades</h3>
+          <h3>Estimadores: tipos y propiedades</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Un <strong>estimador puntual</strong> es una función de la muestra, \( \hat\theta = g(X_1,\dots,X_n) \), empleada para aproximar un parámetro desconocido \( \theta \). El <strong>estimado</strong> es el valor numérico que toma el estimador al observarse una muestra concreta.</p>
+            <p>Un <strong>estimador</strong> es una función de la muestra, \( \hat\theta = g(X_1,\dots,X_n) \), empleada para aproximar un parámetro desconocido \( \theta \). El <strong>estimado</strong> es el valor numérico que toma el estimador al observarse una muestra concreta.</p>
           </div>
-          <p>La distinción importa: el estimador es una <em>regla</em> — una variable aleatoria con distribución propia — y el estimado es un número. Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>:</p>
+          <p><strong>Tipos de estimadores.</strong> Conviene distinguir dos clasificaciones complementarias:</p>
           <ul>
-            <li><strong>Insesgamiento:</strong> \( E(\hat\theta) = \theta \). En promedio el estimador «dispara al centro»: no sobreestima ni subestima sistemáticamente.</li>
-            <li><strong>Eficiencia:</strong> entre estimadores insesgados se prefiere el de menor varianza. La medida natural de precisión es el <strong>error estándar</strong>.</li>
-            <li><strong>Error cuadrático medio:</strong> \( \mathrm{MSE}(\hat\theta) = \mathrm{Var}(\hat\theta) + [\,\text{sesgo}(\hat\theta)\,]^2 \), que penaliza a la vez imprecisión y sesgo.</li>
-            <li><strong>Consistencia:</strong> \( \hat\theta \) converge en probabilidad a \( \theta \) cuando \( n \to \infty \): con más datos, la estimación se concentra alrededor del parámetro.</li>
+            <li><strong>Por el resultado que producen:</strong> <em>puntuales</em>, que entregan un solo número (\( \bar X \) para \( \mu \)), y <em>por intervalo</em>, que entregan un rango con un nivel de confianza asociado (secciones 5.3–5.5). La estimación puntual responde «¿cuánto?»; la intervalar, «¿entre cuánto, con qué garantía?».</li>
+            <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em> —sección 5.2, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión, unidad posterior.</li>
           </ul>
-          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \). Sus errores estándar —el «medidor de precisión» de cada estimación— son:</p>
+          <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas:</p>
+          <table class="tbl">
+            <thead><tr><th>Propiedad</th><th>Criterio</th><th>Lectura</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>En promedio dispara al centro: no sobre- ni subestima sistemáticamente.</td></tr>
+              <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Misma diana, menor dispersión. Se mide con el error estándar.</td></tr>
+              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados.</td></tr>
+              <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se concentra alrededor del parámetro.</td></tr>
+            </tbody>
+          </table>
+          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar —el «medidor de precisión»— son:</p>
           <table class="tbl">
             <thead><tr><th>Parámetro</th><th>Estimador</th><th>Error estándar</th></tr></thead>
             <tbody>
@@ -500,7 +515,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <div class="ex">
             <span class="ex-tag">Ejemplo — e-commerce (administración)</span>
             <p>Sea \(X\) el gasto por pedido en una tienda en línea, con \( \sigma = \$18 \) conocido. Con un solo pedido, \(X_1\) estima a \( \mu \) con varianza \( 18^2 = 324 \). El promedio de \( n=9 \) pedidos, \( \bar X \), también es insesgado —\( E(\bar X)=\mu \)— pero con varianza \( 324/9 = 36 \): misma diana, con error estándar de \( \$6 \) en lugar de \( \$18 \).</p>
-            <p>La precisión mejora como \( 1/\sqrt{n} \): para duplicar la precisión hay que <em>cuadruplicar</em> el tamaño de muestra.</p>
+            <p>La precisión mejora como \( 1/\sqrt{n} \): para duplicar la precisión hay que <em>cuadruplicar</em> el tamaño de muestra. Verifícalo en el <a href="#" data-view="simulador">simulador</a> cambiando \(n\).</p>
           </div>
         </article>
 
@@ -540,58 +555,94 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
         <!-- 5.3 -->
         <article class="sec" id="t53">
           <div class="sec-no">5.3</div>
-          <h3>Intervalos de confianza para la media</h3>
+          <h3>Intervalos de confianza para una muestra</h3>
           <div class="def">
-            <span class="def-tag">Definición</span>
+            <span class="def-tag">Definición — estimación por intervalo</span>
             <p>Un <strong>intervalo de confianza</strong> del \(100(1-\alpha)\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro en \( 1-\alpha \) de ellas. Antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
           </div>
           <p><strong>Interpretación correcta.</strong> «Con 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendría a \( \mu \). No significa que \( \mu \) «mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
-          <p>Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \) y, con \( \sigma \) conocida:</p>
-          <div class="formula-hero">\( \displaystyle P\!\left(-z_{\alpha/2} \le \frac{\bar X - \mu}{\sigma/\sqrt n} \le z_{\alpha/2}\right) = 1-\alpha \;\Longrightarrow\; \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
-          <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: es el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
-          <p><strong>Cuando \( \sigma \) es desconocida</strong> —el caso habitual— se sustituye por la desviación estándar muestral \( s \), y el pivote sigue la distribución <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad:</p>
+          <p><strong>Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
+          <div class="formula-hero">\( \displaystyle \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
+          <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
+          <p><strong>Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño:</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm t_{\alpha/2,\,n-1}\,\frac{s}{\sqrt n}. \)</div>
-          <p>Este uso exige que la población sea aproximadamente normal (crítico con muestras pequeñas). Algunos valores críticos \( t_{0.025} \) para intervalos del 95%:</p>
-          <table class="tbl">
-            <thead><tr><th class="center">\(\nu = n-1\)</th><th class="center">4</th><th class="center">9</th><th class="center">15</th><th class="center">29</th><th class="center">\(\to\infty\)</th></tr></thead>
-            <tbody><tr><td class="center">\(t_{0.025}\)</td><td class="center">2.776</td><td class="center">2.262</td><td class="center">2.131</td><td class="center">2.045</td><td class="center">1.960</td></tr></tbody>
-          </table>
-          <p>Conforme \( n \) crece, la t se aproxima a la normal estándar: la «penalización» por estimar \( \sigma \) desaparece con datos abundantes.</p>
+          <p><strong>Proporción (2.6).</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \):</p>
+          <div class="formula-hero">\( \displaystyle \hat p \pm z_{\alpha/2}\sqrt{\frac{\hat p\,\hat q}{n}}. \)</div>
           <div class="ex">
             <span class="ex-tag">Ejemplo — fondo de inversión (finanzas)</span>
             <p>Un fondo tiene \( \sigma = 2.1\% \) mensual, conocido por su historia larga. En los últimos \( n=36 \) meses el rendimiento promedio fue \( \bar x = 0.8\% \). IC del 95%:</p>
             <p>\( 0.8 \pm 1.96\cdot\frac{2.1}{\sqrt{36}} = 0.8 \pm 0.686 \;\Rightarrow\; (0.11\%,\ 1.49\%). \)</p>
-            <p>Con 95% de confianza, el rendimiento medio mensual del fondo está entre 0.11% y 1.49%. Como el 0% queda <em>fuera</em> del intervalo, los datos evidencian un rendimiento medio positivo.</p>
+            <p>Como el 0% queda <em>fuera</em> del intervalo, los datos evidencian un rendimiento medio mensual positivo.</p>
+          </div>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — campaña digital (marketing)</span>
+            <p>Una campaña acumula 5,000 impresiones con 300 clics. \( \hat p = 0.06 \). Como \( n\hat p = 300 \ge 5 \) y \( n\hat q = 4700 \ge 5 \), el IC del 95% es válido:</p>
+            <p>\( 0.06 \pm 1.96\sqrt{\tfrac{0.06\cdot 0.94}{5000}} = 0.06 \pm 0.0066 \;\Rightarrow\; (5.3\%,\ 6.7\%). \)</p>
+            <p>La tasa de clics verdadera está, con 95% de confianza, entre 5.3% y 6.7% — un margen de \( \pm 0.66 \) puntos porcentuales.</p>
           </div>
         </article>
 
         <!-- 5.4 -->
         <article class="sec" id="t54">
           <div class="sec-no">5.4</div>
-          <h3>IC para una proporción y tamaño de muestra</h3>
-          <div class="def">
-            <span class="def-tag">Intervalo para \( p \)</span>
-            <p>Para muestras grandes, la proporción muestral \( \hat p = X/n \) es aproximadamente normal y el intervalo del \( 100(1-\alpha)\% \) es</p>
-            <p style="display:flex;justify-content:center;padding:6px 0">\( \displaystyle \hat p \pm z_{\alpha/2}\sqrt{\frac{\hat p\,\hat q}{n}}, \qquad \text{válida si } n\hat p \ge 5 \text{ y } n\hat q \ge 5. \)</p>
-          </div>
-          <p><strong>¿Cuántos datos se necesitan?</strong> Despejando \( n \) del error máximo \( E \) se obtienen las dos fórmulas de planeación más usadas en investigación de mercados y auditoría:</p>
-          <ul>
-            <li>Para estimar una <strong>media</strong> con error máximo \( E \): \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
-            <li>Para estimar una <strong>proporción</strong>: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\hat q = 0.25 \), el caso más conservador.</li>
-          </ul>
+          <h3>Intervalos de confianza para dos muestras</h3>
+          <p>Comparar dos poblaciones —dos sucursales, dos versiones de una campaña, antes y después de una intervención— sigue el mismo esquema: estimador de la diferencia \( \pm \) valor crítico \( \times \) error estándar de la diferencia. Lo que cambia es la forma del error estándar y la distribución del pivote.</p>
+
+          <p><strong>Diferencia de medias, \( \sigma_1, \sigma_2 \) conocidas.</strong> Pivote normal estándar:</p>
+          <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}. \)</div>
+
+          <p><strong>Diferencia de medias, varianzas desconocidas.</strong> Si se pueden asumir iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \):</p>
+          <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm t_{\alpha/2,\,\nu}\,s_p\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}, \qquad \nu = n_1+n_2-2. \)</div>
+          <p>Si las varianzas no pueden asumirse iguales, la alternativa es <strong>Welch–Satterthwaite</strong>: mismo numerador con \( \sqrt{s_1^2/n_1 + s_2^2/n_2} \) y grados de libertad \( \nu = \dfrac{(s_1^2/n_1 + s_2^2/n_2)^2}{\dfrac{(s_1^2/n_1)^2}{n_1-1} + \dfrac{(s_2^2/n_2)^2}{n_2-1}} \).</p>
+
+          <p><strong>Datos pareados.</strong> Cuando cada observación de un grupo se empareja naturalmente con una del otro (antes/después sobre la misma unidad), se construyen las diferencias \( d_i = x_{1i} - x_{2i} \) y se aplica la t de una muestra a \( \bar d \):</p>
+          <div class="formula-hero">\( \displaystyle \bar d \pm t_{\alpha/2,\,n-1}\,\frac{s_d}{\sqrt n}. \)</div>
+
+          <p><strong>Diferencia de proporciones.</strong> Para muestras grandes —el IC usa varianzas <em>no agrupadas</em>, a diferencia de la prueba Z de hipótesis que agrupa bajo \(H_0\):</p>
+          <div class="formula-hero">\( \displaystyle (\hat p_1 - \hat p_2) \pm z_{\alpha/2}\sqrt{\frac{\hat p_1\hat q_1}{n_1}+\frac{\hat p_2\hat q_2}{n_2}}. \)</div>
+
           <div class="ex">
-            <span class="ex-tag">Ejemplo — campaña digital (marketing)</span>
-            <p>Una campaña acumula 5,000 impresiones con 300 clics. La tasa de clics muestral es \( \hat p = 300/5000 = 0.06 \). Como \( n\hat p = 300 \ge 5 \) y \( n\hat q = 4700 \ge 5 \), el IC del 95% es válido:</p>
-            <p>\( 0.06 \pm 1.96\sqrt{\tfrac{0.06\cdot 0.94}{5000}} = 0.06 \pm 0.0066 \;\Rightarrow\; (5.3\%,\ 6.7\%). \)</p>
-            <p>El equipo puede reportar: la tasa de clics verdadera está, con 95% de confianza, entre 5.3% y 6.7% — un margen de \( \pm 0.66 \) puntos porcentuales.</p>
+            <span class="ex-tag">Ejemplo — carga de la app web (administración)</span>
+            <p>Se comparan los tiempos de carga (segundos) de la versión actual (A) y una optimizada (B) de una aplicación, con \( n_1=n_2=10 \): \( \bar x_A = 2.8,\ s_A = 0.6 \) y \( \bar x_B = 2.1,\ s_B = 0.5 \). Con varianzas comparables, \( s_p^2 = \tfrac{9(0.36)+9(0.25)}{18} = 0.305 \), \( s_p = 0.552 \):</p>
+            <p>\( E = 2.101\cdot 0.552\sqrt{\tfrac{2}{10}} = 0.519 \;\Rightarrow\; \text{IC}_{95\%} = (2.8-2.1) \pm 0.519 = (0.18,\ 1.22). \)</p>
+            <p>El intervalo <em>no contiene al 0</em>: la versión B es más rápida, en promedio, entre 0.18 y 1.22 segundos con 95% de confianza. Esa es la lectura de negocio del intervalo de diferencia.</p>
+          </div>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — email vs. SMS (marketing)</span>
+            <p>Dos canales de retención: correo con 96 respuestas en 400 envíos (\( \hat p_1 = 0.24 \)) y SMS con 60 en 400 (\( \hat p_2 = 0.15 \)). Condiciones de éxitos esperados \( \ge 5 \) ✓:</p>
+            <p>\( E = 1.96\sqrt{\tfrac{0.24\cdot 0.76}{400}+\tfrac{0.15\cdot 0.85}{400}} = 0.055 \;\Rightarrow\; \text{IC}_{95\%} = 0.09 \pm 0.055 = (3.5\%,\ 14.5\%). \)</p>
+            <p>El correo supera al SMS entre 3.5 y 14.5 puntos porcentuales. Regla de lectura: si el intervalo de una diferencia <em>contiene al 0</em>, los datos no evidencian diferencia al nivel elegido; si <em>excluye</em> al 0, la diferencia es significativa.</p>
+          </div>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — capacitación (administración, pareado)</span>
+            <p>Tras un taller, se midió la productividad de los <em>mismos</em> 9 empleados antes y después. Las diferencias dan \( \bar d = 1.8 \) unidades y \( s_d = 1.2 \):</p>
+            <p>\( E = 2.306\cdot\tfrac{1.2}{\sqrt 9} = 0.92 \;\Rightarrow\; \text{IC}_{95\%} = (0.88,\ 2.72). \)</p>
+            <p>El pareado elimina la variabilidad entre empleados y gana potencia frente a dos muestras independientes.</p>
           </div>
         </article>
 
         <!-- 5.5 -->
         <article class="sec" id="t55">
           <div class="sec-no">5.5</div>
+          <h3>Tamaño de muestra: cuántos datos se necesitan</h3>
+          <p>Despejando \( n \) del error máximo \( E \) se obtienen las dos fórmulas de planeación más usadas en investigación de mercados y auditoría:</p>
+          <ul>
+            <li>Para estimar una <strong>media</strong> con error máximo \( E \): \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
+            <li>Para estimar una <strong>proporción</strong>: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\,\hat q = 0.25 \), el caso más conservador.</li>
+          </ul>
+          <div class="ex">
+            <span class="ex-tag">Ejemplo — piloto de encuesta (marketing)</span>
+            <p>¿Cuántos clientes encuestar para un margen de \( \pm 5 \) puntos al 95%? Sin información previa (\( \hat p\,\hat q = 0.25 \)):</p>
+            <p>\( n = \dfrac{1.96^{2}\times 0.25}{0.05^{2}} = \dfrac{0.9604}{0.0025} = 384.2 \;\Rightarrow\; \mathbf{385} \) encuestados.</p>
+            <p>Con un piloto que indicara \( \hat p = 0.30 \), bastarían \( \tfrac{1.96^2 \times 0.21}{0.0025} = 322.7 \Rightarrow 323 \). El redondeo es <em>siempre hacia arriba</em>: \( n \) es un número de personas.</p>
+          </div>
+        </article>
+
+        <!-- 5.6 -->
+        <article class="sec" id="t56">
+          <div class="sec-no">5.6</div>
           <h3>Catálogo de estimadores e intervalos</h3>
-          <p>Las fórmulas de esta unidad en una sola vista. Las etiquetas indican su papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo numéricamente en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
+          <p>Las catorce fórmulas de la unidad en una sola vista, agrupadas por papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo —una y dos muestras— en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
 
           <div style="margin-top:22px">
             <div class="spec-row">
@@ -620,27 +671,47 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
               <div class="spec-math">\( \hat\lambda = \dfrac{1}{\bar x} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">Intervalo</span><span class="no">E6</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E6</span></div>
               <div><div class="spec-name">IC para \( \mu \), \( \sigma \) conocida</div><div class="spec-use">Población normal o \( n \) grande; pivote normal estándar.</div></div>
               <div class="spec-math">\( \bar x \pm z_{\alpha/2}\,\dfrac{\sigma}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">Intervalo</span><span class="no">E7</span></div>
-              <div><div class="spec-name">IC para \( \mu \), \( \sigma \) desconocida</div><div class="spec-use">Sustituir \( s \) y usar t de Student con \( n-1 \) grados de libertad.</div></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E7</span></div>
+              <div><div class="spec-name">IC para \( \mu \), \( \sigma \) desconocida</div><div class="spec-use">Sustituir \( s \) y usar t de Student con \( n-1 \) gl.</div></div>
               <div class="spec-math">\( \bar x \pm t_{\alpha/2,\,n-1}\,\dfrac{s}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">Intervalo</span><span class="no">E8</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E8</span></div>
               <div><div class="spec-name">IC para \( p \)</div><div class="spec-use">Muestras grandes: \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \).</div></div>
               <div class="spec-math">\( \hat p \pm z_{\alpha/2}\sqrt{\dfrac{\hat p\,\hat q}{n}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E9</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E9</span></div>
+              <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), \( \sigma \) conocidas</div><div class="spec-use">Comparación de dos procesos con varianzas poblacionales conocidas.</div></div>
+              <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm z_{\alpha/2}\sqrt{\dfrac{\sigma_1^2}{n_1}+\dfrac{\sigma_2^2}{n_2}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E10</span></div>
+              <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), t</div><div class="spec-use">Varianzas iguales: t agrupada con \(s_p\). Si no: Welch con gl ajustados.</div></div>
+              <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm t_{\alpha/2,\nu}\,s_p\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}},\ \nu{=}n_1{+}n_2{-}2 \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">IC · pareado</span><span class="no">E11</span></div>
+              <div><div class="spec-name">IC para \( \mu_d \) (antes/después)</div><div class="spec-use">Misma unidad medida dos veces: t sobre las diferencias \(d_i\).</div></div>
+              <div class="spec-math">\( \bar d \pm t_{\alpha/2,\,n-1}\,\dfrac{s_d}{\sqrt n} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E12</span></div>
+              <div><div class="spec-name">IC para \( p_1-p_2 \)</div><div class="spec-use">A/B testing. SE <em>no agrupada</em>; éxitos esperados \( \ge 5 \).</div></div>
+              <div class="spec-math">\( (\hat p_1{-}\hat p_2) \pm z_{\alpha/2}\sqrt{\dfrac{\hat p_1\hat q_1}{n_1}+\dfrac{\hat p_2\hat q_2}{n_2}} \)</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E13</span></div>
               <div><div class="spec-name">\( n \) para estimar \( \mu \)</div><div class="spec-use">Planeación: error máximo \( E \) con nivel \( 1-\alpha \).</div></div>
               <div class="spec-math">\( n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E10</span></div>
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E14</span></div>
               <div><div class="spec-name">\( n \) para estimar \( p \)</div><div class="spec-use">Sin datos previos usar \( \hat p\,\hat q = 0.25 \) (conservador).</div></div>
               <div class="spec-math">\( n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \)</div>
             </div>
@@ -760,7 +831,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     <div class="view-head">
       <p class="overline">Laboratorio de cálculo</p>
       <h2>Calculadora de intervalos de confianza</h2>
-      <p class="sub">Construye intervalos para medias y proporciones, calcula tamaños de muestra y visualiza el intervalo sobre la distribución muestral correspondiente.</p>
+      <p class="sub">Construye intervalos para medias y proporciones —<strong>en una o dos muestras</strong>—, calcula tamaños de muestra y visualiza el intervalo sobre la distribución muestral correspondiente.</p>
     </div>
 
     <div class="lab-grid">
@@ -771,10 +842,16 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
             <div class="field">
               <label for="calcDist">Tipo de cálculo</label>
               <select id="calcDist">
-                <optgroup label="Intervalos de confianza">
+                <optgroup label="Una muestra">
                   <option value="mediaZ" selected>Media — σ conocida (Z)</option>
                   <option value="mediaT">Media — σ desconocida (t de Student)</option>
                   <option value="prop">Proporción p (muestras grandes)</option>
+                </optgroup>
+                <optgroup label="Dos muestras">
+                  <option value="media2Z">Diferencia de medias — σ₁, σ₂ conocidas (Z)</option>
+                  <option value="media2T">Diferencia de medias — t agrupada / Welch</option>
+                  <option value="pareada">Media de diferencias — datos pareados (t)</option>
+                  <option value="prop2">Diferencia de proporciones p₁ − p₂ (Z)</option>
                 </optgroup>
                 <optgroup label="Planeación del tamaño de muestra">
                   <option value="nmed">Tamaño n — para la media</option>
@@ -794,7 +871,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           </div>
           <div id="calcParams" style="display:grid;gap:14px;margin-bottom:18px"></div>
           <button class="btn" id="btnCalc" style="width:100%;justify-content:center"><i data-lucide="equal"></i>Calcular</button>
-          <p class="note" id="calcNote">El nivel de confianza aplica a todos los modos. En «σ desconocida» se usa la t de Student con \(n-1\) grados de libertad, calculada numéricamente (requiere población aproximadamente normal).</p>
+          <p class="note" id="calcNote">En «σ desconocida» y en las diferencias t se usa la t de Student con los grados de libertad correspondientes, calculada numéricamente (sin tablas). En la diferencia de proporciones el IC usa SE <em>no agrupada</em> — a diferencia de la prueba Z de hipótesis, que agrupa bajo H₀.</p>
         </div>
       </div>
 
@@ -878,6 +955,17 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e4"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
         </div>
       </details>
+
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 5 · IC para diferencia de medias, t agrupada — cajas del banco (finanzas)</span>Los tiempos de servicio (minutos) en las cajas rápidas de dos sucursales son aproximadamente normales, con varianzas comparables. Sucursal A: \( n_1 = 15 \), \( \bar x_1 = 4.2 \), \( s_1 = 1.1 \). Sucursal B: \( n_2 = 12 \), \( \bar x_2 = 5.4 \), \( s_2 = 1.5 \). Construye el IC del 95% para \( \mu_A - \mu_B \) y decide si A es más rápida.</span></summary>
+        <div class="sol-body">
+          <p>Varianza agrupada: \( s_p^2 = \dfrac{(14)(1.21) + (11)(2.25)}{25} = \dfrac{41.69}{25} = 1.668 \Rightarrow s_p = 1.291 \).</p>
+          <p>\( SE = 1.291\sqrt{\tfrac{1}{15}+\tfrac{1}{12}} = 1.291\,(0.3873) = 0.500 \). &nbsp; \( t_{0.025,\,25} = 2.060 \Rightarrow E = 1.03 \).</p>
+          <p>\( \text{IC}_{95\%} = (4.2 - 5.4) \pm 1.03 = -1.2 \pm 1.03 = (-2.23,\ -0.17). \)</p>
+          <p><strong>Decisión:</strong> el intervalo <em>no contiene al 0</em> — A es más rápida, en promedio, entre 0.17 y 2.23 minutos, con 95% de confianza. La diferencia favorece a la sucursal A de forma consistente.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e5"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
     </div>
 
     <!-- Refuerzo con redacción -->
@@ -916,14 +1004,15 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       </details>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — IC con t, muestra pequeña (marketing)</span>El gasto por transacción en una boutique es aproximadamente normal. Una muestra de 10 clientes da \( \bar x = \$640 \) y \( s = \$85 \). (a) Justifica por qué se usa t y no Z. (b) Construye el IC del 95% para \( \mu \). (c) El gerente afirma que el gasto medio es de \$600: ¿qué dice tu intervalo?</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — IC para dos proporciones (marketing)</span>Una tienda en línea compara dos plataformas de pago midiendo la tasa de transacciones fallidas: plataforma 1 registra 118 fallas en 500 transacciones; plataforma 2, 85 fallas en 500. (a) Verifica las condiciones del intervalo. (b) Construye el IC del 95% para \( p_1 - p_2 \). (c) Interpreta: ¿hay evidencia de que las plataformas difieren en confiabilidad?</span></summary>
         <div class="sol-body">
-          <p>En (a) argumenta los dos requisitos de la t: \( \sigma \) desconocida y población aproximadamente normal con \( n \) pequeña. En (b) usa \( t_{0.025,9} = 2.262 \). En (c), evalúa si \$600 queda dentro o fuera del intervalo y qué significa.</p>
+          <p>En (a) revisa éxitos y fracasos esperados \( \ge 5 \) en ambas muestras. En (b) usa el IC con SE <em>no agrupada</em>: \( (\hat p_1 - \hat p_2) \pm z_{\alpha/2}\sqrt{\hat p_1\hat q_1/n_1 + \hat p_2\hat q_2/n_2} \). En (c), decide observando si el intervalo contiene al 0.</p>
           <div class="ed-box" data-ed="e7"></div>
           <details class="mini-check">
             <summary>Respuestas de control (solo resultados) — compáralas con tu redacción</summary>
             <div class="sol-body">
-              <p>(b) \( E = 2.262\cdot 85/\sqrt{10} = 60.8 \Rightarrow \text{IC} = (\$579.2,\ \$700.8) \). &nbsp; (c) \$600 <em>sí</em> está dentro del intervalo: no hay evidencia, al 95% de confianza, de que el gasto medio difiera de \$600.</p>
+              <p>(a) \( 500\times 0.236 = 118 \ge 5 \), \( 382 \ge 5 \), \( 85 \ge 5 \), \( 415 \ge 5 \). ✓ &nbsp; (b) \( \hat p_1 - \hat p_2 = 0.066 \); \( SE = \sqrt{0.0003606+0.0002822} = 0.0254 \); \( E = 0.0497 \Rightarrow \text{IC} = (0.016,\ 0.116) \).</p>
+              <p>(c) El intervalo <em>excluye</em> al 0: la plataforma 1 falla entre 1.6 y 11.6 puntos porcentuales más que la 2 — hay evidencia de menor confiabilidad.</p>
             </div>
           </details>
         </div>
@@ -948,7 +1037,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     <!-- Quiz -->
     <div class="act-block">
       <h3>Quiz de autoevaluación</h3>
-      <p class="act-desc">Seis preguntas de opción múltiple. Al calificar recibirás la retroalimentación de cada respuesta; tu <strong>mejor intento</strong> se registra en tu boleta.</p>
+      <p class="act-desc">Siete preguntas de opción múltiple. Al calificar recibirás la retroalimentación de cada respuesta; tu <strong>mejor intento</strong> se registra en tu boleta.</p>
       <div id="quizList"></div>
       <div class="quiz-foot">
         <button class="btn" id="btnGrade"><i data-lucide="check-check"></i>Calificar quiz</button>
@@ -977,7 +1066,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <div class="panel-head"><i data-lucide="file-text"></i>Instrucciones de entrega</div>
           <div class="panel-body">
             <ol style="margin-left:20px;font-size:14.5px">
-              <li style="margin-bottom:9px">En cada problema identifica: parámetro objetivo, estimador empleado y supuestos (\( \sigma \) conocida o no, condición \( n\hat p, n\hat q \ge 5 \), normalidad aproximada).</li>
+              <li style="margin-bottom:9px">En cada problema identifica: parámetro objetivo, estimador empleado y supuestos (\( \sigma \) conocida o no, condición \( n\hat p, n\hat q \ge 5 \), normalidad aproximada, muestras independientes o pareadas).</li>
               <li style="margin-bottom:9px">Justifica cada paso con la definición o propiedad que aplicas, y termina con la <em>interpretación de negocio</em> del intervalo, no solo el número.</li>
               <li style="margin-bottom:9px">Marca aquí cada problema terminado; el avance se guarda automáticamente en este dispositivo.</li>
               <li>Entrega el PDF en la plataforma de la clase el día de la sesión 4.</li>
@@ -1054,7 +1143,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
         <button class="btn ghost" id="btnEstEdit"><i data-lucide="pencil"></i>Editar datos</button>
         <button class="del-btn" id="btnEstDel"><i data-lucide="trash-2"></i><span>Borrar registro y avance</span></button>
       </div>
-      <p class="note" style="max-width:700px"><strong>Criterios de la nota.</strong> <em>Simulador:</em> 20% del rubro por cada nivel de ejecuciones acumuladas — 1, 25, 100, 500 y 1,000 o más. <em>Quiz:</em> proporción de tu mejor intento (0–6 aciertos). <em>Ejercicios y tarea:</em> casillas marcadas en Actividades. Las redacciones de refuerzo se guardan por separado y se revisan en clase. Al borrar el registro se elimina también todo el avance guardado en este navegador.</p>
+      <p class="note" style="max-width:700px"><strong>Criterios de la nota.</strong> <em>Simulador:</em> 20% del rubro por cada nivel de ejecuciones acumuladas — 1, 25, 100, 500 y 1,000 o más. <em>Quiz:</em> proporción de tu mejor intento (0–7 aciertos). <em>Ejercicios y tarea:</em> casillas marcadas en Actividades. Las redacciones de refuerzo se guardan por separado y se revisan en clase. Al borrar el registro se elimina también todo el avance guardado en este navegador.</p>
     </div>
   </div>
 </section>
@@ -1099,8 +1188,8 @@ function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
    PERSISTENCIA: registro individual + actividades por curso
    El registro del estudiante se COMPARTE entre unidades/materias.
 ============================================================ */
-const LS_EST='aula_estudiante';   // datos del alumno registrado
-const LS_ACT='aula_actividades';  // avance por curso: { inf5: {...} }
+const LS_EST='aula_estudiante';
+const LS_ACT='aula_actividades';
 const CURSO='inf5';
 
 function loadEst(){ try{ return JSON.parse(localStorage.getItem(LS_EST)); }catch(e){ return null; } }
@@ -1155,12 +1244,11 @@ function erf(x){
 }
 const Phi = z => 0.5*(1+erf(z/Math.SQRT2));
 function normPdf(x,m,s){ return Math.exp(-Math.pow(x-m,2)/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
-function zQuantile(p){ // cuantil normal por bisección
+function zQuantile(p){
   let lo=-12, hi=12;
   for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(Phi(m)<p) lo=m; else hi=m; }
   return (lo+hi)/2;
 }
-/* t de Student: densidad, CDF (Simpson) y cuantil (bisección) */
 function tPdf(t,v){
   return Math.exp(logGamma((v+1)/2)-logGamma(v/2))/Math.sqrt(v*Math.PI)
        * Math.pow(1+t*t/v, -(v+1)/2);
@@ -1277,7 +1365,6 @@ function drawHero(t){
   const m={l:24,r:24,t:26,b:26}, pw=w-m.l-m.r, ph=h-m.t-m.b;
   const scale=0.85*ph/0.3989;
   const X=z=>m.l+(z+4)/8*pw, Y=v=>m.t+ph-v*scale;
-  // área central (IC) que crece
   const fs=Math.min(1,Math.max(0,(t-0.45)/0.55));
   const half=1.96*fs;
   if(fs>0){
@@ -1293,20 +1380,17 @@ function drawHero(t){
     if(fs>0.35) ctx.fillText('x̄ − E', X(-half), Y(0)+16);
     if(fs>0.35) ctx.fillText('x̄ + E', X( half), Y(0)+16);
   }
-  // campana progresiva
   const fc=Math.min(1,t/0.65);
   ctx.strokeStyle=INK; ctx.lineWidth=2.4; ctx.beginPath();
   const steps=220, upto=Math.floor(steps*fc);
   for(let i=0;i<=upto;i++){ const z=-4+8*i/steps; const y=0.3989*Math.exp(-z*z/2);
     i? ctx.lineTo(X(z),Y(y)) : ctx.moveTo(X(z),Y(y)); }
   ctx.stroke();
-  // eje y marca de μ
   ctx.strokeStyle=INK; ctx.lineWidth=1.4;
   ctx.beginPath(); ctx.moveTo(m.l, m.t+ph); ctx.lineTo(w-m.r, m.t+ph); ctx.stroke();
   ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(X(0), Y(0), 3.4, 0, 7); ctx.fill();
   ctx.font='700 12px Instrument Sans'; ctx.textAlign='center';
   ctx.fillText('μ', X(0), Y(0)-10);
-  // leyenda
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.fillStyle='rgba(28,43,37,.85)';
   ctx.fillText('Distribución muestral de X̄ ~ N(μ, σ²/n)', m.l, m.t-8);
@@ -1421,7 +1505,6 @@ function drawDist(){
     ctx.fillStyle='rgba(30,70,54,.78)';
     ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
   });
-  // curva teórica escalada a conteos
   if(simD.total>0){
     ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
     const N=280;
@@ -1432,11 +1515,9 @@ function drawDist(){
     }
     ctx.stroke();
   }
-  // guía μ
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
   ctx.beginPath(); ctx.moveTo(m.l+(p.mu-rlo)/(rhi-rlo)*m.pw, m.t+6);
   ctx.lineTo(m.l+(p.mu-rlo)/(rhi-rlo)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
-  // leyenda
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.fillStyle='rgba(30,70,54,.9)'; ctx.fillRect(m.l+6, m.t-8, 10, 10);
   ctx.fillStyle=INK; ctx.fillText('frecuencia observada de x̄', m.l+21, m.t+1);
@@ -1456,9 +1537,7 @@ function drawCover(){
   const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
   const span=8*SE;
   const X=x=>m.l+((x-(p.mu-span))/(2*span))*m.pw;
-  // eje
   axes(ctx,m); xTicks(ctx,m,p.mu-span,p.mu+span);
-  // línea μ
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.6;
   ctx.beginPath(); ctx.moveTo(X(p.mu), m.t+2); ctx.lineTo(X(p.mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='center';
@@ -1477,7 +1556,6 @@ function drawCover(){
     ctx.beginPath(); ctx.moveTo(X(it.lo),y); ctx.lineTo(X(it.hi),y); ctx.stroke();
     ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(X(it.x),y,2.2,0,7); ctx.fill();
   });
-  // leyenda
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.strokeStyle='rgba(30,70,54,.85)'; ctx.lineWidth=2.4;
   ctx.beginPath(); ctx.moveTo(m.l+6, m.t-3); ctx.lineTo(m.l+22, m.t-3); ctx.stroke();
@@ -1504,7 +1582,7 @@ function drawSim(){ simMode==='dist'? drawDist() : drawCover(); }
  $('#simLevel').addEventListener('change', ()=>{ updateCoverStats(); resetCover(); });
 
 /* ============================================================
-   CALCULADORA DE INTERVALOS Y TAMAÑOS
+   CALCULADORA DE INTERVALOS Y TAMAÑOS (una y dos muestras)
 ============================================================ */
 const PDEFS={
   mediaZ:[
@@ -1518,6 +1596,30 @@ const PDEFS={
   prop:[
     {k:'x',label:'x — número de éxitos en la muestra',min:0,max:1e7,step:1,val:232},
     {k:'n',label:'n — tamaño de la muestra',min:5,max:1e7,step:1,val:400}],
+  media2Z:[
+    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:4.2},
+    {k:'sg1',label:'σ₁ — desv. estándar poblacional 1',min:1e-6,max:1e7,step:0.1,val:1.2},
+    {k:'n1',label:'n₁ — tamaño 1',min:2,max:100000,step:1,val:15},
+    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:5.4},
+    {k:'sg2',label:'σ₂ — desv. estándar poblacional 2',min:1e-6,max:1e7,step:0.1,val:1.5},
+    {k:'n2',label:'n₂ — tamaño 2',min:2,max:100000,step:1,val:12}],
+  media2T:[
+    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:2.8},
+    {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:0.6},
+    {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:10},
+    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:2.1},
+    {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:0.5},
+    {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:10},
+    {k:'pool',type:'check',label:'Asumir varianzas iguales (t agrupada); desmarcar usa Welch',val:true}],
+  pareada:[
+    {k:'dbar',label:'d̄ — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:1.8},
+    {k:'sd',label:'s_d — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:1.2},
+    {k:'n',label:'n — número de pares',min:2,max:5000,step:1,val:9}],
+  prop2:[
+    {k:'x1',label:'x₁ — éxitos grupo 1',min:0,max:1e7,step:1,val:96},
+    {k:'n1',label:'n₁ — tamaño grupo 1',min:5,max:1e7,step:1,val:400},
+    {k:'x2',label:'x₂ — éxitos grupo 2',min:0,max:1e7,step:1,val:60},
+    {k:'n2',label:'n₂ — tamaño grupo 2',min:5,max:1e7,step:1,val:400}],
   nmed:[
     {k:'E',label:'E — error máximo admisible',min:1e-6,max:1e6,step:0.1,val:500},
     {k:'sg',label:'σ — desviación estándar poblacional',min:1e-6,max:1e7,step:1,val:4200}],
@@ -1525,16 +1627,22 @@ const PDEFS={
     {k:'E',label:'E — error máximo admisible (proporción)',min:0.001,max:0.5,step:0.01,val:0.03},
     {k:'p',label:'p̂ — proporción esperada (usa 0.5 si no hay datos)',min:0,max:1,step:0.01,val:0.5}]
 };
-const CALC_NAMES={mediaZ:'IC para la media (σ conocida)',mediaT:'IC para la media (σ desconocida)',
-  prop:'IC para una proporción',nmed:'Tamaño de muestra — media',nprop:'Tamaño de muestra — proporción'};
+const CALC_NAMES={mediaZ:'IC media (σ conocida)',mediaT:'IC media (σ desconocida)',
+  prop:'IC proporción',media2Z:'IC diferencia de medias (Z)',media2T:'IC diferencia de medias (t)',
+  pareada:'IC datos pareados',prop2:'IC diferencia de proporciones',
+  nmed:'Tamaño de muestra — media',nprop:'Tamaño de muestra — proporción'};
 
 function buildParams(){
   const key=$('#calcDist').value, box=$('#calcParams');
-  box.innerHTML = PDEFS[key].map(p=>`
-    <div class="field">
+  box.innerHTML = PDEFS[key].map(p=>{
+    if(p.type==='check'){
+      return `<label class="chk"><input type="checkbox" id="cp_${p.k}" ${p.val?'checked':''}><span>${p.label}</span></label>`;
+    }
+    return `<div class="field">
       <label for="cp_${p.k}">${p.label}</label>
       <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
  $('#calcDist').addEventListener('change',()=>{
   buildParams();
@@ -1547,7 +1655,8 @@ function buildParams(){
 function readVals(key){
   const out={};
   for(const p of PDEFS[key]){
-    const raw=$('#cp_'+p.k).value.trim(), v=parseFloat(raw);
+    if(p.type==='check'){ out[p.k]=$('#cp_'+p.k).checked; continue; }
+    const v=parseFloat($('#cp_'+p.k).value);
     if(isNaN(v)) throw `Revisa el campo «${p.label.split('—')[0].trim()}».`;
     if(v<p.min||v>p.max) throw `«${p.label.split('—')[0].trim()}» debe estar entre ${p.min} y ${p.max}.`;
     out[p.k]=v;
@@ -1556,6 +1665,7 @@ function readVals(key){
 }
 function computeCalc(key,v,lev){
   const R=[], z=zOf(lev);
+  const contieneCero=(L,U)=> (L<=0 && U>=0)? 'Sí' : 'No';
   if(key==='mediaZ'){
     const {xb,sg,n}=v, SE=sg/Math.sqrt(n), E=z*SE, L=xb-E, U=xb+E;
     R.push(['Valor crítico z',z],['Error máximo E',E],['Límite inferior',L],['Límite superior',U]);
@@ -1581,6 +1691,60 @@ function computeCalc(key,v,lev){
     return {results:R, warn,
       tex:`\\hat{p}\\pm z_{\\alpha/2}\\sqrt{\\dfrac{\\hat{p}\\hat{q}}{n}} = ${fmt(ph)}\\pm ${z.toFixed(3)}\\sqrt{\\dfrac{${fmt(ph)}\\cdot ${fmt(1-ph)}}{${n}}}`,
       draw:()=>drawPDF($('#calcCanvas'), px=>normPdf(px,ph,SE), lo, hi, [[Math.max(0,L),Math.min(1,U)]])};
+  }
+  if(key==='media2Z'){
+    const {xb1,sg1,n1,xb2,sg2,n2}=v;
+    const dif=xb1-xb2, SE=Math.sqrt(sg1*sg1/n1+sg2*sg2/n2), E=z*SE, L=dif-E, U=dif+E;
+    R.push(['Diferencia x̄₁ − x̄₂',dif],['Valor crítico z',z],['Error máximo E',E],
+           ['Límite inferior',L],['Límite superior',U],
+           ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
+    return {results:R,
+      tex:`(\\bar{x}_1{-}\\bar{x}_2)\\pm z_{\\alpha/2}\\sqrt{\\dfrac{\\sigma_1^2}{n_1}+\\dfrac{\\sigma_2^2}{n_2}} = ${fmt(dif)}\\pm ${z.toFixed(3)}\\cdot${fmt(SE)}`,
+      draw:()=>drawPDF($('#calcCanvas'), x=>normPdf(x,dif,SE), dif-4.2*SE, dif+4.2*SE, [[L,U]])};
+  }
+  if(key==='media2T'){
+    const {xb1,s1,n1,xb2,s2,n2,pool}=v;
+    const dif=xb1-xb2;
+    let SE,nu,tag;
+    if(pool){
+      const sp2=((n1-1)*s1*s1+(n2-1)*s2*s2)/(n1+n2-2);
+      SE=Math.sqrt(sp2*(1/n1+1/n2)); nu=n1+n2-2; tag='t agrupada';
+    }else{
+      const v1=s1*s1/n1, v2=s2*s2/n2;
+      SE=Math.sqrt(v1+v2);
+      nu=Math.floor(Math.pow(v1+v2,2)/((v1*v1)/(n1-1)+(v2*v2)/(n2-1)));
+      tag='Welch–Satterthwaite';
+    }
+    const t=tOf(lev,nu), E=t*SE, L=dif-E, U=dif+E;
+    R.push(['Método',tag,1],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
+           ['Límite inferior',L],['Límite superior',U],
+           ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
+    return {results:R,
+      tex:`(\\bar{x}_1{-}\\bar{x}_2)\\pm t_{\\alpha/2,\\,${nu}}\\cdot ${fmt(SE)} = ${fmt(dif)}\\pm ${t.toFixed(3)}\\cdot${fmt(SE)}`,
+      draw:()=>drawPDF($('#calcCanvas'), x=>tPdf((x-dif)/SE,nu)/SE, dif-4.2*SE, dif+4.2*SE, [[L,U]])};
+  }
+  if(key==='pareada'){
+    const {dbar,sd,n}=v, nu=n-1, SE=sd/Math.sqrt(n), t=tOf(lev,nu), E=t*SE, L=dbar-E, U=dbar+E;
+    R.push(['Diferencia media d̄',dbar],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
+           ['Límite inferior',L],['Límite superior',U],
+           ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
+    return {results:R,
+      tex:`\\bar{d}\\pm t_{\\alpha/2,\\,${nu}}\\,\\dfrac{s_d}{\\sqrt{n}} = ${fmt(dbar)}\\pm ${t.toFixed(3)}\\cdot${fmt(SE)}`,
+      draw:()=>drawPDF($('#calcCanvas'), x=>tPdf((x-dbar)/SE,nu)/SE, dbar-4.2*SE, dbar+4.2*SE, [[L,U]])};
+  }
+  if(key==='prop2'){
+    const {x1,n1,x2,n2}=v, p1=x1/n1, p2=x2/n2;
+    if((p1<=0&&p2<=0)||(p1>=1&&p2>=1)) throw 'Las proporciones muestrales deben estar estrictamente entre 0 y 1.';
+    const dif=p1-p2, SE=Math.sqrt(p1*(1-p1)/n1+p2*(1-p2)/n2), E=z*SE, L=dif-E, U=dif+E;
+    R.push(['p̂₁',p1],['p̂₂',p2],['Diferencia p̂₁ − p̂₂',dif],['Valor crítico z',z],['Error máximo E',E],
+           ['Límite inferior',L],['Límite superior',U],
+           ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
+    const ok = n1*p1>=5&&n1*(1-p1)>=5&&n2*p2>=5&&n2*(1-p2)>=5;
+    const warn = ok? null : '⚠ La condición de éxitos esperados ≥ 5 en ambos grupos no se cumple: el intervalo aproximado puede ser poco confiable.';
+    const lo=dif-4.2*SE, hi=dif+4.2*SE;
+    return {results:R, warn,
+      tex:`(\\hat{p}_1{-}\\hat{p}_2)\\pm z_{\\alpha/2}\\sqrt{\\dfrac{\\hat{p}_1\\hat{q}_1}{n_1}+\\dfrac{\\hat{p}_2\\hat{q}_2}{n_2}} = ${fmt(dif)}\\pm ${z.toFixed(3)}\\cdot${fmt(SE)}`,
+      draw:()=>drawPDF($('#calcCanvas'), x=>normPdf(x,dif,SE), lo, hi, [[L,U]])};
   }
   if(key==='nmed'){
     const {E,sg}=v, n0=Math.pow(z*sg/E,2);
@@ -1613,9 +1777,10 @@ let calcState=null;
   calcState=out;
   $('#calcResults').innerHTML =
     `<div class="calc-formula" id="calcTex"></div>` +
-    (out.warn? `<p class="note" style="border:none;margin:0 0 8px;color:var(--terra)">${out.warn}</p>`:'') +
-    out.results.map(([lab,val])=>`
-      <div class="res-row"><span class="res-label">${lab}</span><span class="res-val mono">${fmtP(val)}</span></div>`).join('');
+    (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
+    out.results.map(([lab,val,isTxt])=>`
+      <div class="res-row"><span class="res-label">${lab}</span>
+      <span class="res-val mono">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('');
   try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
   out.draw();
   toast(`${CALC_NAMES[key]} calculado.`);
@@ -1642,9 +1807,12 @@ const QUIZ=[
  {q:'El error estándar de la proporción muestral \\(\\hat p = X/n\\) es…',
   opts:['\\(\\sqrt{pq/n}\\)','\\(pq/n\\)','\\(\\sqrt{pq}\\,/n\\)','\\(p q / \\sqrt{n}\\)'],
   ans:0, why:'\\(\\mathrm{EE}(\\hat p)=\\sqrt{p(1-p)/n}\\): la misma estructura \\(1/\\sqrt{n}\\) que la media muestral. En la práctica se evalúa con \\(\\hat p\\) y \\(\\hat q\\).'},
- {q:'Para estimar λ en una Poisson (llegadas por hora), el MLE es…',
-  opts:['La mediana muestral','\\(\\hat\\lambda = s^2\\)','\\(\\hat\\lambda = \\bar x\\)','\\(\\hat\\lambda = 1/\\bar x\\)'],
-  ans:2, why:'De \\(\\ln L = -n\\lambda + (\\sum x_i)\\ln\\lambda - \\sum\\ln x_i!\\) se obtiene \\(\\hat\\lambda = \\bar x\\). Ojo: \\(1/\\bar x\\) es el MLE para la <em>exponencial</em>, no para la Poisson.'}
+ {q:'Para comparar el tiempo de trámite de los <em>mismos</em> 12 expedientes antes y después de una digitalización, el IC apropiado es…',
+  opts:['El IC para diferencia de medias con muestras independientes','El IC para datos pareados: \\(\\bar d \\pm t_{\\alpha/2,\\,n-1}\\,s_d/\\sqrt{n}\\)','El IC para diferencia de proporciones','El IC para la media con σ conocida'],
+  ans:1, why:'Cuando las observaciones se emparejan naturalmente (misma unidad, antes/después), la inferencia correcta se hace sobre las diferencias \\(d_i\\) con la t de una muestra; comparar dos muestras independientes desperdiciaría el emparejamiento y perdería potencia.'},
+ {q:'En el IC para \\(p_1 - p_2\\) el error estándar se calcula…',
+  opts:['Agrupado: \\(\\sqrt{\\hat p\\hat q(1/n_1+1/n_2)}\\), igual que en la prueba Z','No agrupado: \\(\\sqrt{\\hat p_1\\hat q_1/n_1 + \\hat p_2\\hat q_2/n_2}\\)','Con \\(p_0\\) bajo \\(H_0\\)','Con la media de las dos proporciones muestrales'],
+  ans:1, why:'El <em>intervalo</em> para \\(p_1-p_2\\) usa SE no agrupada porque no hay valor hipotético común. La <em>prueba Z</em> de hipótesis sí agrupa bajo \\(H_0\\): es la distinción que más confunden los alumnos.'}
 ];
 function renderQuiz(){
   $('#quizList').innerHTML = QUIZ.map((it,i)=>`
@@ -1675,8 +1843,8 @@ function renderQuiz(){
   });
   const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
   if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
-  const msg = score===6?'Dominio excelente de la unidad.':score>=4?'Muy bien: revisa los puntos marcados en naranja.':
-              score>=2?'Repasa las secciones 5.1 a 5.4 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
+  const msg = score===QUIZ.length?'Dominio excelente de la unidad.':score>=5?'Muy bien: revisa los puntos marcados en naranja.':
+              score>=3?'Repasa las secciones 5.3 y 5.4 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
   $('#quizResult').innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
   toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
 });
@@ -1723,6 +1891,7 @@ let progToastTimer=null;
 /* ============================================================
    EJERCICIOS GUIADOS: casillas "ya lo resolví"
 ============================================================ */
+const EJ_KEYS=['e1','e2','e3','e4','e5'];
 function syncEjChecks(){
   const EJ=act()[CURSO].ej;
   $$('#ejBlock .chk-ej input').forEach(cb=>{
@@ -1735,8 +1904,8 @@ function syncEjChecks(){
   const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
   cb.closest('.chk').classList.toggle('done', cb.checked);
   renderBoleta();
-  const n=Object.values(a[CURSO].ej).filter(Boolean).length;
-  toast(`Ejercicio marcado como resuelto (${n} de 4).`);
+  const n=EJ_KEYS.filter(k=>a[CURSO].ej[k]).length;
+  toast(`Ejercicio marcado como resuelto (${n} de ${EJ_KEYS.length}).`);
 });
 
 /* ============================================================
@@ -1928,12 +2097,12 @@ function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1
 function progresoCurso(){
   const c=act()[CURSO];
   const rolls=c.sim.rolls||0;
-  const ejOk=['e1','e2','e3','e4'].filter(k=>c.ej[k]).length;
+  const ejOk=EJ_KEYS.filter(k=>c.ej[k]).length;
   const tOk=PROBLEMAS.filter(p=>c.tarea[p]).length;
   return {
     rolls,
     sim:   simPct(rolls),
-    ej:    ejOk/4*100, ejOk,
+    ej:    ejOk/EJ_KEYS.length*100, ejOk,
     quiz:  (c.quiz && c.quiz.score!=null)? c.quiz.score/c.quiz.total*100 : 0,
     quizScore: (c.quiz && c.quiz.score!=null)? c.quiz.score : null,
     tarea: tOk/PROBLEMAS.length*100, tOk
@@ -1963,8 +2132,8 @@ function renderBoleta(){
   const p=progresoCurso();
   const defs=[
     {nombre:'Simulador — muestras e intervalos', pct:p.sim, w:1.5, det:`${p.rolls.toLocaleString('es-MX')} ejecuciones acumuladas`},
-    {nombre:'Ejercicios guiados resueltos', pct:p.ej, w:2.5, det:`${p.ejOk} de 4 marcados como resueltos`},
-    {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 6 aciertos`},
+    {nombre:'Ejercicios guiados resueltos', pct:p.ej, w:2.5, det:`${p.ejOk} de ${EJ_KEYS.length} marcados como resueltos`},
+    {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 7 aciertos`},
     {nombre:'Tarea — problemas del Larsen & Marx', pct:p.tarea, w:3.0, det:`${p.tOk} de ${PROBLEMAS.length} problemas marcados`}
   ];
   $('#bRows').innerHTML=defs.map(d=>`
