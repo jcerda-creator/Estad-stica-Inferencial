@@ -672,7 +672,6 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     </div>
   </div>
 </section>
-
 <!-- ==================== SIMULADOR ==================== -->
 <section class="view" id="v-simulador" hidden>
   <div class="wrap">
@@ -868,7 +867,6 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     </div>
   </div>
 </section>
-
 <!-- ==================== ACTIVIDADES ==================== -->
 <section class="view" id="v-actividades" hidden>
   <div class="wrap">
@@ -1141,16 +1139,17 @@ function fmtP(v){ if(!isFinite(v)) return '—'; if(v!==0 && Math.abs(v)<1e-6) r
 function fmtNum(v){ if(v===0) return '0'; const a=Math.abs(v); if(a>=1e5||a<1e-4) return v.toExponential(1); if(a<1) return String(parseFloat(v.toFixed(4))); return String(parseFloat(v.toPrecision(4))); }
 function fmt(x){ return String(parseFloat(x.toPrecision(6))); }
 function toast(msg, type='ok'){
-  const box=$('#toasts'), t=document.createElement('div');
+  const box=$('#toasts'); if(!box) return;
+  const t=document.createElement('div');
   t.className='toast '+type;
   t.innerHTML = `<i data-lucide="${type==='ok'?'check-circle-2':'alert-circle'}"></i><span>${msg}</span>`;
-  box.appendChild(t); lucide.createIcons();
+  box.appendChild(t); refreshIcons();
   setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
 }
-function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+function refreshIcons(){ if(window.lucide && typeof lucide.createIcons==='function'){ try{ lucide.createIcons(); }catch(e){} } }
 
 /* ============================================================
-   PERSISTENCIA: registro individual + actividades por curso
+   PERSISTENCIA
 ============================================================ */
 const LS_EST='aula_estudiante';
 const LS_ACT='aula_actividades';
@@ -1171,11 +1170,13 @@ function act(){
 function saveAct(a){ localStorage.setItem(LS_ACT, JSON.stringify(a)); }
 
 /* ============================================================
-   NAVEGACIÓN DE VISTAS
+   NAVEGACIÓN DE VISTAS (CORREGIDA)
 ============================================================ */
 function showView(v){
+  const target = $('#v-'+v);
+  if(!target){ console.warn('Vista no encontrada:', v); return; }
   $$('.view').forEach(s => s.hidden = true);
-  $('#v-'+v).hidden = false;
+  target.hidden = false;
   $$('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   window.scrollTo({top:0, behavior:'smooth'});
   if(v==='inicio')      animateHero();
@@ -1183,15 +1184,21 @@ function showView(v){
   if(v==='calculadora') redrawCalc();
   if(v==='boleta')      renderBoleta();
 }
- $$('[data-view]').forEach(el => el.addEventListener('click', e => {
-  if(el.tagName==='A'){ e.preventDefault(); }
+
+/* Delegación de eventos: un solo listener para toda la página.
+   Funciona con botones, enlaces <a> y cualquier elemento con data-view,
+   incluso si se agregan dinámicamente después. */
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-view]');
+  if(!el) return;
+  if(el.tagName === 'A') e.preventDefault();
   showView(el.dataset.view);
-}));
+});
 
 /* ============================================================
-   MATEMÁTICAS: gamma, normal, t, χ², F y cuantiles
+   MATEMÁTICAS
 ============================================================ */
-function logGamma(z){ // Lanczos
+function logGamma(z){
   const g=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,
            12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
   if(z<0.5) return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
@@ -1229,7 +1236,6 @@ function tQuantile(p,v){
   for(let i=0;i<90;i++){ const m=(lo+hi)/2; if(tCdf(m,v)<p) lo=m; else hi=m; }
   return (lo+hi)/2;
 }
-/* Gamma incompleta regularizada P(s,x) → CDF de χ² */
 function gammaincP(s,x){
   if(x<=0) return 0;
   if(x < s+1){
@@ -1262,7 +1268,6 @@ function chi2Quantile(p,k){
   for(let i=0;i<80;i++){ const m=(lo+hi)/2; if(chi2Cdf(m,k)<p) lo=m; else hi=m; }
   return (lo+hi)/2;
 }
-/* F de Fisher: pdf, cdf (Simpson) y cuantil */
 function fPdf(x,d1,d2){
   if(x<=0) return 0;
   const lc=logGamma((d1+d2)/2)-logGamma(d1/2)-logGamma(d2/2)+(d1/2)*Math.log(d1/d2);
@@ -1286,7 +1291,7 @@ function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(
   return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
 
 /* ============================================================
-   DIBUJO EN CANVAS
+   CANVAS HELPERS
 ============================================================ */
 function setupCanvas(cv){
   const dpr = window.devicePixelRatio||1;
@@ -1316,7 +1321,6 @@ function xTicks(ctx,m,lo,hi){
     ctx.fillStyle='rgba(28,43,37,.7)'; ctx.fillText(fmtNum(v), m.l+(v-lo)/(hi-lo)*m.pw, m.t+m.ph+17);
   }
 }
-/* Curva de densidad con regiones de rechazo sombreadas y estadístico marcado */
 function drawTest(cv, pdf, lo, hi, regions, stat, statLab){
   const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
   const N=360, xs=[]; let maxV=0;
@@ -1350,7 +1354,7 @@ function drawTest(cv, pdf, lo, hi, regions, stat, statLab){
 }
 
 /* ============================================================
-   HERO: dos mundos, α y β (animado)
+   HERO
 ============================================================ */
 let heroAnim=null;
 function drawHero(t){
@@ -1369,9 +1373,8 @@ function drawHero(t){
     ctx.fillStyle=color; ctx.fill();
   }
   const p1=Math.min(1,Math.max(0,(t-0.42)/0.58));
-  if(p1>0) area(f0, c, hi, 'rgba(194,84,47,'+(0.30*p1)+')');       // α bajo H0
-  if(p1>0) area(f1, lo, c, 'rgba(201,162,39,'+(0.32*p1)+')');      // β bajo H1
-  // curvas
+  if(p1>0) area(f0, c, hi, 'rgba(194,84,47,'+(0.30*p1)+')');
+  if(p1>0) area(f1, lo, c, 'rgba(201,162,39,'+(0.32*p1)+')');
   const fA=Math.min(1,t/0.45);
   ctx.strokeStyle=INK; ctx.lineWidth=2.2; ctx.beginPath();
   let upto=Math.floor(220*fA);
@@ -1390,17 +1393,14 @@ function drawHero(t){
     for(let i=0;i<=upto2;i++){ const x=lo+(hi-lo)*i/steps; i? ctx.lineTo(X(x),Y(f1(x))) : ctx.moveTo(X(x),Y(f1(x))); }
     ctx.stroke();
   }
-  // línea crítica
   if(t>0.3){
     ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
     ctx.beginPath(); ctx.moveTo(X(c),m.t+ph); ctx.lineTo(X(c),m.t-2); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
     ctx.fillText('c', X(c), m.t+ph+16);
   }
-  // eje
   ctx.strokeStyle=INK; ctx.lineWidth=1.4;
   ctx.beginPath(); ctx.moveTo(m.l, m.t+ph); ctx.lineTo(w-m.r, m.t+ph); ctx.stroke();
-  // etiquetas
   if(t>0.5){
     ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='center';
     ctx.fillStyle=TERRA; ctx.fillText('α', X(c+0.85), m.t+ph-14);
@@ -1421,7 +1421,7 @@ function animateHero(){
 }
 
 /* ============================================================
-   SIMULADOR: los dos errores + χ² de bondad de ajuste
+   SIMULADOR
 ============================================================ */
 const M0=500, SIG=8;
 let simMode='errs';
@@ -1430,7 +1430,7 @@ const simG={list:[], total:0, rej:0};
 
 function bumpRolls(k){
   const a=act(); a[CURSO].sim.rolls=(a[CURSO].sim.rolls||0)+k; saveAct(a);
-  $('#simEver').textContent=(a[CURSO].sim.rolls).toLocaleString('es-MX');
+  const el=$('#simEver'); if(el) el.textContent=(a[CURSO].sim.rolls).toLocaleString('es-MX');
 }
 function eParams(){
   const n=+$('#simEN').value, alpha=+$('#simEAlpha').value, delta=+$('#simEDelta').value;
@@ -1517,14 +1517,12 @@ function drawErrs(){
   }
   area(f0, P.c, hi, 'rgba(194,84,47,.28)');
   area(f1, lo, P.c, 'rgba(201,162,39,.30)');
-  // curvas
   [[f0,INK],[f1,TERRA]].forEach(([f,col])=>{
     ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.beginPath();
     const N=260;
     for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N; i? ctx.lineTo(X(x),Y(f(x))) : ctx.moveTo(X(x),Y(f(x))); }
     ctx.stroke();
   });
-  // línea crítica
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(X(P.c),m.t+2); ctx.lineTo(X(P.c),m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
@@ -1534,7 +1532,6 @@ function drawErrs(){
   for(let v=sy;v<=yMax;v+=sy){ const y=Y(v);
     ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
-  // leyenda
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.strokeStyle=INK; ctx.lineWidth=2.2;
   ctx.beginPath(); ctx.moveTo(m.l+6,m.t-3); ctx.lineTo(m.l+22,m.t-3); ctx.stroke();
@@ -1559,20 +1556,18 @@ function drawGof(){
     ctx.fillStyle='rgba(30,70,54,.78)';
     ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
   });
-  // curva teórica escalada
   if(simG.total>0){
     ctx.strokeStyle=TERRA; ctx.lineWidth=2.2; ctx.beginPath();
     const N=280;
     for(let i=0;i<=N;i++){
       const x=hi*i/N, y=chi2Pdf(x,3)*simG.total*bw;
-      i? ctx.lineTo(m.l+(x/hi)*m.pw, m.t+m.ph-Math.min(y,yMax)*m.ph/yMax) : ctx.moveTo(m.l+(x/hi)*m.pw, m.t+m.ph-Math.min(y,yMax)*m.ph/yMax);
+      const px=m.l+(x/hi)*m.pw, py=m.t+m.ph-Math.min(y,yMax)*m.ph/yMax;
+      i? ctx.lineTo(px,py) : ctx.moveTo(px,py);
     }
     ctx.stroke();
-    // región de rechazo
     ctx.fillStyle='rgba(194,84,47,.14)';
     ctx.fillRect(m.l+(P.crit/hi)*m.pw, m.t, m.pw-(P.crit/hi)*m.pw, m.ph);
   }
-  // línea crítica
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(m.l+(P.crit/hi)*m.pw, m.t+2); ctx.lineTo(m.l+(P.crit/hi)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11px Instrument Sans'; ctx.textAlign='center';
@@ -1587,21 +1582,8 @@ function drawGof(){
 }
 function drawSim(){ simMode==='errs'? drawErrs() : drawGof(); }
 
- $('#mErrs').addEventListener('click',()=>setMode('errs'));
- $('#mGof').addEventListener('click',()=>setMode('gof'));
- $('#btnE1').addEventListener('click',()=>addErrs(1));
- $('#btnE100').addEventListener('click',()=>addErrs(100));
- $('#btnE1000').addEventListener('click',()=>addErrs(1000));
- $('#btnEReset').addEventListener('click',()=>{ resetErrs(); toast('Contadores reiniciados (tu acumulado se conserva).'); });
- $('#btnG1').addEventListener('click',()=>addGof(1));
- $('#btnG50').addEventListener('click',()=>addGof(50));
- $('#btnG200').addEventListener('click',()=>addGof(200));
- $('#btnGReset').addEventListener('click',()=>{ resetGof(); toast('Experimentos reiniciados (tu acumulado se conserva).'); });
-['simEN','simEAlpha','simEDelta'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetErrs(); }));
-['simGD','simGN','simGAlpha'].forEach(id=>$('#'+id).addEventListener('change',()=>{ resetGof(); }));
-
 /* ============================================================
-   CALCULADORA DE PRUEBAS DE HIPÓTESIS
+   CALCULADORA
 ============================================================ */
 const PDEFS={
   mediaZ:[
@@ -1672,13 +1654,6 @@ function buildParams(){
   }).join('');
   $('#altRow').style.display = ALT_OK[key]? '' : 'none';
 }
- $('#calcDist').addEventListener('change',()=>{
-  buildParams();
-  $('#calcResults').innerHTML=`<div class="calc-empty"><i data-lucide="calculator"></i>
-    <p>Prueba seleccionada: <strong>${CALC_NAMES[$('#calcDist').value]}</strong>.<br>Presiona <strong>Calcular la prueba</strong>.</p></div>`;
-  refreshIcons();
-  const cv=$('#calcCanvas'); cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
-});
 
 function readVals(key){
   const out={};
@@ -1706,7 +1681,8 @@ function computeTest(key,v,alpha,alt){
     R.push(['Estadístico de prueba',v2],['Distribución bajo H₀',dist,1],['Valor P',p],
            ['Decisión (α = '+(alpha*100)+'%)',decideTxt(p,alpha),1,decideTxt(p,alpha)==='Rechazar H₀'?'dec-ok':'dec-no']);
     return {results:R, warn, html:extraHtml,
-      draw:()=>drawTest($('#calcCanvas'),dist==='Z'? x=>normPdf(x,0,1)
+      draw:()=>drawTest($('#calcCanvas'),
+        dist==='Z'? x=>normPdf(x,0,1)
         : dist.startsWith('t')? x=>tPdf(x,gl)
         : dist.startsWith('χ²')? x=>chi2Pdf(x,gl)
         : x=>fPdf(x,gl[0],gl[1]),
@@ -1872,28 +1848,10 @@ function computeTest(key,v,alpha,alt){
 }
 
 let calcState=null;
- $('#btnCalc').addEventListener('click',()=>{
-  const key=$('#calcDist').value, alpha=+$('#calcLevel').value, alt=$('#calcAlt').value;
-  let v,out;
-  try{ v=readVals(key); out=computeTest(key,v,alpha,alt); }
-  catch(e){ toast(typeof e==='string'? e : 'Parámetros inválidos.','err'); return; }
-  calcState=out;
-  $('#calcResults').innerHTML =
-    `<div class="calc-formula" id="calcTex"></div>` +
-    (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
-    out.results.map(([lab,val,isTxt,cls])=>`
-      <div class="res-row"><span class="res-label">${lab}</span>
-      <span class="res-val mono ${cls||''}">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('') +
-    (out.html? `<div style="margin-top:14px">${out.html}</div>`:'');
-  try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
-  out.draw();
-  toast(`${CALC_NAMES[key]} calculada.`);
-});
 function redrawCalc(){ if(calcState) calcState.draw(); }
-buildParams();
 
 /* ============================================================
-   QUIZ (guarda el mejor intento para la boleta)
+   QUIZ
 ============================================================ */
 const QUIZ=[
  {q:'El valor P de una prueba es…',
@@ -1916,7 +1874,8 @@ const QUIZ=[
   ans:1, why:'Con más datos, el error estándar baja: la distribución bajo \\(H_1\\) se aleja del valor crítico y \\(\\beta\\) se reduce. El simulador «Los dos errores» permite verificarlo empíricamente.'}
 ];
 function renderQuiz(){
-  $('#quizList').innerHTML = QUIZ.map((it,i)=>`
+  const box=$('#quizList'); if(!box) return;
+  box.innerHTML = QUIZ.map((it,i)=>`
     <article class="quiz-q">
       <header><span class="qnum">P${i+1}</span><p class="q-text">${it.q}</p></header>
       <div class="opts">${it.opts.map((o,j)=>`
@@ -1925,43 +1884,19 @@ function renderQuiz(){
       </div>
       <p class="explain" hidden><strong>Retroalimentación:</strong> ${it.why}</p>
     </article>`).join('');
-  $('#quizResult').innerHTML='';
-  try{ renderMathInElement($('#quizList'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+  const res=$('#quizResult'); if(res) res.innerHTML='';
+  try{ renderMathInElement(box,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
 }
- $('#btnGrade').addEventListener('click',()=>{
-  const unanswered = QUIZ.some((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
-  if(unanswered){ toast('Responde todas las preguntas antes de calificar.','err'); return; }
-  let score=0;
-  $$('#quizList .quiz-q').forEach((art,i)=>{
-    const sel=document.querySelector(`input[name="q${i}"]:checked`);
-    if(+sel.value===QUIZ[i].ans) score++;
-    art.querySelectorAll('.opt').forEach(l=>{
-      const inp=l.querySelector('input'); inp.disabled=true; l.classList.add('locked');
-      if(+inp.value===QUIZ[i].ans) l.classList.add('is-correct');
-      else if(+inp.value===+sel.value) l.classList.add('is-wrong');
-    });
-    art.querySelector('.explain').hidden=false;
-  });
-  const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
-  if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
-  const msg = score===6?'Dominio excelente de la unidad.':score>=4?'Muy bien: revisa los puntos marcados en naranja.':
-              score>=2?'Repasa las secciones 6.1 a 6.3 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
-  $('#quizResult').innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
-  toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
-});
- $('#btnQuizReset').addEventListener('click',()=>{ renderQuiz(); toast('Quiz reiniciado.'); });
-renderQuiz();
 
 /* ============================================================
-   TAREA: avance de los 8 problemas
+   TAREA
 ============================================================ */
 const PROBLEMAS=['6.2','6.5','6.9','6.14','9.3','9.9','10.5','10.11'];
-const dl=new Date(Date.now()+7*864e5);
- $('#taskDeadline').textContent = dl.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
 
 function renderTaskList(){
   const T=act()[CURSO].tarea;
-  $('#taskList').innerHTML = PROBLEMAS.map(p=>`
+  const box=$('#taskList'); if(!box) return;
+  box.innerHTML = PROBLEMAS.map(p=>`
     <label class="chk ${T[p]?'done':''}">
       <input type="checkbox" data-p="${p}" ${T[p]?'checked':''}>
       <span>Problema <strong>${p}</strong> del Larsen &amp; Marx</span>
@@ -1971,26 +1906,12 @@ function renderTaskList(){
 function updateTaskBar(){
   const T=act()[CURSO].tarea;
   const done=PROBLEMAS.filter(p=>T[p]).length, pct=Math.round(done/PROBLEMAS.length*100);
-  $('#taskBar').style.width=pct+'%';
-  $('#taskPct').textContent=`${done} / ${PROBLEMAS.length} · ${pct}%`;
+  const bar=$('#taskBar'); if(bar) bar.style.width=pct+'%';
+  const pctEl=$('#taskPct'); if(pctEl) pctEl.textContent=`${done} / ${PROBLEMAS.length} · ${pct}%`;
 }
-let progToastTimer=null;
- $('#taskList').addEventListener('change', e=>{
-  const cb=e.target.closest('input[data-p]'); if(!cb) return;
-  const p=cb.dataset.p;
-  const a=act(); a[CURSO].tarea[p]=cb.checked; saveAct(a);
-  cb.closest('.chk').classList.toggle('done', cb.checked);
-  updateTaskBar(); renderBoleta();
-  clearTimeout(progToastTimer);
-  progToastTimer=setTimeout(()=>{
-    const T=act()[CURSO].tarea, done=PROBLEMAS.filter(q=>T[q]).length;
-    if(done===PROBLEMAS.length) toast('¡Tarea completa! No olvides entregar tu PDF.');
-    else toast(`Avance guardado: ${done} de ${PROBLEMAS.length} problemas.`);
-  },500);
-});
 
 /* ============================================================
-   EJERCICIOS GUIADOS: casillas "ya lo resolví"
+   EJERCICIOS GUIADOS
 ============================================================ */
 function syncEjChecks(){
   const EJ=act()[CURSO].ej;
@@ -1999,17 +1920,9 @@ function syncEjChecks(){
     cb.closest('.chk').classList.toggle('done', cb.checked);
   });
 }
- $('#ejBlock').addEventListener('change', e=>{
-  const cb=e.target.closest('input[data-ej]'); if(!cb) return;
-  const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
-  cb.closest('.chk').classList.toggle('done', cb.checked);
-  renderBoleta();
-  const n=Object.values(a[CURSO].ej).filter(Boolean).length;
-  toast(`Ejercicio marcado como resuelto (${n} de 4).`);
-});
 
 /* ============================================================
-   EDITOR DE REDACCIÓN (ejercicios de refuerzo e5–e8)
+   EDITOR DE REDACCIÓN
 ============================================================ */
 const REDACS=['e5','e6','e7','e8'];
 const redTimers={};
@@ -2118,8 +2031,9 @@ function setStatus(k, txt, saved){
 }
 function redPreview(k){
   const ta=$('#ta_'+k), pv=$('#pv_'+k);
+  if(!ta||!pv) return;
   const raw=ta.value;
-  $('#cn_'+k).textContent=(raw.trim()? raw.trim().split(/\s+/).length:0)+' palabras';
+  const cn=$('#cn_'+k); if(cn) cn.textContent=(raw.trim()? raw.trim().split(/\s+/).length:0)+' palabras';
   if(!raw.trim()){
     pv.innerHTML='<em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em>';
     return;
@@ -2135,7 +2049,8 @@ function redPreview(k){
   }
 }
 function redSave(k, announce){
-  const a=act(); a[CURSO].red[k]=$('#ta_'+k).value; saveAct(a);
+  const ta=$('#ta_'+k); if(!ta) return;
+  const a=act(); a[CURSO].red[k]=ta.value; saveAct(a);
   setStatus(k,'Guardado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}), true);
   if(announce) toast('Redacción guardada en este navegador.');
 }
@@ -2183,7 +2098,7 @@ function resetRedacs(){
 }
 
 /* ============================================================
-   REGISTRO INDIVIDUAL + BOLETA DE RESULTADOS
+   BOLETA
 ============================================================ */
 const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
                  ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
@@ -2192,7 +2107,6 @@ function initials(name){
   return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
 }
 function avColor(name){ return AV_COLORS[[...name].reduce((a,c)=>a+c.charCodeAt(0),0)%AV_COLORS.length]; }
-
 function simPct(n){ return n>=1000?100 : n>=500?80 : n>=100?60 : n>=25?40 : n>=1?20 : 0; }
 
 function progresoCurso(){
@@ -2215,20 +2129,22 @@ function notaFinal(){
 }
 function updateHomeStat(){
   const est=loadEst();
-  $('#statNota').textContent = est? notaFinal().toFixed(1) : '—';
+  const el=$('#statNota'); if(el) el.textContent = est? notaFinal().toFixed(1) : '—';
 }
 function renderBoleta(){
   const est=loadEst();
-  $('#regEmpty').hidden = !!est;
-  $('#boletaWrap').hidden = !est;
+  const regE=$('#regEmpty'), bw=$('#boletaWrap');
+  if(regE) regE.hidden = !!est;
+  if(bw)   bw.hidden = !est;
   updateHomeStat();
   if(!est) return;
 
   const [bg,fg]=avColor(est.nombre);
-  const av=$('#bAvatar'); av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg;
-  $('#bName').textContent=est.nombre;
-  $('#bMeta').textContent=`Matrícula ${est.matricula} · ${est.correo}`;
-  $('#bSince').textContent=new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+  const av=$('#bAvatar');
+  if(av){ av.textContent=initials(est.nombre); av.style.background=bg; av.style.color=fg; }
+  const bN=$('#bName'); if(bN) bN.textContent=est.nombre;
+  const bM=$('#bMeta'); if(bM) bM.textContent=`Matrícula ${est.matricula} · ${est.correo}`;
+  const bS=$('#bSince'); if(bS) bS.textContent=new Date(est.ts).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
 
   const p=progresoCurso();
   const defs=[
@@ -2237,91 +2153,219 @@ function renderBoleta(){
     {nombre:'Quiz de autoevaluación', pct:p.quiz, w:3.0, det: p.quizScore==null?'Sin intento registrado':`Mejor intento: ${p.quizScore} de 6 aciertos`},
     {nombre:'Tarea — problemas del Larsen & Marx', pct:p.tarea, w:3.0, det:`${p.tOk} de ${PROBLEMAS.length} problemas marcados`}
   ];
-  $('#bRows').innerHTML=defs.map(d=>`
+  const rows=$('#bRows');
+  if(rows) rows.innerHTML=defs.map(d=>`
     <div class="b-row">
       <div><div class="b-rubname">${d.nombre}</div><div class="b-rubdet">${d.det}</div></div>
       <div class="b-bar"><div style="width:${d.pct.toFixed(0)}%"></div></div>
       <div class="b-pts mono">${(d.pct/100*d.w).toFixed(2)} <small>/ ${d.w.toFixed(1)}</small></div>
     </div>`).join('');
-  $('#bNota').textContent=notaFinal().toFixed(1);
-  $('#bEmit').textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+  const bNota=$('#bNota'); if(bNota) bNota.textContent=notaFinal().toFixed(1);
+  const bEmit=$('#bEmit'); if(bEmit) bEmit.textContent=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
 }
 
 let editMode=false;
 function setFormMode(edit){
   editMode=edit;
-  $('#btnEstSave').innerHTML = edit? '<i data-lucide="save"></i><span>Guardar cambios</span>'
-                                   : '<i data-lucide="user-plus"></i><span>Registrarme</span>';
-  $('#btnEstCancel').hidden=!edit;
+  const bs=$('#btnEstSave'); if(bs) bs.innerHTML = edit? '<i data-lucide="save"></i><span>Guardar cambios</span>' : '<i data-lucide="user-plus"></i><span>Registrarme</span>';
+  const bc=$('#btnEstCancel'); if(bc) bc.hidden=!edit;
   refreshIcons();
 }
- $('#formEst').addEventListener('submit', e=>{
-  e.preventDefault();
-  const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
-  if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
-  if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
-  if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
-  const prev=loadEst();
-  saveEst({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()});
-  e.target.reset(); setFormMode(false);
-  renderBoleta(); syncEjChecks(); renderTaskList();
-  toast(prev? 'Datos actualizados correctamente.' : `¡Listo, ${nombre.split(' ')[0]}! Tu avance quedará registrado a tu nombre.`);
-});
- $('#btnEstEdit').addEventListener('click', ()=>{
-  const est=loadEst(); if(!est) return;
-  $('#alNombre').value=est.nombre; $('#alMat').value=est.matricula; $('#alMail').value=est.correo;
-  $('#regEmpty').hidden=false; $('#boletaWrap').hidden=true;
-  setFormMode(true); $('#alNombre').focus();
-});
- $('#btnEstCancel').addEventListener('click', ()=>{ $('#formEst').reset(); setFormMode(false); renderBoleta(); });
 
- $('#btnEstDel').addEventListener('click', ()=>{
-  const b=$('#btnEstDel');
-  if(!b.classList.contains('confirm')){
-    b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar todo?</span>'; refreshIcons();
-    setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
-      b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar registro y avance</span>'; refreshIcons(); } },3000);
-    return;
-  }
-  localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
-  $('#formEst').reset(); setFormMode(false);
-  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetErrs(); resetGof();
-  toast('Registro y avance borrados de este navegador.');
-});
+/* ============================================================
+   EVENTOS (todos con delegación o guardas defensivas)
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
 
- $('#btnBoletaPng').addEventListener('click', ()=>{
-  if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
-  toast('Generando imagen de tu boleta…');
-  html2canvas($('#boletaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
-    const est=loadEst();
-    const a=document.createElement('a');
-    a.download=`boleta-inf6-unidad6-${est? est.matricula : 'alumno'}.png`;
-    a.href=cv.toDataURL('image/png'); a.click();
-    toast('Boleta descargada como PNG.');
-  }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+  /* Navegación se maneja por delegación arriba (document click) */
+
+  /* Simulador */
+  const mE=$('#mErrs'); if(mE) mE.addEventListener('click',()=>setMode('errs'));
+  const mG=$('#mGof');  if(mG) mG.addEventListener('click',()=>setMode('gof'));
+  const bE1=$('#btnE1'); if(bE1) bE1.addEventListener('click',()=>addErrs(1));
+  const bE100=$('#btnE100'); if(bE100) bE100.addEventListener('click',()=>addErrs(100));
+  const bE1000=$('#btnE1000'); if(bE1000) bE1000.addEventListener('click',()=>addErrs(1000));
+  const bER=$('#btnEReset'); if(bER) bER.addEventListener('click',()=>{ resetErrs(); toast('Contadores reiniciados (tu acumulado se conserva).'); });
+  const bG1=$('#btnG1'); if(bG1) bG1.addEventListener('click',()=>addGof(1));
+  const bG50=$('#btnG50'); if(bG50) bG50.addEventListener('click',()=>addGof(50));
+  const bG200=$('#btnG200'); if(bG200) bG200.addEventListener('click',()=>addGof(200));
+  const bGR=$('#btnGReset'); if(bGR) bGR.addEventListener('click',()=>{ resetGof(); toast('Experimentos reiniciados (tu acumulado se conserva).'); });
+  ['simEN','simEAlpha','simEDelta'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('change',()=>resetErrs()); });
+  ['simGD','simGN','simGAlpha'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('change',()=>resetGof()); });
+
+  /* Calculadora */
+  const cd=$('#calcDist'); if(cd) cd.addEventListener('change',()=>{
+    buildParams();
+    const res=$('#calcResults');
+    if(res) res.innerHTML=`<div class="calc-empty"><i data-lucide="calculator"></i>
+      <p>Prueba seleccionada: <strong>${CALC_NAMES[$('#calcDist').value]}</strong>.<br>Presiona <strong>Calcular la prueba</strong>.</p></div>`;
+    refreshIcons();
+    const cv=$('#calcCanvas'); if(cv){ const c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height); }
+  });
+  const bCalc=$('#btnCalc'); if(bCalc) bCalc.addEventListener('click',()=>{
+    const key=$('#calcDist').value, alpha=+$('#calcLevel').value, alt=$('#calcAlt').value;
+    let v,out;
+    try{ v=readVals(key); out=computeTest(key,v,alpha,alt); }
+    catch(e){ toast(typeof e==='string'? e : 'Parámetros inválidos.','err'); return; }
+    calcState=out;
+    const res=$('#calcResults');
+    res.innerHTML =
+      `<div class="calc-formula" id="calcTex"></div>` +
+      (out.warn? `<div class="warn-box">${out.warn}</div>`:'') +
+      out.results.map(([lab,val,isTxt,cls])=>`
+        <div class="res-row"><span class="res-label">${lab}</span>
+        <span class="res-val mono ${cls||''}">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('') +
+      (out.html? `<div style="margin-top:14px">${out.html}</div>`:'');
+    try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ const ct=$('#calcTex'); if(ct) ct.textContent=''; }
+    out.draw();
+    toast(`${CALC_NAMES[key]} calculada.`);
+  });
+
+  /* Quiz */
+  const bGrade=$('#btnGrade'); if(bGrade) bGrade.addEventListener('click',()=>{
+    const unanswered = QUIZ.some((_,i)=>!document.querySelector(`input[name="q${i}"]:checked`));
+    if(unanswered){ toast('Responde todas las preguntas antes de calificar.','err'); return; }
+    let score=0;
+    $$('#quizList .quiz-q').forEach((art,i)=>{
+      const sel=document.querySelector(`input[name="q${i}"]:checked`);
+      if(+sel.value===QUIZ[i].ans) score++;
+      art.querySelectorAll('.opt').forEach(l=>{
+        const inp=l.querySelector('input'); inp.disabled=true; l.classList.add('locked');
+        if(+inp.value===QUIZ[i].ans) l.classList.add('is-correct');
+        else if(+inp.value===+sel.value) l.classList.add('is-wrong');
+      });
+      art.querySelector('.explain').hidden=false;
+    });
+    const a=act(), prev=(a[CURSO].quiz && a[CURSO].quiz.score!=null)? a[CURSO].quiz.score : -1;
+    if(score>prev){ a[CURSO].quiz={score, total:QUIZ.length, ts:Date.now()}; saveAct(a); renderBoleta(); }
+    const msg = score===6?'Dominio excelente de la unidad.':score>=4?'Muy bien: revisa los puntos marcados en naranja.':
+                score>=2?'Repasa las secciones 6.1 a 6.3 y vuelve a intentarlo.':'Comienza por la teoría y reintenta con calma.';
+    const qr=$('#quizResult');
+    if(qr) qr.innerHTML=`<strong>${score} / ${QUIZ.length}</strong> ${msg}`;
+    toast(`Quiz calificado: ${score} de ${QUIZ.length} aciertos. Tu mejor intento se refleja en «Mi boleta».`);
+  });
+  const bQR=$('#btnQuizReset'); if(bQR) bQR.addEventListener('click',()=>{ renderQuiz(); toast('Quiz reiniciado.'); });
+
+  /* Tarea */
+  const tl=$('#taskList');
+  let progToastTimer=null;
+  if(tl) tl.addEventListener('change', e=>{
+    const cb=e.target.closest('input[data-p]'); if(!cb) return;
+    const p=cb.dataset.p;
+    const a=act(); a[CURSO].tarea[p]=cb.checked; saveAct(a);
+    cb.closest('.chk').classList.toggle('done', cb.checked);
+    updateTaskBar(); renderBoleta();
+    clearTimeout(progToastTimer);
+    progToastTimer=setTimeout(()=>{
+      const T=act()[CURSO].tarea, done=PROBLEMAS.filter(q=>T[q]).length;
+      if(done===PROBLEMAS.length) toast('¡Tarea completa! No olvides entregar tu PDF.');
+      else toast(`Avance guardado: ${done} de ${PROBLEMAS.length} problemas.`);
+    },500);
+  });
+
+  /* Ejercicios guiados */
+  const ejB=$('#ejBlock');
+  if(ejB) ejB.addEventListener('change', e=>{
+    const cb=e.target.closest('input[data-ej]'); if(!cb) return;
+    const a=act(); a[CURSO].ej[cb.dataset.ej]=cb.checked; saveAct(a);
+    cb.closest('.chk').classList.toggle('done', cb.checked);
+    renderBoleta();
+    const n=Object.values(a[CURSO].ej).filter(Boolean).length;
+    toast(`Ejercicio marcado como resuelto (${n} de 4).`);
+  });
+
+  /* Registro */
+  const formEst=$('#formEst');
+  if(formEst) formEst.addEventListener('submit', e=>{
+    e.preventDefault();
+    const nombre=$('#alNombre').value.trim(), mat=$('#alMat').value.trim(), correo=$('#alMail').value.trim();
+    if(nombre.length<3){ toast('Escribe el nombre completo del alumno.','err'); return; }
+    if(mat.length<4){ toast('La matrícula debe tener al menos 4 caracteres.','err'); return; }
+    if(!/^\S+@\S+\.\S+$/.test(correo)){ toast('Escribe un correo electrónico válido.','err'); return; }
+    const prev=loadEst();
+    saveEst({nombre, matricula:mat, correo, ts: prev? prev.ts : Date.now()});
+    e.target.reset(); setFormMode(false);
+    renderBoleta(); syncEjChecks(); renderTaskList();
+    toast(prev? 'Datos actualizados correctamente.' : `¡Listo, ${nombre.split(' ')[0]}! Tu avance quedará registrado a tu nombre.`);
+  });
+  const bEE=$('#btnEstEdit'); if(bEE) bEE.addEventListener('click', ()=>{
+    const est=loadEst(); if(!est) return;
+    $('#alNombre').value=est.nombre; $('#alMat').value=est.matricula; $('#alMail').value=est.correo;
+    const regE=$('#regEmpty'), bw=$('#boletaWrap');
+    if(regE) regE.hidden=false;
+    if(bw) bw.hidden=true;
+    setFormMode(true); $('#alNombre').focus();
+  });
+  const bEC=$('#btnEstCancel'); if(bEC) bEC.addEventListener('click', ()=>{ $('#formEst').reset(); setFormMode(false); renderBoleta(); });
+
+  const bED=$('#btnEstDel');
+  if(bED) bED.addEventListener('click', ()=>{
+    const b=$('#btnEstDel');
+    if(!b.classList.contains('confirm')){
+      b.classList.add('confirm'); b.innerHTML='<i data-lucide="alert-triangle"></i><span>¿Borrar todo?</span>'; refreshIcons();
+      setTimeout(()=>{ if(b.isConnected){ b.classList.remove('confirm');
+        b.innerHTML='<i data-lucide="trash-2"></i><span>Borrar registro y avance</span>'; refreshIcons(); } },3000);
+      return;
+    }
+    localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
+    $('#formEst').reset(); setFormMode(false);
+    renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetErrs(); resetGof();
+    toast('Registro y avance borrados de este navegador.');
+  });
+
+  const bPNG=$('#btnBoletaPng');
+  if(bPNG) bPNG.addEventListener('click', ()=>{
+    if(typeof html2canvas!=='function'){ toast('No se pudo cargar el generador de imágenes; toma una captura de pantalla.','err'); return; }
+    toast('Generando imagen de tu boleta…');
+    html2canvas($('#boletaCard'),{scale:2, backgroundColor:null, useCORS:true}).then(cv=>{
+      const est=loadEst();
+      const a=document.createElement('a');
+      a.download=`boleta-inf6-unidad6-${est? est.matricula : 'alumno'}.png`;
+      a.href=cv.toDataURL('image/png'); a.click();
+      toast('Boleta descargada como PNG.');
+    }).catch(()=>toast('No se pudo generar la imagen; toma una captura de pantalla.','err'));
+  });
+
+  /* Deadline + fecha */
+  const dl=new Date(Date.now()+7*864e5);
+  const td=$('#taskDeadline');
+  if(td) td.textContent = dl.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+
+  /* Arranque */
+  refreshIcons();
+  initMath();
+  buildEditors();
+  initRedacs();
+  renderTaskList();
+  syncEjChecks();
+  renderBoleta();
+  updateErrs(); updateGof();
+  setMode('errs');
+  animateHero();
 });
 
 /* ============================================================
-   RENDER MATEMÁTICO + ARRANQUE
+   RENDER MATEMÁTICO con reintento
 ============================================================ */
 function initMath(){
-  if(typeof renderMathInElement==='function'){
-    renderMathInElement(document.body,{delimiters:[
-      {left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  if(typeof renderMathInElement === 'function'){
+    try {
+      renderMathInElement(document.body,{delimiters:[
+        {left:'$$',right:'$$',display:true},
+        {left:'\\(',right:'\\)',display:false}
+      ],throwOnError:false});
+    } catch(e){ console.warn('KaTeX render error:', e); }
+  } else {
+    setTimeout(initMath, 200);
   }
 }
-window.addEventListener('resize', ()=>{ drawSim(); redrawCalc(); animateHero(); });
 
-refreshIcons();
-initMath();
-buildEditors();
-initRedacs();
-renderTaskList();
-syncEjChecks();
-renderBoleta();
-updateErrs(); updateGof();
-setMode('errs');
-animateHero();
+/* Reajustar canvas al redimensionar */
+window.addEventListener('resize', ()=>{
+  try{ drawSim(); }catch(e){}
+  try{ redrawCalc(); }catch(e){}
+  try{ animateHero(); }catch(e){}
+});
 </script>
 </body>
 </html>
