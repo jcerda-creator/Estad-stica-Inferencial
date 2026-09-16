@@ -490,7 +490,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <h3>Fundamentos: la lógica de la decisión estadística</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Una <strong>prueba de hipótesis</strong> es un procedimiento que, a partir de una muestra, decide entre dos afirmaciones mutuamente excluyentes sobre un parámetro: la <strong>hipótesis nula</strong> \(H_0\) —el estado de things por defecto, lo que se asumiría sin evidencia en contra— y la <strong>hipótesis alternativa</strong> \(H_1\) —lo que el investigador sospecha y quiere evidenciar.</p>
+            <p>Una <strong>prueba de hipótesis</strong> es un procedimiento que, a partir de una muestra, decide entre dos afirmaciones mutuamente excluyentes sobre un parámetro: la <strong>hipótesis nula</strong> \(H_0\) —el estado de las cosas por defecto, lo que se asumiría sin evidencia en contra— y la <strong>hipótesis alternativa</strong> \(H_1\) —lo que el investigador sospecha y quiere evidenciar.</p>
           </div>
           <p>La analogía judicial es precisa: \(H_0\) es la presunción de inocencia. No se acepta \(H_0\) «porque sí»; se <em>rechaza</em> solo cuando los datos son improbables bajo ella. La carga de la prueba está en \(H_1\). Un procedimiento completo consta de cinco pasos:</p>
           <ol>
@@ -1170,7 +1170,7 @@ function act(){
 function saveAct(a){ localStorage.setItem(LS_ACT, JSON.stringify(a)); }
 
 /* ============================================================
-   NAVEGACIÓN DE VISTAS (CORREGIDA)
+   NAVEGACIÓN DE VISTAS
 ============================================================ */
 function showView(v){
   const target = $('#v-'+v);
@@ -1185,9 +1185,7 @@ function showView(v){
   if(v==='boleta')      renderBoleta();
 }
 
-/* Delegación de eventos: un solo listener para toda la página.
-   Funciona con botones, enlaces <a> y cualquier elemento con data-view,
-   incluso si se agregan dinámicamente después. */
+/* Delegación de eventos: un solo listener para toda la página. */
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-view]');
   if(!el) return;
@@ -1352,6 +1350,7 @@ function drawTest(cv, pdf, lo, hi, regions, stat, statLab){
     ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
     ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
 }
+
 
 /* ============================================================
    HERO
@@ -1803,8 +1802,8 @@ function computeTest(key,v,alpha,alt){
     else{
       probs=parseList(v.pr);
       if(probs.length!==k) throw `Las probabilidades esperadas deben ser ${k} valores (una por categoría).`;
-      const s=probs.reduce((a,b)=>a+b,0);
-      if(Math.abs(s-1)>0.001) throw `Las probabilidades deben sumar 1 (suman ${s.toFixed(4)}).`;
+      const sumP=probs.reduce((a,b)=>a+b,0);
+      if(Math.abs(sumP-1)>0.001) throw `Las probabilidades deben sumar 1 (suman ${sumP.toFixed(4)}).`;
     }
     const E=probs.map(p=>N*p);
     const chi2=obs.reduce((s,o,i)=>s+(o-E[i])*(o-E[i])/E[i],0);
@@ -1820,13 +1819,13 @@ function computeTest(key,v,alpha,alt){
     return s;
   }
   if(key==='indep'){
-    const rows=v.tab.split(';').map(r=>r.split(',').map(s=>parseFloat(s.trim())));
+    const rows=v.tab.split(';').map(r=>r.split(',').map(x=>parseFloat(x.trim())));
     const r=rows.length, c=rows[0].length;
     if(r<2||c<2) throw 'La tabla necesita al menos 2 filas y 2 columnas.';
-    if(rows.some(row=>row.length!==c || row.some(v2=>isNaN(v2)||v2<0))) throw 'Revisa la tabla: todas las filas deben tener la misma cantidad de valores no negativos.';
+    if(rows.some(row=>row.length!==c || row.some(x=>isNaN(x)||x<0))) throw 'Revisa la tabla: todas las filas deben tener la misma cantidad de valores no negativos.';
     const rowT=rows.map(row=>row.reduce((a,b)=>a+b,0));
     const colT=Array(c).fill(0);
-    rows.forEach(row=>row.forEach((v2,j)=>colT[j]+=v2));
+    rows.forEach(row=>row.forEach((x,j)=>colT[j]+=x));
     const N=rowT.reduce((a,b)=>a+b,0);
     if(N<=0) throw 'La tabla debe contener frecuencias positivas.';
     const E=rows.map((row,i)=>row.map((_,j)=>rowT[i]*colT[j]/N));
@@ -1953,7 +1952,7 @@ const MANUAL=[
    snip:String.raw`\begin{cases} \text{rechazar}, & \bar{x} > c \\ \text{no rechazar}, & \bar{x} \le c \end{cases}`}
 ];
 const NOTE_DELIM = String.raw`<strong>Fórmulas:</strong> escríbelas entre <code>\( … \)</code> o <code>$ … $</code>; lo demás queda como texto normal. Pulsa <b>+</b> para insertar un comando en el cursor (si hay texto seleccionado, lo envuelve).`;
-const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 1) hipótesis \\(H_0\\) y \\(H_1\\) · 2) estadístico y su distribución bajo \\(H_0\\) · 3) cálculo del estadístico · 4) región de rechazo o valor P · 5) decisión y conclusión en lenguaje del problema, con la respuesta en <code>\boxed{}</code>.`;
+const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 1) hipótesis \(H_0\) y \(H_1\) · 2) estadístico y su distribución bajo \(H_0\) · 3) cálculo del estadístico · 4) región de rechazo o valor P · 5) decisión y conclusión en lenguaje del problema, con la respuesta en <code>\boxed{}</code>.`;
 
 function buildEditors(){
   $$('.ed-box').forEach(box=>{
@@ -1966,7 +1965,7 @@ function buildEditors(){
       <div class="ed-grid">
         <div class="ed-main">
           <textarea id="ta_${k}" class="ed-ta" spellcheck="false"
-            placeholder="Hipótesis → estadístico → cálculo → decisión.&#10;Ej.: \( H_0: \mu = 24 \) vs. \( H_1: \mu > 24 \). El estadístico es&#10;\( t = \dfrac{\bar{x}-\mu_0}{s/\sqrt{n}} = 2.06 \) con 19 gl…"></textarea>
+            placeholder="Hipótesis → estadístico → cálculo → decisión.&#10;Ej.: \\( H_0: \\mu = 24 \\) vs. \\( H_1: \\mu &gt; 24 \\). El estadístico es&#10;\\( t = \\dfrac{\\bar{x}-\\mu_0}{s/\\sqrt{n}} = 2.06 \\) con 19 gl…"></textarea>
           <div class="ed-preview-wrap">
             <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
             <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
@@ -2173,7 +2172,7 @@ function setFormMode(edit){
 }
 
 /* ============================================================
-   EVENTOS (todos con delegación o guardas defensivas)
+   EVENTOS
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
 
