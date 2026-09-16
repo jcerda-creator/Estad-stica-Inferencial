@@ -1127,6 +1127,9 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
+/* Marcador de versión: verifica en consola que este archivo cargó */
+console.log('%c✔ Aula v4 cargada (fix: sin duplicados de s)','color:#1e4636;font-weight:bold');
+
 /* ============================================================
    UTILIDADES
 ============================================================ */
@@ -1694,9 +1697,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
     else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
     R.push(['Valor crítico z',cr,1]);
-    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5));
-    s.tex=`z=\\dfrac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(sg)}/\\sqrt{${n}}}=${z.toFixed(3)}`;
-    return s;
+    const st=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5));
+    st.tex=`z=\\dfrac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(sg)}/\\sqrt{${n}}}=${z.toFixed(3)}`;
+    return st;
   }
   if(key==='mediaT'){
     const {xb,mu0,s,n}=v, nu=n-1, SE=s/Math.sqrt(n), t=(xb-mu0)/SE;
@@ -1705,9 +1708,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
     else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
     R.push([`Valor crítico t (${nu} gl)`,cr,1]);
-    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
-    s.tex=`t=\\dfrac{\\bar{x}-\\mu_0}{s/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(s)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
-    return s;
+    const st=stat(t,'t',nu,p,regions,-5.5,5.5);
+    st.tex=`t=\\dfrac{\\bar{x}-\\mu_0}{s/\\sqrt{n}}=\\dfrac{${fmt(xb)}-${fmt(mu0)}}{${fmt(s)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return st;
   }
   if(key==='prop1'){
     const {x,n,p0}=v, ph=x/n;
@@ -1718,9 +1721,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
     else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
     R.push(['Proporción muestral p̂',ph],['Valor crítico z',cr,1]);
-    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
-    s.tex=`z=\\dfrac{\\hat{p}-p_0}{\\sqrt{p_0q_0/n}}=\\dfrac{${fmt(ph)}-${fmt(p0)}}{\\sqrt{${fmt(p0)}\\cdot${fmt(1-p0)}/${n}}}=${z.toFixed(3)}`;
-    return s;
+    const st=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
+    st.tex=`z=\\dfrac{\\hat{p}-p_0}{\\sqrt{p_0q_0/n}}=\\dfrac{${fmt(ph)}-${fmt(p0)}}{\\sqrt{${fmt(p0)}\\cdot${fmt(1-p0)}/${n}}}=${z.toFixed(3)}`;
+    return st;
   }
   if(key==='var1'){
     const {s2,n,v0}=v, nu=n-1, chi2=(n-1)*s2/v0;
@@ -1731,9 +1734,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const q=chi2Quantile(1-alpha,nu); p=1-chi2Cdf(chi2,nu); regions=[[q,hi]]; cr=q.toFixed(3); }
     else { const q=chi2Quantile(alpha,nu); p=chi2Cdf(chi2,nu); regions=[[0,q]]; cr=q.toFixed(3); }
     R.push([`Valor crítico χ² (${nu} gl)`,cr,1]);
-    const s=stat(chi2,'χ²',nu,p,regions,0,hi);
-    s.tex=`\\chi^2=\\dfrac{(n-1)s^2}{\\sigma_0^2}=\\dfrac{${nu}\\cdot${fmt(s2)}}{${fmt(v0)}}=${chi2.toFixed(3)},\\;\\nu=${nu}`;
-    return s;
+    const st=stat(chi2,'χ²',nu,p,regions,0,hi);
+    st.tex=`\\chi^2=\\dfrac{(n-1)s^2}{\\sigma_0^2}=\\dfrac{${nu}\\cdot${fmt(s2)}}{${fmt(v0)}}=${chi2.toFixed(3)},\\;\\nu=${nu}`;
+    return st;
   }
   if(key==='dmedias'){
     const {xb1,s1,n1,xb2,s2,n2,pool}=v;
@@ -1753,9 +1756,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
     else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
     R.push([`Método`,tag,1],[`Valor crítico t (${nu} gl)`,cr,1]);
-    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
-    s.tex=`t=\\dfrac{\\bar{x}_1-\\bar{x}_2}{SE}=${t.toFixed(3)},\\;\\nu=${nu}`;
-    return s;
+    const st=stat(t,'t',nu,p,regions,-5.5,5.5);
+    st.tex=`t=\\dfrac{\\bar{x}_1-\\bar{x}_2}{SE}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return st;
   }
   if(key==='pareada'){
     const {dbar,sd,n}=v, nu=n-1, SE=sd/Math.sqrt(n), t=dbar/SE;
@@ -1764,9 +1767,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=tQuantile(1-alpha,nu); p=1-tCdf(t,nu); regions=[[c,5.5]]; cr=c.toFixed(3); }
     else { const c=tQuantile(alpha,nu); p=tCdf(t,nu); regions=[[-5.5,c]]; cr=c.toFixed(3); }
     R.push([`Valor crítico t (${nu} gl)`,cr,1]);
-    const s=stat(t,'t',nu,p,regions,-5.5,5.5);
-    s.tex=`t=\\dfrac{\\bar{d}}{s_d/\\sqrt{n}}=\\dfrac{${fmt(dbar)}}{${fmt(sd)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
-    return s;
+    const st=stat(t,'t',nu,p,regions,-5.5,5.5);
+    st.tex=`t=\\dfrac{\\bar{d}}{s_d/\\sqrt{n}}=\\dfrac{${fmt(dbar)}}{${fmt(sd)}/\\sqrt{${n}}}=${t.toFixed(3)},\\;\\nu=${nu}`;
+    return st;
   }
   if(key==='dprop'){
     const {x1,n1,x2,n2}=v, p1h=x1/n1, p2h=x2/n2, pp=(x1+x2)/(n1+n2);
@@ -1777,9 +1780,9 @@ function computeTest(key,v,alpha,alt){
     else if(alt==='right'){ const c=zQuantile(1-alpha); p=1-Phi(z); regions=[[c,5]]; cr=c.toFixed(3); }
     else { const c=zQuantile(alpha); p=Phi(z); regions=[[-4.2,c]]; cr=c.toFixed(3); }
     R.push(['p̂₁',p1h],['p̂₂',p2h],['p̂ agrupado',pp],['Valor crítico z',cr,1]);
-    const s=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
-    s.tex=`z=\\dfrac{\\hat{p}_1-\\hat{p}_2}{\\sqrt{\\hat{p}\\hat{q}\\left(\\tfrac{1}{n_1}+\\tfrac{1}{n_2}\\right)}}=${z.toFixed(3)}`;
-    return s;
+    const st=stat(z,'Z',null,p,regions,-4.2,Math.max(5,Math.abs(z)+1.5),warn);
+    st.tex=`z=\\dfrac{\\hat{p}_1-\\hat{p}_2}{\\sqrt{\\hat{p}\\hat{q}\\left(\\tfrac{1}{n_1}+\\tfrac{1}{n_2}\\right)}}=${z.toFixed(3)}`;
+    return st;
   }
   if(key==='dvar'){
     const {s1,n1,s2,n2}=v, d1=n1-1, d2=n2-1, F=(s1*s1)/(s2*s2);
@@ -1787,9 +1790,9 @@ function computeTest(key,v,alpha,alt){
     const crit=fQuantile(1-alpha/2,d1,d2);
     const hi=Math.max(F,crit)*1.35+1;
     R.push([`Valor crítico F(${d1}, ${d2}) al 1−α/2`,crit]);
-    const s=stat(F,'F',[d1,d2],p,[[crit,hi]],0,hi);
-    s.tex=`F=\\dfrac{s_1^2}{s_2^2}=\\dfrac{${fmt(s1*s1)}}{${fmt(s2*s2)}}=${F.toFixed(3)}`;
-    return s;
+    const st=stat(F,'F',[d1,d2],p,[[crit,hi]],0,hi);
+    st.tex=`F=\\dfrac{s_1^2}{s_2^2}=\\dfrac{${fmt(s1*s1)}}{${fmt(s2*s2)}}=${F.toFixed(3)}`;
+    return st;
   }
   if(key==='gof'){
     const obs=parseList(v.obs);
@@ -1805,18 +1808,18 @@ function computeTest(key,v,alpha,alt){
       const sumP=probs.reduce((a,b)=>a+b,0);
       if(Math.abs(sumP-1)>0.001) throw `Las probabilidades deben sumar 1 (suman ${sumP.toFixed(4)}).`;
     }
-    const E=probs.map(p=>N*p);
+    const E=probs.map(pp=>N*pp);
     const chi2=obs.reduce((s,o,i)=>s+(o-E[i])*(o-E[i])/E[i],0);
     const gl=k-1, p=1-chi2Cdf(chi2,gl);
     const crit=chi2Quantile(1-alpha,gl);
     const hi=Math.max(chi2,crit)*1.35+2;
-    const warn=E.some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: la aproximación χ² puede ser poco confiable; agrupa categorías si es posible.' : null;
+    const warn=E.some(ee=>ee<5)? '⚠ Al menos un valor esperado es menor que 5: la aproximación χ² puede ser poco confiable; agrupa categorías si es posible.' : null;
     const rows=obs.map((o,i)=>`<tr><td class="center">${i+1}</td><td class="center">${fmtNum(o)}</td><td class="center">${fmtNum(E[i])}</td><td class="center">${fmtNum((o-E[i])*(o-E[i])/E[i])}</td></tr>`).join('');
     const html=`<table class="tbl"><thead><tr><th class="center">Cat.</th><th class="center">Observado</th><th class="center">Esperado</th><th class="center">(O−E)²/E</th></tr></thead><tbody>${rows}</tbody></table>`;
     R.push(['Categorías (k)',k],['Valor crítico χ² (gl = '+gl+')',crit]);
-    const s=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
-    s.tex=`\\chi^2=\\sum\\frac{(O_i-E_i)^2}{E_i}=${chi2.toFixed(3)},\\;\\nu=${gl}`;
-    return s;
+    const st=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
+    st.tex=`\\chi^2=\\sum\\frac{(O_i-E_i)^2}{E_i}=${chi2.toFixed(3)},\\;\\nu=${gl}`;
+    return st;
   }
   if(key==='indep'){
     const rows=v.tab.split(';').map(r=>r.split(',').map(x=>parseFloat(x.trim())));
@@ -1835,14 +1838,14 @@ function computeTest(key,v,alpha,alt){
     const crit=chi2Quantile(1-alpha,gl);
     const hi=Math.max(chi2,crit)*1.35+2;
     const flatE=E.flat();
-    const warn=flatE.some(e=>e<5)? '⚠ Al menos un valor esperado es menor que 5: considera agrupar categorías.' : null;
+    const warn=flatE.some(ee=>ee<5)? '⚠ Al menos un valor esperado es menor que 5: considera agrupar categorías.' : null;
     const head='<tr><th></th>'+colT.map((_,j)=>`<th class="center">Col. ${j+1}</th>`).join('')+'</tr>';
     const body=rows.map((row,i)=>`<tr><td><strong>Fila ${i+1}</strong></td>${row.map((o,j)=>`<td class="center">${fmtNum(o)}<br><small style="color:var(--muted)">E=${fmtNum(E[i][j])}</small></td>`).join('')}</tr>`).join('');
     const html=`<table class="tbl"><thead>${head}</thead><tbody>${body}</tbody></table>`;
     R.push([`Tabla ${r}×${c}`,`gl = ${gl}`,1],['Valor crítico χ² (gl = '+gl+')',crit]);
-    const s=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
-    s.tex=`\\chi^2=\\sum_{i,j}\\frac{(O_{ij}-E_{ij})^2}{E_{ij}}=${chi2.toFixed(3)},\\;\\nu=(${r}{-}1)(${c}{-}1)=${gl}`;
-    return s;
+    const st=stat(chi2,'χ²',gl,p,[[crit,hi]],0,hi,warn,html);
+    st.tex=`\\chi^2=\\sum_{i,j}\\frac{(O_{ij}-E_{ij})^2}{E_{ij}}=${chi2.toFixed(3)},\\;\\nu=(${r}{-}1)(${c}{-}1)=${gl}`;
+    return st;
   }
 }
 
