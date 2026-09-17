@@ -420,7 +420,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
     <div>
       <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, Capítulo 5</p>
       <h1>Estimación: de la muestra al <em>parámetro</em></h1>
-      <p class="lead">La inferencia empieza aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
+      <p class="lead">La inferencia estadística empieza realmente aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— son las herramientas clave que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
       <div class="hero-actions">
         <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
         <button class="btn ghost" data-view="simulador"><i data-lucide="flask-conical"></i>Probar el simulador</button>
@@ -509,12 +509,12 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <span class="def-tag">Definición</span>
             <p>Un <strong>estimador</strong> es una función de la muestra, \( \hat\theta = g(X_1,\dots,X_n) \), empleada para aproximar un parámetro desconocido \( \theta \). El <strong>estimado</strong> es el valor numérico que toma el estimador al observarse una muestra concreta.</p>
           </div>
-          <p><strong>Tipos de estimadores.</strong> Conviene distinguir dos clasificaciones complementarias:</p>
+          <p><strong>Tipos de estimadores.</strong> Conviene distinguirlos en dos grandes clases:</p>
           <ul>
-            <li><strong>Por el resultado que producen:</strong> <em>puntuales</em>, que entregan un solo número (\( \bar X \) para \( \mu \)), y <em>por intervalo</em>, que entregan un rango con un nivel de confianza asociado (secciones 5.3–5.5). La estimación puntual responde «¿cuánto?»; la intervalar, «¿entre cuánto, con qué garantía?».</li>
-            <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em> —sección 5.2, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión, unidad posterior.</li>
+            <li><strong>Por el resultado que producen:</strong> <em>puntuales</em>, que entregan un solo número (\( \bar X \) para \( \mu \)), y <em>por intervalo</em>, que entregan un rango de valores con un nivel de confianza asociado. La estimación puntual responde «¿cuánto?»; la intervalar, «¿entre cuánto, y con qué garantía?».</li>
+            <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em>, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión lineal, unidad que veremos más adelante.</li>
           </ul>
-          <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas:</p>
+          <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas son:</p>
           <table class="tbl">
             <thead><tr><th>Propiedad</th><th>Criterio</th><th>Lectura</th></tr></thead>
             <tbody>
@@ -524,11 +524,11 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se concentra alrededor del parámetro.</td></tr>
             </tbody>
           </table>
-          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar —el «medidor de precisión»— son:</p>
+          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar — o «medidor de precisión» — son:</p>
           <table class="tbl">
             <thead><tr><th>Parámetro</th><th>Estimador</th><th>Error estándar</th></tr></thead>
             <tbody>
-              <tr><td>\(\mu\) (media poblacional)</td><td>\(\bar X\)</td><td>\( \sigma/\sqrt{n} \) &nbsp;(con \( \sigma \) desconocida, \( s/\sqrt{n} \))</td></tr>
+              <tr><td>\(\mu\) (media poblacional)</td><td>\(\bar X\)</td><td>\( \sigma/\sqrt{n} \) &nbsp;(y con \( \sigma \) desconocida, \( s/\sqrt{n} \))</td></tr>
               <tr><td>\(p\) (proporción)</td><td>\(\hat p = X/n\)</td><td>\( \sqrt{p\,q/n} \)</td></tr>
             </tbody>
           </table>
@@ -545,14 +545,15 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>El método de máxima verosimilitud</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (MLE) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
+            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
-          <p>El procedimiento estándar de derivación:</p>
+           <ol> Nota: La abreviación más usual es MLE por sus siglas en inglés <em>Maximum Likelihood Estimator<em>.</ol>
+          <p>El procedimiento estándar de derivación es:</p>
           <ol>
             <li>Plantear \( L(\theta) \) como producto de las densidades o fmp de los datos.</li>
-            <li>Tomar logaritmo: \( \ln L(\theta) \) (mismo máximo, cálculo mucho más fácil).</li>
+            <li>Tomar logaritmo: \( \ln L(\theta) \) (mismo máximo, cálculo mucho más fácil, ya que reemplaza un producto por una suma).</li>
             <li>Derivar respecto a \( \theta \), igualar a cero y despejar \( \hat\theta \).</li>
-            <li>Verificar que es un máximo (segunda derivada negativa o argumento directo).</li>
+            <li>Verificar que es un máximo (segunda derivada negativa).</li>
           </ol>
           <div class="ex">
             <span class="ex-tag">Ejemplo — sucursal bancaria (finanzas)</span>
@@ -578,15 +579,15 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>Intervalos de confianza para una muestra</h3>
           <div class="def">
             <span class="def-tag">Definición — estimación por intervalo</span>
-            <p>Un <strong>intervalo de confianza</strong> del \(100(1-\alpha)\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro en \( 1-\alpha \) de ellas. Antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
+            <p>Un <strong>intervalo de confianza</strong> del \((1-\alpha)\times 100\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro en \( 1-\alpha \) de ellas. Antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
           </div>
           <p><strong>Interpretación correcta.</strong> «Con 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendría a \( \mu \). No significa que \( \mu \) «mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
-          <p><strong>Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
+          <p><strong>Datos: Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
           <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
-          <p><strong>Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño:</p>
+          <p><strong>Datos: Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño:</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm t_{\alpha/2,\,n-1}\,\frac{s}{\sqrt n}. \)</div>
-          <p><strong>Proporción (2.6).</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \):</p>
+          <p><strong>IC para una proporción.</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \), el intervalo es:</p>
           <div class="formula-hero">\( \displaystyle \hat p \pm z_{\alpha/2}\sqrt{\frac{\hat p\,\hat q}{n}}. \)</div>
           <div class="ex">
             <span class="ex-tag">Ejemplo — fondo de inversión (finanzas)</span>
@@ -608,10 +609,10 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>Intervalos de confianza para dos muestras</h3>
           <p>Comparar dos poblaciones —dos sucursales, dos versiones de una campaña, antes y después de una intervención— sigue el mismo esquema: estimador de la diferencia \( \pm \) valor crítico \( \times \) error estándar de la diferencia. Lo que cambia es la forma del error estándar y la distribución del pivote.</p>
 
-          <p><strong>Diferencia de medias, \( \sigma_1, \sigma_2 \) conocidas.</strong> Pivote normal estándar:</p>
+          <p><strong>Datos: Diferencia de medias, \( \sigma_1, \sigma_2 \) conocidas.</strong> Pivote normal estándar:</p>
           <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}. \)</div>
 
-          <p><strong>Diferencia de medias, varianzas desconocidas.</strong> Si se pueden asumir iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \):</p>
+          <p><strong>Datos: Diferencia de medias, varianzas desconocidas.</strong> Si se pueden asumir iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \):</p>
           <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm t_{\alpha/2,\,\nu}\,s_p\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}, \qquad \nu = n_1+n_2-2. \)</div>
           <p>Si las varianzas no pueden asumirse iguales, la alternativa es <strong>Welch–Satterthwaite</strong>: mismo numerador con \( \sqrt{s_1^2/n_1 + s_2^2/n_2} \) y grados de libertad \( \nu = \dfrac{(s_1^2/n_1 + s_2^2/n_2)^2}{\dfrac{(s_1^2/n_1)^2}{n_1-1} + \dfrac{(s_2^2/n_2)^2}{n_2-1}} \).</p>
 
@@ -647,8 +648,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>Tamaño de muestra: cuántos datos se necesitan</h3>
           <p>Despejando \( n \) del error máximo \( E \) se obtienen las dos fórmulas de planeación más usadas en investigación de mercados y auditoría:</p>
           <ul>
-            <li>Para estimar una <strong>media</strong> con error máximo \( E \): \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
-            <li>Para estimar una <strong>proporción</strong>: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\,\hat q = 0.25 \), el caso más conservador.</li>
+            <li>Para estimar una <strong>media</strong> con error máximo \( E \) el tamaño de muestra es: \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
+            <li>Para estimar una <strong>proporción</strong> el tamaño es: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\,\hat q = 0.25 \), que se convierte en el caso más conservador.</li>
           </ul>
           <div class="ex">
             <span class="ex-tag">Ejemplo — piloto de encuesta (marketing)</span>
@@ -666,72 +667,72 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 
           <div style="margin-top:22px">
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">E1</span></div>
+              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">F1</span></div>
               <div><div class="spec-name">Media poblacional \( \mu \)</div><div class="spec-use">Estimador natural insesgado; su precisión se mide con el error estándar.</div></div>
               <div class="spec-math">\( \hat\mu = \bar X, \quad \mathrm{EE} = \dfrac{\sigma}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">E2</span></div>
+              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">F2</span></div>
               <div><div class="spec-name">Proporción \( p \)</div><div class="spec-use">Éxitos sobre ensayos: intención de compra, satisfacción, tasa de clics.</div></div>
               <div class="spec-math">\( \hat p = \dfrac{X}{n}, \quad \mathrm{EE} = \sqrt{\dfrac{p\,q}{n}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E3</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F3</span></div>
               <div><div class="spec-name">Bernoulli / Binomial</div><div class="spec-use">Parámetro de éxito estimado por la proporción observada.</div></div>
               <div class="spec-math">\( \hat p = \dfrac{x}{n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E4</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F4</span></div>
               <div><div class="spec-name">Poisson</div><div class="spec-use">Llegadas por hora, fallas por lote, reclamos por día.</div></div>
               <div class="spec-math">\( \hat\lambda = \bar x \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E5</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F5</span></div>
               <div><div class="spec-name">Exponencial</div><div class="spec-use">Tiempos entre eventos; el recíproco de la vida media.</div></div>
               <div class="spec-math">\( \hat\lambda = \dfrac{1}{\bar x} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E6</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F6</span></div>
               <div><div class="spec-name">IC para \( \mu \), \( \sigma \) conocida</div><div class="spec-use">Población normal o \( n \) grande; pivote normal estándar.</div></div>
               <div class="spec-math">\( \bar x \pm z_{\alpha/2}\,\dfrac{\sigma}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E7</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F7</span></div>
               <div><div class="spec-name">IC para \( \mu \), \( \sigma \) desconocida</div><div class="spec-use">Sustituir \( s \) y usar t de Student con \( n-1 \) gl.</div></div>
               <div class="spec-math">\( \bar x \pm t_{\alpha/2,\,n-1}\,\dfrac{s}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E8</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F8</span></div>
               <div><div class="spec-name">IC para \( p \)</div><div class="spec-use">Muestras grandes: \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \).</div></div>
               <div class="spec-math">\( \hat p \pm z_{\alpha/2}\sqrt{\dfrac{\hat p\,\hat q}{n}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E9</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F9</span></div>
               <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), \( \sigma \) conocidas</div><div class="spec-use">Comparación de dos procesos con varianzas poblacionales conocidas.</div></div>
               <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm z_{\alpha/2}\sqrt{\dfrac{\sigma_1^2}{n_1}+\dfrac{\sigma_2^2}{n_2}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E10</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F10</span></div>
               <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), t</div><div class="spec-use">Varianzas iguales: t agrupada con \(s_p\). Si no: Welch con gl ajustados.</div></div>
               <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm t_{\alpha/2,\nu}\,s_p\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}},\ \nu{=}n_1{+}n_2{-}2 \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · pareado</span><span class="no">E11</span></div>
+              <div class="spec-id"><span class="tag c">IC · pareado</span><span class="no">F11</span></div>
               <div><div class="spec-name">IC para \( \mu_d \) (antes/después)</div><div class="spec-use">Misma unidad medida dos veces: t sobre las diferencias \(d_i\).</div></div>
               <div class="spec-math">\( \bar d \pm t_{\alpha/2,\,n-1}\,\dfrac{s_d}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E12</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F12</span></div>
               <div><div class="spec-name">IC para \( p_1-p_2 \)</div><div class="spec-use">A/B testing. SE <em>no agrupada</em>; éxitos esperados \( \ge 5 \).</div></div>
               <div class="spec-math">\( (\hat p_1{-}\hat p_2) \pm z_{\alpha/2}\sqrt{\dfrac{\hat p_1\hat q_1}{n_1}+\dfrac{\hat p_2\hat q_2}{n_2}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E13</span></div>
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">F13</span></div>
               <div><div class="spec-name">\( n \) para estimar \( \mu \)</div><div class="spec-use">Planeación: error máximo \( E \) con nivel \( 1-\alpha \).</div></div>
               <div class="spec-math">\( n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E14</span></div>
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">F14</span></div>
               <div><div class="spec-name">\( n \) para estimar \( p \)</div><div class="spec-use">Sin datos previos usar \( \hat p\,\hat q = 0.25 \) (conservador).</div></div>
               <div class="spec-math">\( n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \)</div>
             </div>
@@ -749,7 +750,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
     <div class="view-head">
       <p class="overline">Laboratorio de simulación · Actividad práctica</p>
       <h2>La estimación en acción: muestras, estimadores e intervalos</h2>
-      <p class="sub">Dos experimentos complementarios: <strong>① la distribución muestral de \(\bar X\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
+      <p class="sub">Consideremos dos experimentos complementarios: <strong>① la distribución muestral de \(\bar X\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
     </div>
 
     <div class="lab-grid">
@@ -935,7 +936,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
       <p class="act-desc">Intenta resolverlos por escrito antes de desplegar la solución. En clase se revisará el procedimiento, no solo el resultado. Al terminar cada uno, márcalo como resuelto para que sume en tu boleta.</p>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · IC para μ con σ conocida — banca (finanzas)</span>El saldo promedio de tarjetas de crédito de una banca múltiple tiene \( \sigma = \$4{,}200 \), conocido de reportes regulatorios. Una muestra aleatoria de 49 clientes arroja \( \bar x = \$18{,}750 \). Construye el IC del 95% para \( \mu \) y decide si la gerencia puede afirmar que el saldo medio supera \$17,500.</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · IC para μ con σ conocida — banca (finanzas)</span>El saldo promedio de tarjetas de crédito de una banca múltiple tiene \( \sigma = \$4{,}200 \), conocido de reportes regulatorios. Una muestra aleatoria de 49 clientes arroja \( \bar x = \$18{,}750 \). Construye el IC del 95% para \( \mu \) y decide si la gerencia puede afirmar que el saldo medio supera $17,500.</span></summary>
         <div class="sol-body">
           <p>\( \sigma \) conocida y \( n=49 \) grande ⇒ intervalo Z: &nbsp; \( E = z_{0.025}\,\dfrac{\sigma}{\sqrt n} = 1.96\cdot\dfrac{4200}{7} = 1{,}176 \).</p>
           <p>\( \text{IC}_{95\%} = 18{,}750 \pm 1{,}176 = (\$17{,}574,\ \$19{,}926). \)</p>
@@ -1815,7 +1816,7 @@ buildParams();
    QUIZ (guarda el mejor intento para la boleta)
 ============================================================ */
 const QUIZ=[
- {q:'Un estimador \(\\hat\\theta\) es insesgado si…',
+ {q:'Un estimador \(\hat{\theta}\) es insesgado si…',
   opts:['\\(\\hat\\theta = \\theta\\) en cada muestra','\\(E(\\hat\\theta) = \\theta\\)','\\(\\mathrm{Var}(\\hat\\theta) = 0\\)','Su MSE es mínimo'],
   ans:1, why:'Insesgado significa que <em>en promedio, sobre muestras repetidas</em>, el estimador acierta al parámetro: \\(E(\\hat\\theta)=\\theta\\). Nada garantiza acertar en cada muestra concreta.'},
  {q:'La interpretación correcta de un «IC del 95% para μ» es…',
