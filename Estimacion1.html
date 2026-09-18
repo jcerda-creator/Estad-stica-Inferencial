@@ -418,16 +418,16 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 <section class="view" id="v-inicio">
   <div class="wrap hero">
     <div>
-      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, Capítulo 5</p>
+      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP </p>
       <h1>Estimación: de la muestra al <em>parámetro</em></h1>
-      <p class="lead">La inferencia estadística empieza realmente aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— son las herramientas clave que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
+      <p class="lead">La inferencia estadística realmente empieza aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— son las herramientas clave que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
       <div class="hero-actions">
         <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
         <button class="btn ghost" data-view="simulador"><i data-lucide="flask-conical"></i>Probar el simulador</button>
       </div>
       <dl class="meta-grid">
         <div><dt>Unidad</dt><dd>V — Estimación</dd></div>
-        <div><dt>Sesiones</dt><dd>4 · teórico-prácticas</dd></div>
+        <div><dt>Sesiones</dt><dd>teórico-prácticas</dd></div>
         <div><dt>Evaluación</dt><dd>Quiz + tareas + laboratorio</dd></div>
         <div><dt>Requisitos</dt><dd>Variables aleatorias y distribuciones (Caps. 3–4)</dd></div>
       </dl>
@@ -518,13 +518,13 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <table class="tbl">
             <thead><tr><th>Propiedad</th><th>Criterio</th><th>Lectura</th></tr></thead>
             <tbody>
-              <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>En promedio dispara al centro: no sobre- ni subestima sistemáticamente.</td></tr>
-              <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Misma diana, menor dispersión. Se mide con el error estándar.</td></tr>
-              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados.</td></tr>
-              <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se concentra alrededor del parámetro.</td></tr>
+              <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>El promedio de todas sus posibles muestras coincide exactamente con el parámetro: no sobre- ni subestima el dato real en promedio.</td></tr>
+              <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Tiene la menor dispersión entre todos los estimadores insesgados posibles, garantizando mayor precisión. Se mide con el error estándar.</td></tr>
+              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados bajo la premisa de que un estimador ideal tiene sego cero y varianza mínima.</td></tr>
+              <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se acerca al verdadero valor del parámetro y el error tiende a cero.</td></tr>
             </tbody>
           </table>
-          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar — o «medidor de precisión» — son:</p>
+          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar — o «medidores de precisión» — son:</p>
           <table class="tbl">
             <thead><tr><th>Parámetro</th><th>Estimador</th><th>Error estándar</th></tr></thead>
             <tbody>
@@ -579,9 +579,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>Intervalos de confianza para una muestra</h3>
           <div class="def">
             <span class="def-tag">Definición — estimación por intervalo</span>
-            <p>Un <strong>intervalo de confianza</strong> del \((1-\alpha)\times 100\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro en \( 1-\alpha \) de ellas. Antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
+            <p>Un <strong>intervalo de confianza</strong> del \((1-\alpha)\times 100\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro deseado en \( 1-\alpha \) de ellas. En otras palabras, antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
           </div>
-          <p><strong>Interpretación correcta.</strong> «Con 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendría a \( \mu \). No significa que \( \mu \) «mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
+          <p><strong>Interpretación correcta.</strong> «Con un 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendrían a \( \mu \). No significa que \( \mu \) «se mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
           <p><strong>Datos: Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
           <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
@@ -653,7 +653,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           </ul>
           <div class="ex">
             <span class="ex-tag">Ejemplo — piloto de encuesta (marketing)</span>
-            <p>¿Cuántos clientes encuestar para un margen de \( \pm 5 \) puntos al 95%? Sin información previa (\( \hat p\,\hat q = 0.25 \)):</p>
+            <p>¿Cuántos clientes se deben encuestar para un margen de \( \pm 5 \) puntos al 95%? Sin información previa (\( \hat p\,\hat q = 0.25 \)):</p>
             <p>\( n = \dfrac{1.96^{2}\times 0.25}{0.05^{2}} = \dfrac{0.9604}{0.0025} = 384.2 \;\Rightarrow\; \mathbf{385} \) encuestados.</p>
             <p>Con un piloto que indicara \( \hat p = 0.30 \), bastarían \( \tfrac{1.96^2 \times 0.21}{0.0025} = 322.7 \Rightarrow 323 \). El redondeo es <em>siempre hacia arriba</em>: \( n \) es un número de personas.</p>
           </div>
@@ -663,7 +663,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
         <article class="sec" id="t56">
           <div class="sec-no">5.6</div>
           <h3>Catálogo de estimadores e intervalos</h3>
-          <p>Las catorce fórmulas de la unidad en una sola vista, agrupadas por papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo —una y dos muestras— en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
+          <p>A continuación se dan las catorce fórmulas de la unidad en una sola vista, agrupadas por papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo —una y dos muestras— en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
 
           <div style="margin-top:22px">
             <div class="spec-row">
@@ -750,7 +750,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
     <div class="view-head">
       <p class="overline">Laboratorio de simulación · Actividad práctica</p>
       <h2>La estimación en acción: muestras, estimadores e intervalos</h2>
-      <p class="sub">Consideremos dos experimentos complementarios: <strong>① la distribución muestral de \(\bar X\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
+      <p class="sub">Para esta simulación consideramos dos experimentos complementarios: <strong>① la distribución muestral de \(\bar{X}\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
     </div>
 
     <div class="lab-grid">
