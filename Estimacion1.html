@@ -886,7 +886,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <button class="btn ghost" id="btnT50"><i data-lucide="plus"></i>50</button>
               <button class="btn ghost" id="btnT200"><i data-lucide="plus"></i>200</button>
               <button class="btn ghost" id="btnT500"><i data-lucide="plus"></i>500</button>
-              <!-- PATCH v4: inspección de la última muestra -->
               <button class="btn ghost" id="btnTLast" disabled><i data-lucide="eye"></i>Ver última muestra</button>
               <button class="btn ghost" id="btnTReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
             </div>
@@ -898,7 +897,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <div class="stat"><div class="num mono" id="tSides">—</div><div class="lbl">Fallas ↑ / ↓</div></div>
               <div class="stat"><div class="num mono" id="tZpct">—</div><div class="lbl">% captura Z (mismas muestras)</div></div>
             </div>
-            <!-- PATCH v4: la nota ahora explica cómo inspeccionar la muestra -->
             <p class="note" id="noteT">Cada intervalo usa \( \bar x \pm t_{\alpha/2,\,n-1}\, s/\sqrt n \) — la fórmula <strong>F7</strong>: \( \sigma \) se desconoce y se sustituye por <strong>s</strong>, que cambia en cada muestra. Con población <em>simétrica</em> (normal) el IC-t es exacto: cobertura ≈ nominal y fallas repartidas en ambos lados. Con población <em>asimétrica</em> (exponencial) y \( n \) pequeño, la cobertura real cae <strong>por debajo</strong> del nominal y las fallas se amontonan en un solo lado. La última tarjeta construye el IC-Z (σ conocida) sobre <em>las mismas muestras</em>: la brecha entre ambos porcentajes mide el costo de estimar \( \sigma \) con \( s \).</p>
             <p class="note" style="border-top:none;margin-top:6px;padding-top:0"><strong>Para ver la muestra:</strong> pulsa <strong>+1 intervalo</strong> y se abrirá una ventana con los \( n \) valores generados y el cálculo completo de \( \bar x \), \( s \) y el intervalo. También puedes hacer <strong>clic sobre cualquier fila de la gráfica</strong> para inspeccionar esa muestra, o usar el botón <strong>Ver última muestra</strong>.</p>
           </div>
@@ -912,7 +910,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
         <canvas id="simCanvas"></canvas>
         <div class="graph-cap" id="capDist">Barras: frecuencia observada de \( \bar x \). Curva naranja: modelo teórico de \( \bar X \) — exacta para la normal y la exponencial; aproximada por el TCL para la uniforme.</div>
         <div class="graph-cap" id="capCover" hidden>Segmentos horizontales: intervalos de confianza (el más reciente arriba). Punto: \( \bar x \) de cada muestra. Línea vertical: el parámetro \( \mu \) verdadero. Verde = captura, naranja = fallo.</div>
-        <!-- PATCH v4: el caption del modo t indica que las filas son clicables -->
         <div class="graph-cap" id="capT" hidden>Segmentos: intervalos t construidos con la \( s \) de cada muestra (el más reciente arriba). Línea vertical: \( \mu \) verdadero. Verde = captura; naranja = fallo. Con poblaciones asimétricas y n pequeña, los fallos naranjas se agrupan del mismo lado. <strong>Haz clic sobre cualquier fila para abrir la muestra que generó ese intervalo.</strong></div>
       </div>
     </div>
@@ -1270,9 +1267,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
 /* Marcador de versión: verifica en consola que este archivo cargó */
-/* PATCH v4: muestra visible en el modo IC-t — modal con los n valores, cálculo paso a paso,
-   clic en filas de la gráfica y botón «Ver última muestra» */
-console.log('%c✔ Cap. 5 Estimación — v4 (v3 + muestra visible en IC-t)','color:#4A0E28;font-weight:bold');
+/* PATCH v5: String.raw en showSampleModal y buildEditors — KaTeX ahora recibe los backslashes intactos */
+console.log('%c✔ Cap. 5 Estimación — v5 (modal con LaTeX renderizado)','color:#4A0E28;font-weight:bold');
 
 /* ============================================================
    UTILIDADES
@@ -1528,13 +1524,11 @@ const POBLA={
   expon:{ mu:4, sd:4, kind:'expon',
     gen:()=>-4*Math.log(1-Math.random()) }
 };
-/* PATCH v4: nombres cortos para el título del modal */
 const POP_NAME={normal:'Normal(μ=50, σ=12)', uniform:'Uniforme(30, 70)', expon:'Exponencial(μ=4)'};
 let simMode='dist';
 const simD={vals:[], sum:0, sumSq:0, total:0};
 const simC={list:[], total:0, cap:0};
 const simT={list:[], total:0, cap:0, up:0, down:0, zCap:0};
-/* PATCH v4: layout del último dibujo del modo t, para el clic sobre filas */
 let tDrawInfo=null;
 
 const curPop = ()=> POBLA[$('#simPop').value];
@@ -1603,12 +1597,11 @@ function addT(k){
   const tq=tOf(lev, n-1), z=zOf(lev), SEsig=p.sd/Math.sqrt(n);
   let last=null;
   for(let i=0;i<k;i++){
-    /* PATCH v4: la muestra se conserva en el registro para poder inspeccionarla */
     const data=[]; let s=0, s2=0;
     for(let j=0;j<n;j++){ const x=p.gen(); data.push(x); s+=x; s2+=x*x; }
     const xb=s/n;
-    const ssq=Math.max(0, s2-n*xb*xb);                    // Σ(xᵢ−x̄)²
-    const sv=Math.sqrt(ssq/(n-1));                        // s muestral (n−1 gl)
+    const ssq=Math.max(0, s2-n*xb*xb);
+    const sv=Math.sqrt(ssq/(n-1));
     const SEs=sv/Math.sqrt(n);
     const lo=xb-tq*SEs, hi=xb+tq*SEs;
     const ok=lo<=p.mu && p.mu<=hi;
@@ -1618,12 +1611,10 @@ function addT(k){
     if(zok) simT.zCap++;
     const rec={idx:simT.total+1, lo,hi,x:xb,ok, side, data, s:sv, ssq, lev, tq, z, zok};
     simT.list.push(rec); simT.total++; if(ok) simT.cap++;
-    /* conserva las muestras crudas solo en los 300 intervalos más recientes (memoria) */
     if(simT.list.length>300) simT.list[simT.list.length-301].data=null;
     last=rec;
   }
   bumpRolls(k); updateTStats(); drawSim();
-  /* PATCH v4: con «+1 intervalo» se abre de inmediato la ventana con la muestra */
   if(k===1) showSampleModal(last);
 }
 function resetT(){
@@ -1640,7 +1631,7 @@ function updateTStats(){
   $('#btnTLast').disabled = !simT.total;
 }
 
-/* ===== PATCH v4: MODAL — la muestra que generó un intervalo ===== */
+/* ===== PATCH v4/v5: MODAL — la muestra que generó un intervalo ===== */
 function showSampleModal(rec){
   if(!rec){ toast('No hay intervalo que inspeccionar.','err'); return; }
   if(!rec.data){ toast('La muestra de ese intervalo ya no está en memoria (se conservan las 300 más recientes).','err'); return; }
@@ -1657,14 +1648,35 @@ function showSampleModal(rec){
   const zline= rec.zok
     ? `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y <strong>sí captura</strong> a μ — la diferencia proviene únicamente de estimar σ con s.`
     : `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y tampoco captura — en este caso el fallo no proviene de usar s.`;
-  $('#smpBody').innerHTML=`
+  /* PATCH v5: String.raw conserva los backslashes — KaTeX ahora sí recibe \( \), \bar, \tfrac, \sqrt, etc.
+     El cálculo son 6 pasos y los valores de la derecha también van en LaTeX. */
+  $('#smpBody').innerHTML = String.raw`
     <p class="smp-lead">Estos son los ${n} valores aleatorios generados; el intervalo se construye <strong>solo</strong> con ellos (más el nivel de confianza ${Math.round(100*rec.lev)}%).</p>
     <div class="smp-box"><div class="smp-chips">${chips}</div></div>
-    <div class="smp-step"><span class="lbl">1 · Media muestral: \( \bar{x}=\tfrac{1}{${n}}\sum x_i \)</span><span class="val">x̄ = ${fmt(rec.x)}</span></div>
-    <div class="smp-step"><span class="lbl">2 · \( \sum (x_i-\bar{x})^2 = ${fmt(rec.ssq)} \) &nbsp;⇒&nbsp; \( s=\sqrt{\tfrac{\sum (x_i-\bar{x})^2}{${n-1}}} \)</span><span class="val">s = ${fmt(rec.s)}</span></div>
-    <div class="smp-step"><span class="lbl">3 · Error estándar estimado: \( SE=s/\sqrt{${n}} \)</span><span class="val">SE = ${fmt(rec.s/Math.sqrt(n))}</span></div>
-    <div class="smp-step"><span class="lbl">4 · Valor crítico \( t_{\alpha/2,\,${n-1}} \) al ${Math.round(100*rec.lev)}%</span><span class="val">t = ${rec.tq.toFixed(3)}</span></div>
-    <div class="smp-step"><span class="lbl">5 · Intervalo: \( \bar{x} \pm t\cdot SE \)</span><span class="val">[${fmt(rec.lo)}, ${fmt(rec.hi)}]</span></div>
+    <div class="smp-step">
+      <span class="lbl">1 · Media muestral \( \bar{x}=\tfrac{1}{${n}}\sum x_i \)</span>
+      <span class="val">\( \bar{x} = ${fmt(rec.x)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">2 · Suma de cuadrados \( \sum (x_i-\bar{x})^2 \)</span>
+      <span class="val">\( ${fmt(rec.ssq)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">3 · Desviación muestral \( s=\sqrt{\tfrac{${fmt(rec.ssq)}}{${n-1}}} \)</span>
+      <span class="val">\( s = ${fmt(rec.s)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">4 · Error estándar estimado \( SE=\tfrac{s}{\sqrt{${n}}} \)</span>
+      <span class="val">\( SE = ${fmt(rec.s/Math.sqrt(n))} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">5 · Valor crítico al ${Math.round(100*rec.lev)}%: \( t_{\alpha/2,\;${n-1}} \)</span>
+      <span class="val">\( t = ${rec.tq.toFixed(3)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">6 · Intervalo de confianza \( \bar{x} \pm t\cdot SE \)</span>
+      <span class="val">\( \left[\, ${fmt(rec.lo)},\; ${fmt(rec.hi)} \,\right] \)</span>
+    </div>
     ${verdict}
     <p class="smp-z">${zline}</p>`;
   $('#sampleModal').hidden=false;
@@ -1773,12 +1785,11 @@ function drawT(){
   let span=4*SE;
   const list=simT.list.slice(-60).reverse();
   for(const it of list){ span=Math.max(span, Math.abs(it.hi-p.mu), Math.abs(p.mu-it.lo)); }
-  /* guarda el layout para poder detectar clics sobre las filas */
   tDrawInfo=drawIntervalChart(list, p.mu, span*1.05);
 }
 function drawSim(){
   const cv=$('#simCanvas');
-  if(cv) cv.style.cursor = simMode==='t' ? 'pointer' : 'default';   // PATCH v4
+  if(cv) cv.style.cursor = simMode==='t' ? 'pointer' : 'default';
   if(simMode==='dist') drawDist();
   else if(simMode==='cover') drawCover();
   else drawT();
@@ -1800,12 +1811,10 @@ function drawSim(){
  $('#btnT200').addEventListener('click',()=>addT(200));
  $('#btnT500').addEventListener('click',()=>addT(500));
  $('#btnTReset').addEventListener('click',()=>{ resetT(); toast('Intervalos t reiniciados (tu acumulado se conserva).'); });
- /* PATCH v4: inspección manual de la última muestra */
  $('#btnTLast').addEventListener('click', ()=>{
   if(!simT.total){ toast('Aún no hay intervalos: genera al menos uno.','err'); return; }
   showSampleModal(simT.list[simT.list.length-1]);
  });
- /* PATCH v4: clic sobre una fila de la gráfica abre la muestra de ese intervalo */
  $('#simCanvas').addEventListener('click', e=>{
   if(simMode!=='t'||!tDrawInfo||!tDrawInfo.list.length) return;
   const cv=$('#simCanvas'), r=cv.getBoundingClientRect();
@@ -2186,7 +2195,8 @@ const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 
 function buildEditors(){
   $$('.ed-box').forEach(box=>{
     const k=box.dataset.ed;
-    box.innerHTML=`
+    /* PATCH v5: String.raw conserva los backslashes del placeholder (antes los comía JS) */
+    box.innerHTML=String.raw`
       <div class="ed-toolbar">
         <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
         <span class="ed-status" id="st_${k}"><span class="dot"></span>Sin guardar</span>
@@ -2197,7 +2207,7 @@ function buildEditors(){
             placeholder="Datos → estimador → cálculo → interpretación.&#10;Ej.: Como σ es conocida y n grande, uso Z:&#10;\( \bar{x} \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt{n}} = 18750 \pm 1.96\cdot 600 \)&#10;y concluyo que…"></textarea>
           <div class="ed-preview-wrap">
             <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
-            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
+            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \( … \) se renderizan.</em></div>
           </div>
         </div>
         <aside class="ed-manual" data-for="${k}"></aside>
