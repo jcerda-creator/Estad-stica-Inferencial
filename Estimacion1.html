@@ -126,7 +126,8 @@ nav.tabs::-webkit-scrollbar{display:none}
 }
 .field input:focus,.field select:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(0,123,93,.14)}
 .hint{font-size:12px;color:var(--muted)}
-.mode-row{display:flex;gap:8px;margin-bottom:16px}
+/* PATCH v3: flex-wrap para que quepan los tres botones de modo */
+.mode-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .mode-row .btn{flex:1;justify-content:center}
 
 /* ============================================================
@@ -345,6 +346,29 @@ details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-to
 .boleta-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:700px}
 
 /* ============================================================
+   PATCH v4: MODAL — muestra generada del modo IC-t
+============================================================ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(46,26,38,.55);backdrop-filter:blur(3px);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-card{background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);max-width:640px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:10px 10px 0 var(--shadow);animation:toastIn .25s ease}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1.5px solid var(--ink);background:#f6e3ea}
+.modal-title{font-family:'Fraunces',serif;font-weight:700;color:var(--ink);font-size:1rem}
+.modal-close{width:32px;height:32px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);font-size:18px;font-weight:700;color:var(--ink);line-height:1;flex:none}
+.modal-close:hover{background:var(--ink);color:#fff}
+.modal-body{padding:16px 18px;overflow-y:auto}
+.smp-lead{font-size:13.5px;color:var(--muted);margin-bottom:8px}
+.smp-box{border:1px dashed var(--line-strong);border-radius:8px;padding:10px 12px;margin-bottom:6px;max-height:170px;overflow-y:auto}
+.smp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.smp-chip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;border:1px solid var(--line-strong);border-radius:6px;padding:2px 8px;background:var(--paper)}
+.smp-step{border-top:1px dashed var(--line-strong);padding:9px 0;display:flex;justify-content:space-between;gap:14px;align-items:baseline}
+.smp-step:first-of-type{border-top:none}
+.smp-step .lbl{font-size:13.5px;font-weight:600}
+.smp-step .val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600;color:var(--pine);white-space:nowrap}
+.smp-verdict{margin-top:12px;border-radius:8px;padding:11px 14px;font-size:14px;border:1px solid}
+.smp-verdict.ok{background:var(--ok-bg);border-color:var(--pine)}
+.smp-verdict.bad{background:var(--err-bg);border-color:var(--err)}
+.smp-z{margin-top:10px;font-size:13px;color:var(--muted)}
+
+/* ============================================================
    TOASTS / FOOTER
 ============================================================ */
 #toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
@@ -448,7 +472,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
       </div>
       <div class="route-item" data-view="simulador">
         <span class="route-no">02</span>
-        <div><h3>Laboratorio de simulación</h3><p>Genera miles de muestras y observa dos ideas clave: la distribución muestral del estimador y la cobertura real de los intervalos de confianza.</p></div>
+        <div><h3>Laboratorio de simulación</h3><p>Genera miles de muestras y observa las ideas clave: la distribución muestral del estimador y la cobertura real de los intervalos —con Z y σ conocida, y con t y s cuando σ se desconoce. Inspecciona la muestra detrás de cada intervalo.</p></div>
         <span class="route-go"><i data-lucide="arrow-right"></i></span>
       </div>
       <div class="route-item" data-view="actividades">
@@ -547,7 +571,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <span class="def-tag">Definición</span>
             <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
-          <!-- PATCH 6: párrafo de nota reconstruido (tenía <ol> sin <li> y un strong huérfano) -->
           <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>).</p>
           <p>El procedimiento estándar de derivación es:</p>
           <ol>
@@ -586,7 +609,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <p><strong>Datos: Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
           <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
-          <p><strong>Datos: Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño:</p>
+          <p><strong>Datos: Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño (el modo «IC-t» del <a href="#" data-view="simulador">simulador</a> muestra empíricamente qué ocurre con poblaciones asimétricas cuando se ignora esta condición):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm t_{\alpha/2,\,n-1}\,\frac{s}{\sqrt n}. \)</div>
           <p><strong>IC para una proporción.</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \), el intervalo es:</p>
           <div class="formula-hero">\( \displaystyle \hat p \pm z_{\alpha/2}\sqrt{\frac{\hat p\,\hat q}{n}}. \)</div>
@@ -751,7 +774,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
     <div class="view-head">
       <p class="overline">Laboratorio de simulación · Actividad práctica</p>
       <h2>La estimación en acción: muestras, estimadores e intervalos</h2>
-      <p class="sub">Para esta simulación consideramos dos experimentos complementarios: <strong>① la distribución muestral de \(\bar{X}\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
+      <p class="sub">Aquí tienes tres experimentos complementarios: <strong>① la distribución muestral de \(\bar{X}\)</strong> —cómo se comporta el estimador en muestreos repetidos—, <strong>② la cobertura de IC con Z y σ conocida</strong> —qué significa realmente «95% de confianza»— y <strong>③ la cobertura de IC con t y s (σ desconocida)</strong> —qué ocurre cuando la población es asimétrica y n es pequeño, con la muestra de cada intervalo visible—. Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
     </div>
 
     <div class="lab-grid">
@@ -768,8 +791,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           </div>
 
           <div class="mode-row">
-            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución muestral de X̄</button>
-            <button class="btn sm ghost" id="mCover"><i data-lucide="move-horizontal"></i>Cobertura de IC</button>
+            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución de X̄</button>
+            <button class="btn sm ghost" id="mCover"><i data-lucide="move-horizontal"></i>IC-Z (σ conocida)</button>
+            <button class="btn sm ghost" id="mT"><i data-lucide="percent"></i>IC-t (σ desconocida)</button>
           </div>
 
           <!-- Modo A: distribución muestral -->
@@ -779,7 +803,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <select id="simN">
                 <option value="1">n = 1 (sin promediar)</option>
                 <option value="5">n = 5</option>
-                <!-- PATCH 4: nivel n = 10 añadido -->
                 <option value="10">n = 10</option>
                 <option value="30" selected>n = 30</option>
                 <option value="100">n = 100</option>
@@ -800,7 +823,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <p class="note" id="noteDist">El estimador \(\bar X\) es <strong>insesgado</strong>: el centro de las estimaciones coincide con \( \mu \) (μ aparece como guía en la gráfica). Su dispersión —el <strong>error estándar</strong> \( \sigma/\sqrt n \)— se reduce al aumentar \( n \): esa es la <strong>consistencia</strong>. Cambia \( n \) y compara.</p>
           </div>
 
-          <!-- Modo B: cobertura -->
+          <!-- Modo B: cobertura con Z (σ conocida) -->
           <div id="coverBlock" hidden>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
               <div class="field">
@@ -814,7 +837,6 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <div class="field">
                 <label for="simCn">Tamaño de muestra n</label>
                 <select id="simCn">
-                  <!-- PATCH 4: nivel n = 10 añadido -->
                   <option value="10">n = 10</option>
                   <option value="15">n = 15</option>
                   <option value="30" selected>n = 30</option>
@@ -834,7 +856,51 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <div class="stat"><div class="num mono" id="cPct">—</div><div class="lbl">% de captura observado</div></div>
               <div class="stat"><div class="num mono" id="cNom">95%</div><div class="lbl">Nivel nominal</div></div>
             </div>
-            <p class="note" id="noteCover">Cada intervalo se construye con una <strong>nueva muestra aleatoria</strong>. El % de captura debe acercarse al nivel nominal conforme crece el número de intervalos: esa es la interpretación frecuentista de la confianza. Los intervalos que <em>fallan</em> se pintan en naranja: con 95% esperas que fallen cerca de 1 de cada 20.</p>
+            <p class="note" id="noteCover">Cada intervalo usa \( \bar x \pm z_{\alpha/2}\,\sigma/\sqrt n \) — la fórmula <strong>F6</strong> con la \( \sigma \) <strong>verdadera</strong> de la población elegida. El % de captura debe acercarse al nivel nominal conforme crece el número de intervalos: esa es la interpretación frecuentista de la confianza. Los intervalos que <em>fallan</em> se pintan en naranja: con 95% esperas que fallen cerca de 1 de cada 20.</p>
+          </div>
+
+          <!-- Modo C: cobertura con t y s (σ desconocida) -->
+          <div id="tBlock" hidden>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simTlevel">Nivel de confianza</label>
+                <select id="simTlevel">
+                  <option value="0.90">90%</option>
+                  <option value="0.95" selected>95%</option>
+                  <option value="0.99">99%</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simTn">Tamaño de muestra n</label>
+                <select id="simTn">
+                  <option value="5">n = 5</option>
+                  <option value="10" selected>n = 10</option>
+                  <option value="15">n = 15</option>
+                  <option value="30">n = 30</option>
+                  <option value="60">n = 60</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnT1"><i data-lucide="play"></i>+1 intervalo</button>
+              <button class="btn ghost" id="btnT50"><i data-lucide="plus"></i>50</button>
+              <button class="btn ghost" id="btnT200"><i data-lucide="plus"></i>200</button>
+              <button class="btn ghost" id="btnT500"><i data-lucide="plus"></i>500</button>
+              <!-- PATCH v4: inspección de la última muestra -->
+              <button class="btn ghost" id="btnTLast" disabled><i data-lucide="eye"></i>Ver última muestra</button>
+              <button class="btn ghost" id="btnTReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="tN">0</div><div class="lbl">Intervalos generados</div></div>
+              <div class="stat"><div class="num mono" id="tCap">0</div><div class="lbl">Capturan a μ (IC-t)</div></div>
+              <div class="stat"><div class="num mono" id="tPct">—</div><div class="lbl">% de captura t</div></div>
+              <div class="stat"><div class="num mono" id="tNom">95%</div><div class="lbl">Nivel nominal</div></div>
+              <div class="stat"><div class="num mono" id="tSides">—</div><div class="lbl">Fallas ↑ / ↓</div></div>
+              <div class="stat"><div class="num mono" id="tZpct">—</div><div class="lbl">% captura Z (mismas muestras)</div></div>
+            </div>
+            <!-- PATCH v4: la nota ahora explica cómo inspeccionar la muestra -->
+            <p class="note" id="noteT">Cada intervalo usa \( \bar x \pm t_{\alpha/2,\,n-1}\, s/\sqrt n \) — la fórmula <strong>F7</strong>: \( \sigma \) se desconoce y se sustituye por <strong>s</strong>, que cambia en cada muestra. Con población <em>simétrica</em> (normal) el IC-t es exacto: cobertura ≈ nominal y fallas repartidas en ambos lados. Con población <em>asimétrica</em> (exponencial) y \( n \) pequeño, la cobertura real cae <strong>por debajo</strong> del nominal y las fallas se amontonan en un solo lado. La última tarjeta construye el IC-Z (σ conocida) sobre <em>las mismas muestras</em>: la brecha entre ambos porcentajes mide el costo de estimar \( \sigma \) con \( s \).</p>
+            <p class="note" style="border-top:none;margin-top:6px;padding-top:0"><strong>Para ver la muestra:</strong> pulsa <strong>+1 intervalo</strong> y se abrirá una ventana con los \( n \) valores generados y el cálculo completo de \( \bar x \), \( s \) y el intervalo. También puedes hacer <strong>clic sobre cualquier fila de la gráfica</strong> para inspeccionar esa muestra, o usar el botón <strong>Ver última muestra</strong>.</p>
           </div>
 
           <p class="note">Cada ejecución (muestra o intervalo) se acumula a tu boleta: llevas <strong class="mono" id="simEver">0</strong> (1,000 o más alcanzan el 100% del rubro de laboratorio, que vale <strong>15%</strong>).</p>
@@ -846,6 +912,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
         <canvas id="simCanvas"></canvas>
         <div class="graph-cap" id="capDist">Barras: frecuencia observada de \( \bar x \). Curva naranja: modelo teórico de \( \bar X \) — exacta para la normal y la exponencial; aproximada por el TCL para la uniforme.</div>
         <div class="graph-cap" id="capCover" hidden>Segmentos horizontales: intervalos de confianza (el más reciente arriba). Punto: \( \bar x \) de cada muestra. Línea vertical: el parámetro \( \mu \) verdadero. Verde = captura, naranja = fallo.</div>
+        <!-- PATCH v4: el caption del modo t indica que las filas son clicables -->
+        <div class="graph-cap" id="capT" hidden>Segmentos: intervalos t construidos con la \( s \) de cada muestra (el más reciente arriba). Línea vertical: \( \mu \) verdadero. Verde = captura; naranja = fallo. Con poblaciones asimétricas y n pequeña, los fallos naranjas se agrupan del mismo lado. <strong>Haz clic sobre cualquier fila para abrir la muestra que generó ese intervalo.</strong></div>
       </div>
     </div>
   </div>
@@ -1183,6 +1251,17 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
   </div>
 </footer>
 
+<!-- PATCH v4: ventana emergente con la muestra generada (modo IC-t) -->
+<div id="sampleModal" class="modal-backdrop" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="modal-title" id="smpTitle">Muestra generada</span>
+      <button type="button" class="modal-close" id="btnSmpClose" title="Cerrar (Esc)">×</button>
+    </div>
+    <div class="modal-body" id="smpBody"></div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -1191,8 +1270,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
 /* Marcador de versión: verifica en consola que este archivo cargó */
-/* PATCH v2: dSE visible, n=10, cobertura invertida, simEver restaurado, bins exponencial */
-console.log('%c✔ Cap. 5 Estimación — v2 (paleta guinda UP + logo + parches aplicados)','color:#4A0E28;font-weight:bold');
+/* PATCH v4: muestra visible en el modo IC-t — modal con los n valores, cálculo paso a paso,
+   clic en filas de la gráfica y botón «Ver última muestra» */
+console.log('%c✔ Cap. 5 Estimación — v4 (v3 + muestra visible en IC-t)','color:#4A0E28;font-weight:bold');
 
 /* ============================================================
    UTILIDADES
@@ -1438,7 +1518,7 @@ function animateHero(){
 }
 
 /* ============================================================
-   SIMULADOR: distribución muestral + cobertura de IC
+   SIMULADOR: distribución muestral + cobertura Z + cobertura t
 ============================================================ */
 const POBLA={
   normal:{ mu:50, sd:12, kind:'normal',
@@ -1448,9 +1528,14 @@ const POBLA={
   expon:{ mu:4, sd:4, kind:'expon',
     gen:()=>-4*Math.log(1-Math.random()) }
 };
+/* PATCH v4: nombres cortos para el título del modal */
+const POP_NAME={normal:'Normal(μ=50, σ=12)', uniform:'Uniforme(30, 70)', expon:'Exponencial(μ=4)'};
 let simMode='dist';
 const simD={vals:[], sum:0, sumSq:0, total:0};
 const simC={list:[], total:0, cap:0};
+const simT={list:[], total:0, cap:0, up:0, down:0, zCap:0};
+/* PATCH v4: layout del último dibujo del modo t, para el clic sobre filas */
+let tDrawInfo=null;
 
 const curPop = ()=> POBLA[$('#simPop').value];
 function bumpRolls(k){
@@ -1461,13 +1546,18 @@ function setMode(m){
   simMode=m;
   $('#mDist').classList.toggle('ghost', m!=='dist');
   $('#mCover').classList.toggle('ghost', m!=='cover');
+  $('#mT').classList.toggle('ghost', m!=='t');
   $('#distBlock').hidden  = m!=='dist';
   $('#coverBlock').hidden = m!=='cover';
+  $('#tBlock').hidden     = m!=='t';
   $('#capDist').hidden  = m!=='dist';
   $('#capCover').hidden = m!=='cover';
+  $('#capT').hidden     = m!=='t';
   $('#simHead').innerHTML = m==='dist'
     ? '<i data-lucide="bar-chart-3"></i>Distribución muestral del estimador'
-    : '<i data-lucide="move-horizontal"></i>Cobertura de intervalos de confianza';
+    : m==='cover'
+    ? '<i data-lucide="move-horizontal"></i>Cobertura de IC con Z (σ conocida)'
+    : '<i data-lucide="percent"></i>Cobertura de IC con t y s (σ desconocida)';
   refreshIcons(); drawSim();
 }
 function sampleMean(n, p){ let s=0; for(let i=0;i<n;i++) s+=p.gen(); return s/n; }
@@ -1480,7 +1570,6 @@ function addDist(k){
 function resetDist(){
   simD.vals.length=0; simD.sum=0; simD.sumSq=0; simD.total=0; updateDistStats(); drawSim();
 }
-/* PATCH 1: el EE teórico σ/√n ahora se escribe en #dSE (antes quedaba en '—' para siempre) */
 function updateDistStats(){
   const n=+$('#simN').value;
   $('#dSE').textContent=(curPop().sd/Math.sqrt(n)).toFixed(3);
@@ -1508,6 +1597,84 @@ function updateCoverStats(){
   $('#cPct').textContent=simC.total? (100*simC.cap/simC.total).toFixed(1)+'%' : '—';
   $('#cNom').textContent=Math.round(100*+$('#simLevel').value)+'%';
 }
+/* ===== Modo C: IC con t y s (σ desconocida), fórmula F7 ===== */
+function addT(k){
+  const p=curPop(), n=+$('#simTn').value, lev=+$('#simTlevel').value;
+  const tq=tOf(lev, n-1), z=zOf(lev), SEsig=p.sd/Math.sqrt(n);
+  let last=null;
+  for(let i=0;i<k;i++){
+    /* PATCH v4: la muestra se conserva en el registro para poder inspeccionarla */
+    const data=[]; let s=0, s2=0;
+    for(let j=0;j<n;j++){ const x=p.gen(); data.push(x); s+=x; s2+=x*x; }
+    const xb=s/n;
+    const ssq=Math.max(0, s2-n*xb*xb);                    // Σ(xᵢ−x̄)²
+    const sv=Math.sqrt(ssq/(n-1));                        // s muestral (n−1 gl)
+    const SEs=sv/Math.sqrt(n);
+    const lo=xb-tq*SEs, hi=xb+tq*SEs;
+    const ok=lo<=p.mu && p.mu<=hi;
+    const side= lo>p.mu? 'up' : (hi<p.mu? 'down' : null);
+    if(side==='up') simT.up++; else if(side==='down') simT.down++;
+    const zok = xb-z*SEsig<=p.mu && p.mu<=xb+z*SEsig;
+    if(zok) simT.zCap++;
+    const rec={idx:simT.total+1, lo,hi,x:xb,ok, side, data, s:sv, ssq, lev, tq, z, zok};
+    simT.list.push(rec); simT.total++; if(ok) simT.cap++;
+    /* conserva las muestras crudas solo en los 300 intervalos más recientes (memoria) */
+    if(simT.list.length>300) simT.list[simT.list.length-301].data=null;
+    last=rec;
+  }
+  bumpRolls(k); updateTStats(); drawSim();
+  /* PATCH v4: con «+1 intervalo» se abre de inmediato la ventana con la muestra */
+  if(k===1) showSampleModal(last);
+}
+function resetT(){
+  simT.list.length=0; simT.total=0; simT.cap=0; simT.up=0; simT.down=0; simT.zCap=0;
+  tDrawInfo=null; updateTStats(); drawSim();
+}
+function updateTStats(){
+  $('#tN').textContent=simT.total.toLocaleString('es-MX');
+  $('#tCap').textContent=simT.cap.toLocaleString('es-MX');
+  $('#tPct').textContent=simT.total? (100*simT.cap/simT.total).toFixed(1)+'%' : '—';
+  $('#tNom').textContent=Math.round(100*+$('#simTlevel').value)+'%';
+  $('#tSides').textContent=simT.total? simT.up+' ↑ / '+simT.down+' ↓' : '—';
+  $('#tZpct').textContent=simT.total? (100*simT.zCap/simT.total).toFixed(1)+'%' : '—';
+  $('#btnTLast').disabled = !simT.total;
+}
+
+/* ===== PATCH v4: MODAL — la muestra que generó un intervalo ===== */
+function showSampleModal(rec){
+  if(!rec){ toast('No hay intervalo que inspeccionar.','err'); return; }
+  if(!rec.data){ toast('La muestra de ese intervalo ya no está en memoria (se conservan las 300 más recientes).','err'); return; }
+  const p=curPop(), n=rec.data.length;
+  const SEsig=p.sd/Math.sqrt(n);
+  const zLo=rec.x-rec.z*SEsig, zHi=rec.x+rec.z*SEsig;
+  $('#smpTitle').textContent=`Muestra n=${n} · intervalo t #${rec.idx} · ${POP_NAME[$('#simPop').value]}`;
+  const chips=rec.data.map((v,i)=>`<span class="smp-chip" title="x${i+1}">${fmt(v)}</span>`).join('');
+  const verdict= rec.ok
+    ? `<div class="smp-verdict ok">✔ <strong>El intervalo captura a μ = ${fmt(p.mu)}</strong>: lo ≤ μ ≤ hi. En la gráfica es verde.</div>`
+    : `<div class="smp-verdict bad">✘ <strong>No captura a μ</strong>: ${rec.side==='up'
+        ? `todo el intervalo quedó por <em>encima</em> de μ (lo = ${fmt(rec.lo)} &gt; μ)`
+        : `todo el intervalo quedó por <em>debajo</em> de μ (hi = ${fmt(rec.hi)} &lt; μ)`}. En la gráfica es naranja${rec.side==='down'?' — este es el tipo de fallo que domina con poblaciones asimétricas y n pequeño':''}.</div>`;
+  const zline= rec.zok
+    ? `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y <strong>sí captura</strong> a μ — la diferencia proviene únicamente de estimar σ con s.`
+    : `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y tampoco captura — en este caso el fallo no proviene de usar s.`;
+  $('#smpBody').innerHTML=`
+    <p class="smp-lead">Estos son los ${n} valores aleatorios generados; el intervalo se construye <strong>solo</strong> con ellos (más el nivel de confianza ${Math.round(100*rec.lev)}%).</p>
+    <div class="smp-box"><div class="smp-chips">${chips}</div></div>
+    <div class="smp-step"><span class="lbl">1 · Media muestral: \( \bar{x}=\tfrac{1}{${n}}\sum x_i \)</span><span class="val">x̄ = ${fmt(rec.x)}</span></div>
+    <div class="smp-step"><span class="lbl">2 · \( \sum (x_i-\bar{x})^2 = ${fmt(rec.ssq)} \) &nbsp;⇒&nbsp; \( s=\sqrt{\tfrac{\sum (x_i-\bar{x})^2}{${n-1}}} \)</span><span class="val">s = ${fmt(rec.s)}</span></div>
+    <div class="smp-step"><span class="lbl">3 · Error estándar estimado: \( SE=s/\sqrt{${n}} \)</span><span class="val">SE = ${fmt(rec.s/Math.sqrt(n))}</span></div>
+    <div class="smp-step"><span class="lbl">4 · Valor crítico \( t_{\alpha/2,\,${n-1}} \) al ${Math.round(100*rec.lev)}%</span><span class="val">t = ${rec.tq.toFixed(3)}</span></div>
+    <div class="smp-step"><span class="lbl">5 · Intervalo: \( \bar{x} \pm t\cdot SE \)</span><span class="val">[${fmt(rec.lo)}, ${fmt(rec.hi)}]</span></div>
+    ${verdict}
+    <p class="smp-z">${zline}</p>`;
+  $('#sampleModal').hidden=false;
+  try{ renderMathInElement($('#smpBody'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+}
+function closeSampleModal(){ $('#sampleModal').hidden=true; }
+ $('#btnSmpClose').addEventListener('click', closeSampleModal);
+ $('#sampleModal').addEventListener('click', e=>{ if(e.target===$('#sampleModal')) closeSampleModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !$('#sampleModal').hidden) closeSampleModal(); });
+
 function theoPdf(p,n,x){
   const SE=p.sd/Math.sqrt(n);
   if(p.kind==='normal') return normPdf(x,p.mu,SE);
@@ -1526,7 +1693,6 @@ function drawDist(){
   if(p.kind==='expon'&&n===1){ rlo=0; rhi=p.mu+4.2*p.sd; }
   else if(p.kind==='uniform'&&n===1){ rlo=p.lo; rhi=p.hi; }
   else { rlo=p.mu-4.2*SE; rhi=p.mu+4.2*SE; }
-  /* PATCH 5: en la exponencial el soporte empieza en 0 — evita bins vacíos a la izquierda */
   if(p.kind==='expon') rlo=Math.max(0,rlo);
   const B=44, bw=(rhi-rlo)/B, counts=Array(B).fill(0);
   let outside=0;
@@ -1566,25 +1732,22 @@ function drawDist(){
     ctx.fillText('Genera muestras para construir el histograma', m.l+m.pw/2, m.t+m.ph/2);
   }
 }
-function drawCover(){
-  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
-  const p=curPop(), n=+$('#simCn').value, SE=p.sd/Math.sqrt(n);
+/* núcleo de dibujo compartido por los dos modos de cobertura (devuelve el layout) */
+function drawIntervalChart(list, mu, span){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return null;
   const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
-  const span=8*SE;
-  const X=x=>m.l+((x-(p.mu-span))/(2*span))*m.pw;
-  axes(ctx,m); xTicks(ctx,m,p.mu-span,p.mu+span);
+  const X=x=>m.l+((x-(mu-span))/(2*span))*m.pw;
+  axes(ctx,m); xTicks(ctx,m,mu-span,mu+span);
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.6;
-  ctx.beginPath(); ctx.moveTo(X(p.mu), m.t+2); ctx.lineTo(X(p.mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(X(mu), m.t+2); ctx.lineTo(X(mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='center';
-  ctx.fillText('μ = '+fmt(p.mu), X(p.mu), m.t+m.ph+30>h? m.t+m.ph+16 : m.t-6);
-  /* PATCH 2: invertir el orden — el intervalo más reciente arriba, como dice el caption */
-  const list=simC.list.slice(-60).reverse();
+  ctx.fillText('μ = '+fmt(mu), X(mu), m.t+m.ph+30>h? m.t+m.ph+16 : m.t-6);
+  const rowH=Math.min(13,(m.ph-24)/Math.max(1,list.length));
   if(!list.length){
     ctx.fillStyle='rgba(74,14,40,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
     ctx.fillText('Genera intervalos para ver su cobertura', m.l+m.pw/2, m.t+m.ph/2);
-    return;
+    return {m,rowH,y0:m.t+12,list};
   }
-  const rowH=Math.min(13,(m.ph-24)/list.length);
   list.forEach((it,i)=>{
     const y=m.t+12+i*rowH;
     ctx.strokeStyle= it.ok? 'rgba(0,123,93,.85)' : TERRA;
@@ -1599,11 +1762,31 @@ function drawCover(){
   ctx.strokeStyle=TERRA;
   ctx.beginPath(); ctx.moveTo(m.l+92, m.t-3); ctx.lineTo(m.l+108, m.t-3); ctx.stroke();
   ctx.fillStyle=INK; ctx.fillText('no captura', m.l+113, m.t+1);
+  return {m,rowH,y0:m.t+12,list};
 }
-function drawSim(){ simMode==='dist'? drawDist() : drawCover(); }
+function drawCover(){
+  const p=curPop(), n=+$('#simCn').value, SE=p.sd/Math.sqrt(n);
+  drawIntervalChart(simC.list.slice(-60).reverse(), p.mu, 8*SE);
+}
+function drawT(){
+  const p=curPop(), n=+$('#simTn').value, SE=p.sd/Math.sqrt(n);
+  let span=4*SE;
+  const list=simT.list.slice(-60).reverse();
+  for(const it of list){ span=Math.max(span, Math.abs(it.hi-p.mu), Math.abs(p.mu-it.lo)); }
+  /* guarda el layout para poder detectar clics sobre las filas */
+  tDrawInfo=drawIntervalChart(list, p.mu, span*1.05);
+}
+function drawSim(){
+  const cv=$('#simCanvas');
+  if(cv) cv.style.cursor = simMode==='t' ? 'pointer' : 'default';   // PATCH v4
+  if(simMode==='dist') drawDist();
+  else if(simMode==='cover') drawCover();
+  else drawT();
+}
 
  $('#mDist').addEventListener('click',()=>setMode('dist'));
  $('#mCover').addEventListener('click',()=>setMode('cover'));
+ $('#mT').addEventListener('click',()=>setMode('t'));
  $('#btnD1').addEventListener('click',()=>addDist(1));
  $('#btnD100').addEventListener('click',()=>addDist(100));
  $('#btnD1000').addEventListener('click',()=>addDist(1000));
@@ -1612,10 +1795,33 @@ function drawSim(){ simMode==='dist'? drawDist() : drawCover(); }
  $('#btnC50').addEventListener('click',()=>addCover(50));
  $('#btnC200').addEventListener('click',()=>addCover(200));
  $('#btnCReset').addEventListener('click',()=>{ resetCover(); toast('Intervalos reiniciados (tu acumulado se conserva).'); });
- $('#simPop').addEventListener('change',()=>{ resetDist(); resetCover(); toast('Población cambiada: acumulados del simulador reiniciados.'); });
+ $('#btnT1').addEventListener('click',()=>addT(1));
+ $('#btnT50').addEventListener('click',()=>addT(50));
+ $('#btnT200').addEventListener('click',()=>addT(200));
+ $('#btnT500').addEventListener('click',()=>addT(500));
+ $('#btnTReset').addEventListener('click',()=>{ resetT(); toast('Intervalos t reiniciados (tu acumulado se conserva).'); });
+ /* PATCH v4: inspección manual de la última muestra */
+ $('#btnTLast').addEventListener('click', ()=>{
+  if(!simT.total){ toast('Aún no hay intervalos: genera al menos uno.','err'); return; }
+  showSampleModal(simT.list[simT.list.length-1]);
+ });
+ /* PATCH v4: clic sobre una fila de la gráfica abre la muestra de ese intervalo */
+ $('#simCanvas').addEventListener('click', e=>{
+  if(simMode!=='t'||!tDrawInfo||!tDrawInfo.list.length) return;
+  const cv=$('#simCanvas'), r=cv.getBoundingClientRect();
+  const x=e.clientX-r.left, y=e.clientY-r.top;
+  const {m,rowH,y0,list}=tDrawInfo;
+  if(x<m.l||x>m.l+m.pw) return;
+  const i=Math.floor((y-y0)/rowH);
+  if(i<0||i>=list.length) return;
+  showSampleModal(list[i]);
+ });
+ $('#simPop').addEventListener('change',()=>{ closeSampleModal(); resetDist(); resetCover(); resetT(); toast('Población cambiada: acumulados del simulador reiniciados.'); });
  $('#simN').addEventListener('change', resetDist);
  $('#simCn').addEventListener('change', resetCover);
  $('#simLevel').addEventListener('change', ()=>{ updateCoverStats(); resetCover(); });
+ $('#simTn').addEventListener('change', resetT);
+ $('#simTlevel').addEventListener('change', resetT);
 
 /* ============================================================
    CALCULADORA DE INTERVALOS Y TAMAÑOS (una y dos muestras)
@@ -2220,7 +2426,7 @@ function setFormMode(edit){
   }
   localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
   $('#formEst').reset(); setFormMode(false);
-  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetDist(); resetCover();
+  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetDist(); resetCover(); resetT();
   toast('Registro y avance borrados de este navegador.');
 });
 
@@ -2253,8 +2459,8 @@ buildEditors();
 initRedacs();
 renderTaskList();
 syncEjChecks();
-/* PATCH 3: restaurar el contador acumulado del simulador al recargar la página */
  $('#simEver').textContent=(act()[CURSO].sim.rolls||0).toLocaleString('es-MX');
+updateTStats();
 renderBoleta();
 setMode('dist');
 animateHero();
