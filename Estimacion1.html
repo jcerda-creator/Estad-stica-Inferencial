@@ -520,7 +520,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <tbody>
               <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>El promedio de todas sus posibles muestras coincide exactamente con el parámetro: no sobre- ni subestima el dato real en promedio.</td></tr>
               <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Tiene la menor dispersión entre todos los estimadores insesgados posibles, garantizando mayor precisión. Se mide con el error estándar.</td></tr>
-              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados bajo la premisa de que un estimador ideal tiene sego cero y varianza mínima.</td></tr>
+              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados bajo la premisa de que un estimador ideal tiene sesgo cero y varianza mínima.</td></tr>
               <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se acerca al verdadero valor del parámetro y el error tiende a cero.</td></tr>
             </tbody>
           </table>
@@ -547,7 +547,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <span class="def-tag">Definición</span>
             <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
-          <p> <ol> Nota: La abreviación más usual es MLE por sus siglas en inglés <strong>Maximum Likelihood Estimator</strong>strong>.</ol></p>
+          <!-- PATCH 6: párrafo de nota reconstruido (tenía <ol> sin <li> y un strong huérfano) -->
+          <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>).</p>
           <p>El procedimiento estándar de derivación es:</p>
           <ol>
             <li>Plantear \( L(\theta) \) como producto de las densidades o fmp de los datos.</li>
@@ -778,6 +779,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <select id="simN">
                 <option value="1">n = 1 (sin promediar)</option>
                 <option value="5">n = 5</option>
+                <!-- PATCH 4: nivel n = 10 añadido -->
+                <option value="10">n = 10</option>
                 <option value="30" selected>n = 30</option>
                 <option value="100">n = 100</option>
               </select>
@@ -811,6 +814,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
               <div class="field">
                 <label for="simCn">Tamaño de muestra n</label>
                 <select id="simCn">
+                  <!-- PATCH 4: nivel n = 10 añadido -->
+                  <option value="10">n = 10</option>
                   <option value="15">n = 15</option>
                   <option value="30" selected>n = 30</option>
                   <option value="60">n = 60</option>
@@ -1186,7 +1191,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
 /* Marcador de versión: verifica en consola que este archivo cargó */
-console.log('%c✔ Cap. 5 Estimación — paleta guinda UP + logo cargada','color:#4A0E28;font-weight:bold');
+/* PATCH v2: dSE visible, n=10, cobertura invertida, simEver restaurado, bins exponencial */
+console.log('%c✔ Cap. 5 Estimación — v2 (paleta guinda UP + logo + parches aplicados)','color:#4A0E28;font-weight:bold');
 
 /* ============================================================
    UTILIDADES
@@ -1474,7 +1480,10 @@ function addDist(k){
 function resetDist(){
   simD.vals.length=0; simD.sum=0; simD.sumSq=0; simD.total=0; updateDistStats(); drawSim();
 }
+/* PATCH 1: el EE teórico σ/√n ahora se escribe en #dSE (antes quedaba en '—' para siempre) */
 function updateDistStats(){
+  const n=+$('#simN').value;
+  $('#dSE').textContent=(curPop().sd/Math.sqrt(n)).toFixed(3);
   $('#dN').textContent=simD.total.toLocaleString('es-MX');
   if(!simD.total){ $('#dMean').textContent='—'; $('#dSD').textContent='—'; return; }
   const mean=simD.sum/simD.total;
@@ -1517,6 +1526,8 @@ function drawDist(){
   if(p.kind==='expon'&&n===1){ rlo=0; rhi=p.mu+4.2*p.sd; }
   else if(p.kind==='uniform'&&n===1){ rlo=p.lo; rhi=p.hi; }
   else { rlo=p.mu-4.2*SE; rhi=p.mu+4.2*SE; }
+  /* PATCH 5: en la exponencial el soporte empieza en 0 — evita bins vacíos a la izquierda */
+  if(p.kind==='expon') rlo=Math.max(0,rlo);
   const B=44, bw=(rhi-rlo)/B, counts=Array(B).fill(0);
   let outside=0;
   for(const v of simD.vals){ const b=Math.floor((v-rlo)/bw); if(b<0||b>=B) outside++; else counts[b]++; }
@@ -1566,7 +1577,8 @@ function drawCover(){
   ctx.beginPath(); ctx.moveTo(X(p.mu), m.t+2); ctx.lineTo(X(p.mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='center';
   ctx.fillText('μ = '+fmt(p.mu), X(p.mu), m.t+m.ph+30>h? m.t+m.ph+16 : m.t-6);
-  const list=simC.list.slice(-60);
+  /* PATCH 2: invertir el orden — el intervalo más reciente arriba, como dice el caption */
+  const list=simC.list.slice(-60).reverse();
   if(!list.length){
     ctx.fillStyle='rgba(74,14,40,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
     ctx.fillText('Genera intervalos para ver su cobertura', m.l+m.pw/2, m.t+m.ph/2);
@@ -2241,6 +2253,8 @@ buildEditors();
 initRedacs();
 renderTaskList();
 syncEjChecks();
+/* PATCH 3: restaurar el contador acumulado del simulador al recargar la página */
+ $('#simEver').textContent=(act()[CURSO].sim.rolls||0).toLocaleString('es-MX');
 renderBoleta();
 setMode('dist');
 animateHero();
