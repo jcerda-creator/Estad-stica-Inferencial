@@ -576,30 +576,30 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>El método de máxima verosimilitud</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
+            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \[ V(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \] El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( V(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
-          <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>).</p>
+          <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>). No obstante nosotros utilizaremos EMV.</p>
           <!-- PATCH v6: procedimiento ampliado a los seis pasos -->
           <p>El método se aplica siempre con la misma lógica — cambian la distribución y el parámetro, nunca el procedimiento:</p>
           <ol>
             <li><strong>Identificar</strong> la distribución de los datos y el parámetro desconocido \( \theta \).</li>
-            <li><strong>Construir</strong> \( L(\theta) \) como producto de las densidades o fmp de los datos.</li>
-            <li><strong>Tomar logaritmo</strong>: \( \ell(\theta)=\ln L(\theta) \) — mismo máximo, cálculo mucho más fácil (reemplaza un producto por una suma).</li>
+            <li><strong>Construir</strong> \( V(\theta) \) como producto de las densidades o fmp de los datos.</li>
+            <li><strong>Tomar logaritmo</strong>: \( \ell(\theta)=\ln V(\theta) \) — mismo máximo, cálculo mucho más fácil (reemplaza un producto por una suma).</li>
             <li><strong>Derivar</strong> respecto a \( \theta \).</li>
             <li><strong>Igualar a cero</strong> y despejar \( \hat\theta \).</li>
             <li><strong>Verificar</strong> que es un máximo (segunda derivada negativa).</li>
           </ol>
           <div class="ex">
             <span class="ex-tag">Ejemplo 1 — sucursal bancaria (finanzas, Poisson)</span>
-            <p>El número de llegadas de clientes por hora a una sucursal sigue una distribución Poisson con media \( \lambda \) desconocida. En seis horas se registran 14, 11, 17, 12, 15 y 11 llegadas. La verosimilitud es \( L(\lambda) = \prod e^{-\lambda}\lambda^{x_i}/x_i! \), de modo que</p>
-            <p>\( \ln L = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \sum\ln x_i! \quad\Longrightarrow\quad \frac{d\ln L}{d\lambda} = -n + \frac{\sum x_i}{\lambda} = 0 \)</p>
+            <p>El número de llegadas de clientes por hora a una sucursal sigue una distribución Poisson con media \( \lambda \) desconocida. En seis horas se registran 14, 11, 17, 12, 15 y 11 llegadas. La verosimilitud es \( V(\lambda) = \prod e^{-\lambda}\lambda^{x_i}/x_i! \), de modo que</p>
+            <p>\( \ln V = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \sum\ln x_i! \quad\Longrightarrow\quad \frac{d\ln L}{d\lambda} = -n + \frac{\sum x_i}{\lambda} = 0 \)</p>
             <p>\( \Rightarrow\; \hat\lambda = \bar x = \tfrac{80}{6} \approx 13.3 \) clientes por hora. El promedio muestral —el mismo estimador intuitivo— resulta ser el de máxima verosimilitud.</p>
           </div>
           <!-- PATCH v6: Ejemplo 2 (Bernoulli) -->
           <div class="ex">
             <span class="ex-tag">Ejemplo 2 — aceptación de una promoción (marketing, Bernoulli)</span>
             <p>Se pregunta a \( n=10 \) clientes si aceptarían una nueva promoción: \( X_i=1 \) si acepta y \( 0 \) si no. Los resultados fueron \( 1,\,0,\,1,\,1,\,0,\,1,\,0,\,1,\,1,\,0 \) — seis aceptaciones. Cada \( X_i\sim\mathrm{Bernoulli}(p) \) con \( P(X_i=x_i)=p^{x_i}(1-p)^{1-x_i} \), y el parámetro desconocido es \( \theta=p \).</p>
-            <p><strong>1–2.</strong> \( L(p)=\displaystyle\prod_{i=1}^{10}p^{x_i}(1-p)^{1-x_i}=p^{\sum x_i}(1-p)^{\,n-\sum x_i}=p^{6}(1-p)^{4}. \)</p>
+            <p><strong>1–2.</strong> \( V(p)=\displaystyle\prod_{i=1}^{10}p^{x_i}(1-p)^{1-x_i}=p^{\sum x_i}(1-p)^{\,n-\sum x_i}=p^{6}(1-p)^{4}. \)</p>
             <p><strong>3.</strong> \( \ell(p)=6\ln p+4\ln(1-p) \) — el producto se convirtió en una suma.</p>
             <p><strong>4–5.</strong> \( \dfrac{d\ell}{dp}=\dfrac{6}{p}-\dfrac{4}{1-p}=0 \;\Rightarrow\; 6(1-p)=4p \;\Rightarrow\; 6=10p \;\Rightarrow\; \hat p_{MV}=0.6. \)</p>
             <p><strong>6.</strong> \( \ell''(p)=-\dfrac{6}{p^{2}}-\dfrac{4}{(1-p)^{2}}<0 \) para \( 0<p<1 \): es un máximo. Con base en la muestra, la proporción estimada de clientes que aceptarían la promoción es del <strong>60%</strong>.</p>
@@ -608,11 +608,11 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <!-- PATCH v6: Ejemplo 3 (Normal con ambos parámetros) -->
           <div class="ex">
             <span class="ex-tag">Ejemplo 3 — demanda con media y varianza desconocidas (operaciones, Normal)</span>
-            <p>Cuando la demanda diaria de un producto se modela \( X_i\sim N(\mu,\sigma^2) \) y <em>ambos</em> parámetros son desconocidos, el método produce un <strong>sistema de ecuaciones</strong> — una por parámetro. Con \( L(\mu,\sigma^2)=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-(x_i-\mu)^2/(2\sigma^2)} \), el logaritmo es:</p>
+            <p>Cuando la demanda diaria de un producto se modela \( X_i\sim N(\mu,\sigma^2) \) y <em>ambos</em> parámetros son desconocidos, el método produce un <strong>sistema de ecuaciones</strong> — una por parámetro. Con \( V(\mu,\sigma^2)=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-(x_i-\mu)^2/(2\sigma^2)} \), el logaritmo es:</p>
             <div class="formula-hero">\( \displaystyle \ell(\mu,\sigma^2)=-\frac{n}{2}\ln(2\pi)-\frac{n}{2}\ln(\sigma^2)-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i-\mu)^2. \)</div>
             <p><strong>Derivada respecto a \( \mu \):</strong> &nbsp; \( \dfrac{\partial\ell}{\partial\mu}=\dfrac{1}{\sigma^2}\sum(x_i-\mu)=0 \;\Rightarrow\; \hat\mu_{MV}=\bar X. \)</p>
             <p><strong>Derivada respecto a \( \sigma^2 \):</strong> &nbsp; \( \dfrac{\partial\ell}{\partial\sigma^2}=-\dfrac{n}{2\sigma^2}+\dfrac{\sum(x_i-\mu)^2}{2(\sigma^2)^{2}}=0 \;\Rightarrow\; \hat\sigma^{2}_{MV}=\dfrac{1}{n}\sum_{i=1}^{n}(x_i-\bar x)^2. \)</p>
-            <p><strong>Contraste pedagógico:</strong> el MLE de la varianza usa divisor \( n \), mientras que la varianza muestral insesgada \( s^2 \) de la Sección 5.1 usa \( n-1 \). La máxima verosimilitud maximiza la compatibilidad con los datos observados; no garantiza insesgamiento — son criterios distintos. Resolverás este sistema con datos concretos en el <a href="#" data-view="actividades">Ejercicio 7</a>.</p>
+            <p><strong>Contraste pedagógico:</strong> el EMV de la varianza usa divisor \( n \), mientras que la varianza muestral insesgada \( s^2 \) de la Sección 5.1 usa \( n-1 \). La máxima verosimilitud maximiza la compatibilidad con los datos observados; no garantiza insesgamiento — son criterios distintos. Resolverás este sistema con datos concretos en el <a href="#" data-view="actividades">Ejercicio 7</a>.</p>
           </div>
           <!-- PATCH v6: idea clave de cierre -->
           <div class="def">
@@ -620,9 +620,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <p>La máxima verosimilitud no pregunta qué parámetro es «más probable» antes de observar los datos: pregunta <strong>qué valor del parámetro hace que los datos efectivamente observados sean los más compatibles con el modelo</strong>. Esa misma lógica — datos \( \to L(\theta) \to \ln L(\theta) \to \ell'(\theta)=0 \to \hat\theta_{MV} \) — es la que reaparece en los tres ejemplos anteriores, cualquiera que sea la distribución.</p>
           </div>
           <!-- PATCH v6: la tabla como resumen de los tres ejemplos -->
-          <p>La tabla siguiente resume los MLE que más se usan en la práctica empresarial — los tres ejemplos anteriores ilustran sus filas:</p>
+          <p>La tabla siguiente resume los EMV que más se usan en la práctica empresarial — los tres ejemplos anteriores ilustran sus filas:</p>
           <table class="tbl">
-            <thead><tr><th>Distribución</th><th>Parámetro</th><th>Estimador MLE</th></tr></thead>
+            <thead><tr><th>Distribución</th><th>Parámetro</th><th>Estimador EMV</th></tr></thead>
             <tbody>
               <tr><td>Bernoulli / Binomial</td><td>\(p\)</td><td>\( \hat p = x/n \)</td></tr>
               <tr><td>Poisson</td><td>\(\lambda\)</td><td>\( \hat\lambda = \bar x \)</td></tr>
