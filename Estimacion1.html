@@ -158,6 +158,10 @@ nav.tabs::-webkit-scrollbar{display:none}
 .stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px;box-shadow:0 2px 8px var(--shadow)}
 .stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1;color:var(--ink)}
 .stat .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+/* PATCH v7: las fórmulas dentro de etiquetas en mayúsculas no deben transformarse */
+.stat .lbl .katex{ text-transform:none; letter-spacing:0; }
+/* PATCH v7: evita que las fórmulas KaTeX se partan en varias líneas dentro de las tablas */
+.tbl .katex{ white-space:nowrap; }
 
 /* ============================================================
    TEORÍA
@@ -492,7 +496,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
         <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
         <div class="stat"><div class="num">14</div><div class="lbl">Fórmulas en catálogo</div></div>
         <div class="stat"><div class="num">7</div><div class="lbl">Preguntas del quiz</div></div>
-        <!-- PATCH v6: 7 guiados + 4 refuerzos + 8 tarea = 19 (antes 17) -->
+        <!-- PATCH v6: 7 guiados + 4 refuerzos + 8 tarea = 19 -->
         <div class="stat"><div class="num">19</div><div class="lbl">Ejercicios y problemas</div></div>
       </div>
     </aside>
@@ -540,7 +544,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em>, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión lineal, unidad que veremos más adelante.</li>
           </ul>
           <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas son:</p>
+          <!-- PATCH v7: reparto de columnas para que las fórmulas del criterio no se partan en dos líneas -->
           <table class="tbl">
+            <colgroup><col style="width:17%"><col style="width:34%"><col style="width:49%"></colgroup>
             <thead><tr><th>Propiedad</th><th>Criterio</th><th>Lectura</th></tr></thead>
             <tbody>
               <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>El promedio de todas sus posibles muestras coincide exactamente con el parámetro: no sobre- ni subestima el dato real en promedio.</td></tr>
@@ -613,7 +619,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             <span class="def-tag">Idea clave</span>
             <p>La máxima verosimilitud no pregunta qué parámetro es «más probable» antes de observar los datos: pregunta <strong>qué valor del parámetro hace que los datos efectivamente observados sean los más compatibles con el modelo</strong>. Esa misma lógica — datos \( \to L(\theta) \to \ln L(\theta) \to \ell'(\theta)=0 \to \hat\theta_{MV} \) — es la que reaparece en los tres ejemplos anteriores, cualquiera que sea la distribución.</p>
           </div>
-          <!-- PATCH v6: la tabla se reubica como resumen de los tres ejemplos -->
+          <!-- PATCH v6: la tabla como resumen de los tres ejemplos -->
           <p>La tabla siguiente resume los MLE que más se usan en la práctica empresarial — los tres ejemplos anteriores ilustran sus filas:</p>
           <table class="tbl">
             <thead><tr><th>Distribución</th><th>Parámetro</th><th>Estimador MLE</th></tr></thead>
@@ -820,7 +826,8 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           </div>
 
           <div class="mode-row">
-            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución de X̄</button>
+            <!-- PATCH v7: el macron unicode se reemplaza por LaTeX renderizado -->
+            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución de \( \bar{X} \)</button>
             <button class="btn sm ghost" id="mCover"><i data-lucide="move-horizontal"></i>IC-Z (σ conocida)</button>
             <button class="btn sm ghost" id="mT"><i data-lucide="percent"></i>IC-t (σ desconocida)</button>
           </div>
@@ -845,9 +852,10 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
             </div>
             <div class="stat-2">
               <div class="stat"><div class="num mono" id="dN">0</div><div class="lbl">Muestras generadas</div></div>
-              <div class="stat"><div class="num mono" id="dMean">—</div><div class="lbl">Promedio de las x̄</div></div>
-              <div class="stat"><div class="num mono" id="dSE">—</div><div class="lbl">EE teórico σ/√n</div></div>
-              <div class="stat"><div class="num mono" id="dSD">—</div><div class="lbl">Desv. empírica de x̄</div></div>
+              <!-- PATCH v7: etiquetas con LaTeX renderizado (antes macron unicode) -->
+              <div class="stat"><div class="num mono" id="dMean">—</div><div class="lbl">Promedio de las \( \bar{x} \)</div></div>
+              <div class="stat"><div class="num mono" id="dSE">—</div><div class="lbl">EE teórico \( \sigma/\sqrt{n} \)</div></div>
+              <div class="stat"><div class="num mono" id="dSD">—</div><div class="lbl">Desv. empírica de \( \bar{x} \)</div></div>
             </div>
             <p class="note" id="noteDist">El estimador \(\bar X\) es <strong>insesgado</strong>: el centro de las estimaciones coincide con \( \mu \) (μ aparece como guía en la gráfica). Su dispersión —el <strong>error estándar</strong> \( \sigma/\sqrt n \)— se reduce al aumentar \( n \): esa es la <strong>consistencia</strong>. Cambia \( n \) y compara.</p>
           </div>
@@ -1115,7 +1123,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
       <h3>Refuerzo: redacta tu solución</h3>
       <p class="act-desc">Cuatro problemas adicionales —uno por tema— <strong>sin solución visible</strong>: tú escribes el procedimiento completo en el editor con fórmulas en LaTeX y vista previa instantánea. Tu texto se guarda automáticamente en este navegador. Estas redacciones <em>no alteran tu nota automática</em>, pero forman parte de tu trabajo y se revisarán en clase.</p>
 
-      <!-- PATCH v6: refuerzos renumerados como R1–R4 (antes 5–8) para evitar duplicar numeración con los guiados -->
+      <!-- PATCH v6: refuerzos renumerados como R1–R4 (los IDs internos e5–e8 no cambian) -->
       <details class="sol">
         <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio R1 · Refuerzo — propiedades de estimadores</span>El gasto por cliente en un supermercado es normal con \( \sigma = \$12 \) y media \( \mu \) desconocida. Se toman 9 compras. Compárense los estimadores \( \hat\theta_1 = \bar X \) y \( \hat\theta_2 = \tfrac{X_1+X_2}{2} \). (a) Verifica que ambos son insesgados. (b) Compara su precisión mediante los errores estándar. (c) Si alguien propone \( \hat\theta_3 = 0.8\,\bar X \), calcula su sesgo y su MSE (usa \( \mu = 50 \)) y concluye si conviene.</span></summary>
         <div class="sol-body">
@@ -1319,8 +1327,9 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
 /* Marcador de versión: verifica en consola que este archivo cargó */
-/* PATCH v6: teoría MV con 3 ejemplos resueltos + 2 ejercicios guiados nuevos (e6, e7) + refuerzos R1–R4 */
-console.log('%c✔ Cap. 5 Estimación — v6 (v5 + MV ampliada y ejercicios nuevos)','color:#4A0E28;font-weight:bold');
+/* PATCH v7: símbolos renderizados — X̄ en canvas (barra trazada), LaTeX en botones/tarjetas/
+   calculadora (etiquetas y resultados), colgroup en la tabla 5.1 y quiz P1 con escapes correctos */
+console.log('%c✔ Cap. 5 Estimación — v7 (símbolos renderizados corregidos)','color:#4A0E28;font-weight:bold');
 
 /* ============================================================
    UTILIDADES
@@ -1516,6 +1525,22 @@ function drawNCurve(cv, f, xlo, xhi, x0, cap){
 /* ============================================================
    HERO: distribución muestral + IC del 95% (animado)
 ============================================================ */
+/* PATCH v7: dibuja X̄/x̄ en canvas trazando la barra manualmente
+   (el carácter macron unicode no se renderiza bien con esta fuente) */
+function drawXBar(ctx, pre, ch, post, x, y, align='center'){
+  ctx.save(); ctx.textAlign='left';
+  const w1=ctx.measureText(pre).width, w2=ctx.measureText(ch).width, w3=ctx.measureText(post).width;
+  const start = align==='center'? x-(w1+w2+w3)/2 : x;
+  ctx.fillText(pre, start, y);
+  const cx=start+w1;
+  ctx.fillText(ch, cx, y);
+  const fm=ctx.font.match(/(\d+(?:\.\d+)?)px/);
+  const asc= fm? parseFloat(fm[1])*0.72 : 9;
+  ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(cx+.5, y-asc); ctx.lineTo(cx+w2-.5, y-asc); ctx.stroke();
+  ctx.fillText(post, cx+w2, y);
+  ctx.restore();
+}
 let heroAnim=null;
 function drawHero(t){
   const cv=$('#heroCanvas'); if(!cv || cv.offsetParent===null) return;
@@ -1535,8 +1560,9 @@ function drawHero(t){
     [-half,half].forEach(z=>{ ctx.beginPath(); ctx.moveTo(X(z),Y(0)); ctx.lineTo(X(z),Y(0.3989*Math.exp(-z*z/2))); ctx.stroke(); });
     ctx.setLineDash([]);
     ctx.fillStyle=TERRA; ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='center';
-    if(fs>0.35) ctx.fillText('x̄ − E', X(-half), Y(0)+16);
-    if(fs>0.35) ctx.fillText('x̄ + E', X( half), Y(0)+16);
+    /* PATCH v7: x̄ − E / x̄ + E con la barra trazada */
+    if(fs>0.35){ drawXBar(ctx,'','x',' − E', X(-half), Y(0)+16);
+                 drawXBar(ctx,'','x',' + E', X( half), Y(0)+16); }
   }
   const fc=Math.min(1,t/0.65);
   ctx.strokeStyle=INK; ctx.lineWidth=2.4; ctx.beginPath();
@@ -1551,7 +1577,8 @@ function drawHero(t){
   ctx.fillText('μ', X(0), Y(0)-10);
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.fillStyle='rgba(74,14,40,.85)';
-  ctx.fillText('Distribución muestral de X̄ ~ N(μ, σ²/n)', m.l, m.t-8);
+  /* PATCH v7: título del hero con la barra de X̄ trazada */
+  drawXBar(ctx, 'Distribución muestral de ', 'X', ' ~ N(μ, σ²/n)', m.l, m.t-8, 'left');
   if(fs>0.2){ ctx.fillStyle='rgba(176,42,55,.9)'; ctx.textAlign='right';
     ctx.fillText('intervalo central del 95%', w-m.r, m.t-8); }
 }
@@ -1700,8 +1727,7 @@ function showSampleModal(rec){
   const zline= rec.zok
     ? `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y <strong>sí captura</strong> a μ — la diferencia proviene únicamente de estimar σ con s.`
     : `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y tampoco captura — en este caso el fallo no proviene de usar s.`;
-  /* PATCH v5: String.raw conserva los backslashes — KaTeX ahora sí recibe \( \), \bar, \tfrac, \sqrt, etc.
-     El cálculo son 6 pasos y los valores de la derecha también van en LaTeX. */
+  /* PATCH v5: String.raw conserva los backslashes — KaTeX sí recibe \( \), \bar, \tfrac, \sqrt, etc. */
   $('#smpBody').innerHTML = String.raw`
     <p class="smp-lead">Estos son los ${n} valores aleatorios generados; el intervalo se construye <strong>solo</strong> con ellos (más el nivel de confianza ${Math.round(100*rec.lev)}%).</p>
     <div class="smp-box"><div class="smp-chips">${chips}</div></div>
@@ -1785,7 +1811,8 @@ function drawDist(){
   ctx.lineTo(m.l+(p.mu-rlo)/(rhi-rlo)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
   ctx.fillStyle='rgba(0,123,93,.9)'; ctx.fillRect(m.l+6, m.t-8, 10, 10);
-  ctx.fillStyle=INK; ctx.fillText('frecuencia observada de x̄', m.l+21, m.t+1);
+  /* PATCH v7: leyenda del histograma con la barra de x̄ trazada */
+  ctx.fillStyle=INK; drawXBar(ctx, 'frecuencia observada de ', 'x', '', m.l+21, m.t+1, 'left');
   ctx.strokeStyle=TERRA; ctx.lineWidth=2.2;
   ctx.beginPath(); ctx.moveTo(m.l+196, m.t-3); ctx.lineTo(m.l+212, m.t-3); ctx.stroke();
   ctx.fillStyle=INK; ctx.fillText('modelo teórico', m.l+218, m.t+1);
@@ -1887,36 +1914,37 @@ function drawSim(){
 /* ============================================================
    CALCULADORA DE INTERVALOS Y TAMAÑOS (una y dos muestras)
 ============================================================ */
+/* PATCH v7: las etiquetas con símbolos usan LaTeX \( ... \) (con \\ en JS) */
 const PDEFS={
   mediaZ:[
-    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:18750},
+    {k:'xb',label:'\\( \\bar{x} \\) — media muestral',min:-1e7,max:1e7,step:0.1,val:18750},
     {k:'sg',label:'σ — desviación estándar poblacional (conocida)',min:1e-6,max:1e7,step:1,val:4200},
     {k:'n',label:'n — tamaño de muestra',min:2,max:100000,step:1,val:49}],
   mediaT:[
-    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:7.4},
+    {k:'xb',label:'\\( \\bar{x} \\) — media muestral',min:-1e7,max:1e7,step:0.1,val:7.4},
     {k:'s',label:'s — desviación estándar muestral',min:1e-6,max:1e7,step:0.1,val:1.8},
     {k:'n',label:'n — tamaño de muestra',min:2,max:2000,step:1,val:16}],
   prop:[
     {k:'x',label:'x — número de éxitos en la muestra',min:0,max:1e7,step:1,val:232},
     {k:'n',label:'n — tamaño de la muestra',min:5,max:1e7,step:1,val:400}],
   media2Z:[
-    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:4.2},
+    {k:'xb1',label:'\\( \\bar{x}_1 \\) — media muestral 1',min:-1e7,max:1e7,step:0.1,val:4.2},
     {k:'sg1',label:'σ₁ — desv. estándar poblacional 1',min:1e-6,max:1e7,step:0.1,val:1.2},
     {k:'n1',label:'n₁ — tamaño 1',min:2,max:100000,step:1,val:15},
-    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:5.4},
+    {k:'xb2',label:'\\( \\bar{x}_2 \\) — media muestral 2',min:-1e7,max:1e7,step:0.1,val:5.4},
     {k:'sg2',label:'σ₂ — desv. estándar poblacional 2',min:1e-6,max:1e7,step:0.1,val:1.5},
     {k:'n2',label:'n₂ — tamaño 2',min:2,max:100000,step:1,val:12}],
   media2T:[
-    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:2.8},
+    {k:'xb1',label:'\\( \\bar{x}_1 \\) — media muestral 1',min:-1e7,max:1e7,step:0.1,val:2.8},
     {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:0.6},
     {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:10},
-    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:2.1},
+    {k:'xb2',label:'\\( \\bar{x}_2 \\) — media muestral 2',min:-1e7,max:1e7,step:0.1,val:2.1},
     {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:0.5},
     {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:10},
     {k:'pool',type:'check',label:'Asumir varianzas iguales (t agrupada); desmarcar usa Welch',val:true}],
   pareada:[
-    {k:'dbar',label:'d̄ — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:1.8},
-    {k:'sd',label:'s_d — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:1.2},
+    {k:'dbar',label:'\\( \\bar{d} \\) — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:1.8},
+    {k:'sd',label:'\\( s_d \\) — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:1.2},
     {k:'n',label:'n — número de pares',min:2,max:5000,step:1,val:9}],
   prop2:[
     {k:'x1',label:'x₁ — éxitos grupo 1',min:0,max:1e7,step:1,val:96},
@@ -1928,7 +1956,7 @@ const PDEFS={
     {k:'sg',label:'σ — desviación estándar poblacional',min:1e-6,max:1e7,step:1,val:4200}],
   nprop:[
     {k:'E',label:'E — error máximo admisible (proporción)',min:0.001,max:0.5,step:0.01,val:0.03},
-    {k:'p',label:'p̂ — proporción esperada (usa 0.5 si no hay datos)',min:0,max:1,step:0.01,val:0.5}]
+    {k:'p',label:'\\( \\hat{p} \\) — proporción esperada (usa 0.5 si no hay datos)',min:0,max:1,step:0.01,val:0.5}]
 };
 const CALC_NAMES={mediaZ:'IC media (σ conocida)',mediaT:'IC media (σ desconocida)',
   prop:'IC proporción',media2Z:'IC diferencia de medias (Z)',media2T:'IC diferencia de medias (t)',
@@ -1946,6 +1974,10 @@ function buildParams(){
       <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
     </div>`;
   }).join('');
+  /* PATCH v7: renderizar el LaTeX de las etiquetas generadas dinámicamente */
+  if(typeof renderMathInElement==='function'){
+    try{ renderMathInElement(box,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+  }
 }
  $('#calcDist').addEventListener('change',()=>{
   buildParams();
@@ -1987,7 +2019,8 @@ function computeCalc(key,v,lev){
     const {x,n}=v, ph=x/n;
     if(ph<=0||ph>=1) throw 'Con 0 o todos los éxitos el intervalo aproximado no es válido: ajusta los datos.';
     const SE=Math.sqrt(ph*(1-ph)/n), E=z*SE, L=ph-E, U=ph+E;
-    R.push(['Proporción muestral p̂',ph],['Valor crítico z',z],['Error máximo E',E],['Límite inferior',L],['Límite superior',U]);
+    /* PATCH v7: etiquetas de resultados con LaTeX */
+    R.push(['Proporción muestral \\( \\hat{p} \\)',ph],['Valor crítico z',z],['Error máximo E',E],['Límite inferior',L],['Límite superior',U]);
     const ok = n*ph>=5 && n*(1-ph)>=5;
     const warn = ok? null : '⚠ La condición n·p̂ ≥ 5 y n·q̂ ≥ 5 NO se cumple: el intervalo normal aproximado puede ser poco confiable; considera más datos o un método exacto.';
     const lo=Math.max(0,ph-4.2*SE), hi=Math.min(1,ph+4.2*SE);
@@ -1998,7 +2031,7 @@ function computeCalc(key,v,lev){
   if(key==='media2Z'){
     const {xb1,sg1,n1,xb2,sg2,n2}=v;
     const dif=xb1-xb2, SE=Math.sqrt(sg1*sg1/n1+sg2*sg2/n2), E=z*SE, L=dif-E, U=dif+E;
-    R.push(['Diferencia x̄₁ − x̄₂',dif],['Valor crítico z',z],['Error máximo E',E],
+    R.push(['Diferencia \\( \\bar{x}_1-\\bar{x}_2 \\)',dif],['Valor crítico z',z],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     return {results:R,
@@ -2028,7 +2061,7 @@ function computeCalc(key,v,lev){
   }
   if(key==='pareada'){
     const {dbar,sd,n}=v, nu=n-1, SE=sd/Math.sqrt(n), t=tOf(lev,nu), E=t*SE, L=dbar-E, U=dbar+E;
-    R.push(['Diferencia media d̄',dbar],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
+    R.push(['Diferencia media \\( \\bar{d} \\)',dbar],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     return {results:R,
@@ -2039,7 +2072,7 @@ function computeCalc(key,v,lev){
     const {x1,n1,x2,n2}=v, p1=x1/n1, p2=x2/n2;
     if((p1<=0&&p2<=0)||(p1>=1&&p2>=1)) throw 'Las proporciones muestrales deben estar estrictamente entre 0 y 1.';
     const dif=p1-p2, SE=Math.sqrt(p1*(1-p1)/n1+p2*(1-p2)/n2), E=z*SE, L=dif-E, U=dif+E;
-    R.push(['p̂₁',p1],['p̂₂',p2],['Diferencia p̂₁ − p̂₂',dif],['Valor crítico z',z],['Error máximo E',E],
+    R.push(['\\( \\hat{p}_1 \\)',p1],['\\( \\hat{p}_2 \\)',p2],['Diferencia \\( \\hat{p}_1-\\hat{p}_2 \\)',dif],['Valor crítico z',z],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     const ok = n1*p1>=5&&n1*(1-p1)>=5&&n2*p2>=5&&n2*(1-p2)>=5;
@@ -2062,7 +2095,7 @@ function computeCalc(key,v,lev){
     const {E,p}=v;
     if(p<=0||p>=1) throw 'Usa una proporción estrictamente entre 0 y 1 (0.5 si no hay datos previos).';
     const n0=z*z*p*(1-p)/(E*E);
-    R.push(['Valor crítico z',z],['p̂·q̂ usado',p*(1-p)],['n exacto',n0],['n recomendado',Math.ceil(n0)]);
+    R.push(['Valor crítico z',z],['\\( \\hat{p}\\,\\hat{q} \\) usado',p*(1-p)],['n exacto',n0],['n recomendado',Math.ceil(n0)]);
     const E0=E;
     return {results:R,
       tex:`n=\\dfrac{z_{\\alpha/2}^{2}\\,\\hat{p}\\hat{q}}{E^{2}} = \\dfrac{${z.toFixed(3)}^{2}\\cdot ${fmt(p)}\\cdot ${fmt(1-p)}}{${fmt(E)}^{2}}`,
@@ -2085,6 +2118,8 @@ let calcState=null;
       <div class="res-row"><span class="res-label">${lab}</span>
       <span class="res-val mono">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('');
   try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
+  /* PATCH v7: renderizar el LaTeX de las etiquetas de resultados */
+  try{ renderMathInElement($('#calcResults'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
   out.draw();
   toast(`${CALC_NAMES[key]} calculado.`);
 });
@@ -2095,7 +2130,8 @@ buildParams();
    QUIZ (guarda el mejor intento para la boleta)
 ============================================================ */
 const QUIZ=[
- {q:'Un estimador \(\hat{\theta}\) es insesgado si…',
+ /* PATCH v7: escapes corregidos en P1 (antes JS comía los backslashes) */
+ {q:'Un estimador \\(\\hat{\\theta}\\) es insesgado si…',
   opts:['\\(\\hat\\theta = \\theta\\) en cada muestra','\\(E(\\hat\\theta) = \\theta\\)','\\(\\mathrm{Var}(\\hat\\theta) = 0\\)','Su MSE es mínimo'],
   ans:1, why:'Insesgado significa que <em>en promedio, sobre muestras repetidas</em>, el estimador acierta al parámetro: \\(E(\\hat\\theta)=\\theta\\). Nada garantiza acertar en cada muestra concreta.'},
  {q:'La interpretación correcta de un «IC del 95% para μ» es…',
@@ -2194,7 +2230,7 @@ let progToastTimer=null;
 /* ============================================================
    EJERCICIOS GUIADOS: casillas "ya lo resolví"
 ============================================================ */
-/* PATCH v6: EJ_KEYS ahora incluye e6 y e7 (los dos ejercicios guiados nuevos) */
+/* PATCH v6: EJ_KEYS incluye e6 y e7 */
 const EJ_KEYS=['e1','e2','e3','e4','e5','e6','e7'];
 function syncEjChecks(){
   const EJ=act()[CURSO].ej;
@@ -2248,7 +2284,7 @@ const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 
 function buildEditors(){
   $$('.ed-box').forEach(box=>{
     const k=box.dataset.ed;
-    /* PATCH v5: String.raw conserva los backslashes del placeholder (antes los comía JS) */
+    /* PATCH v5: String.raw conserva los backslashes del placeholder */
     box.innerHTML=String.raw`
       <div class="ed-toolbar">
         <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
