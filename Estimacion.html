@@ -12,38 +12,42 @@
 
 <style>
 /* ============================================================
-   VARIABLES Y BASE
+   VARIABLES Y BASE — paleta institucional UP guinda
 ============================================================ */
 :root{
-  --paper:#f7f3eb;
-  --card:#fffdf8;
-  --ink:#1c2b25;
-  --pine:#1e4636;
-  --pine-soft:#2c5e49;
-  --terra:#c2542f;
-  --terra-soft:#f3e0d6;
-  --gold:#c9a227;
-  --line:rgba(28,43,37,.16);
-  --line-strong:rgba(28,43,37,.4);
-  --muted:rgba(28,43,37,.62);
-  --ok-bg:#e7efe6;
-  --err-bg:#f7e6dd;
+  --paper:#f5f5f5;
+  --card:#ffffff;
+  --ink:#4A0E28;          /* guinda profundo */
+  --accent-light:#7A1E3F; /* guinda medio (hovers) */
+  --pine:#007B5D;         /* verde Metrópolis */
+  --pine-soft:#005F47;
+  --pine-light:#D4EDDA;
+  --terra:#9a7d2e;        /* dorado oscuro (texto) */
+  --terra-soft:#E8D5A3;
+  --gold:#C9A84C;
+  --err:#b02a37;
+  --err-bg:#f8d7da;
+  --line:rgba(74,14,40,.16);
+  --line-strong:rgba(74,14,40,.4);
+  --muted:rgba(58,32,44,.62);
+  --ok-bg:#D4EDDA;
+  --shadow:rgba(74,14,40,.15);
   --radius:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-[id]{scroll-margin-top:150px}
+[id]{scroll-margin-top:170px}
 [hidden]{display:none!important}
 body{
   font-family:'Instrument Sans',sans-serif;
   background:var(--paper);
-  color:var(--ink);
+  color:#2E1A26;
   line-height:1.6;
-  background-image:radial-gradient(rgba(30,70,54,.075) 1px, transparent 1px);
+  background-image:radial-gradient(rgba(74,14,40,.07) 1px, transparent 1px);
   background-size:26px 26px;
 }
 .wrap{max-width:1150px;margin:0 auto;padding:0 24px}
-h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em}
+h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:600;line-height:1.12;letter-spacing:-.01em;color:var(--ink)}
 .overline{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
 .mono{font-variant-numeric:tabular-nums}
 button{font-family:inherit;cursor:pointer}
@@ -55,26 +59,39 @@ svg.lucide{width:16px;height:16px;stroke-width:2}
 ============================================================ */
 header.topbar{
   position:sticky;top:0;z-index:60;
-  background:rgba(247,243,235,.93);
+  background:linear-gradient(135deg,rgba(74,14,40,.97) 0%,rgba(122,30,63,.97) 100%);
   backdrop-filter:blur(10px);
-  border-bottom:1.5px solid var(--ink);
+  border-bottom:4px solid var(--gold);
+  box-shadow:0 6px 20px var(--shadow);
 }
 .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
-.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem}
-.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--ink);color:var(--paper)}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.15rem;color:#fff}
+.brand .brand-ico{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:9px;display:grid;place-items:center;background:var(--gold);color:var(--ink)}
 .brand .brand-ico svg{width:17px;height:17px}
-.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-nav.tabs{display:flex;gap:6px;border-top:1px solid var(--line);padding:10px 0;overflow-x:auto;scrollbar-width:none}
+.brand small{display:block;font-family:'Instrument Sans';font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+
+/* ====== LOGO SUPERIOR DERECHO ====== */
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-logo{
+  height:54px;width:auto;object-fit:contain;display:block;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.55)) brightness(1.05);
+  transition:transform .18s ease;
+}
+.topbar-logo:hover{transform:scale(1.04)}
+@media (max-width:640px){ .topbar-logo{height:38px;} }
+/* ====== FIN LOGO ====== */
+
+nav.tabs{display:flex;gap:6px;border-top:1px solid rgba(255,255,255,.18);padding:10px 0;overflow-x:auto;scrollbar-width:none}
 nav.tabs::-webkit-scrollbar{display:none}
 .nav-btn{
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-  border:1px solid transparent;background:transparent;color:var(--pine);
+  border:1px solid transparent;background:transparent;color:#e8d6dd;
   font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:999px;
   transition:all .18s ease;
 }
 .nav-btn svg{width:15px;height:15px}
-.nav-btn:hover{border-color:var(--line-strong)}
-.nav-btn.active{background:var(--ink);color:var(--paper)}
+.nav-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.nav-btn.active{background:var(--gold);color:var(--ink)}
 
 /* ============================================================
    VISTAS
@@ -89,27 +106,28 @@ nav.tabs::-webkit-scrollbar{display:none}
 ============================================================ */
 .btn{
   display:inline-flex;align-items:center;gap:8px;
-  background:var(--ink);color:var(--paper);
+  background:var(--ink);color:#fff;
   border:1px solid var(--ink);border-radius:10px;
   padding:11px 18px;font-weight:600;font-size:14px;
-  transition:all .18s ease;
+  transition:all .18s ease;box-shadow:0 3px 8px var(--shadow);
 }
-.btn:hover{background:var(--pine);border-color:var(--pine);transform:translateY(-1px)}
-.btn.ghost{background:transparent;color:var(--ink)}
-.btn.ghost:hover{background:rgba(28,43,37,.06);transform:translateY(-1px)}
+.btn:hover{background:var(--accent-light);border-color:var(--accent-light);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:none}
+.btn.ghost:hover{background:rgba(74,14,40,.06);transform:translateY(-1px)}
 .btn.sm{padding:8px 12px;font-size:13px;border-radius:8px}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .field input,.field select{
-  font:inherit;font-size:14px;color:var(--ink);
+  font:inherit;font-size:14px;color:#2E1A26;
   background:var(--card);border:1px solid var(--line-strong);
   border-radius:8px;padding:10px 12px;width:100%;
   transition:border-color .15s, box-shadow .15s;
 }
-.field input:focus,.field select:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(0,123,93,.14)}
 .hint{font-size:12px;color:var(--muted)}
-.mode-row{display:flex;gap:8px;margin-bottom:16px}
+/* PATCH v3: flex-wrap para que quepan los tres botones de modo */
+.mode-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .mode-row .btn{flex:1;justify-content:center}
 
 /* ============================================================
@@ -124,60 +142,64 @@ nav.tabs::-webkit-scrollbar{display:none}
 .meta-grid>div{padding:12px 14px 12px 0;border-bottom:1px solid var(--line)}
 .meta-grid dt{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
 .meta-grid dd{font-weight:600;font-size:14.5px}
-.hero-fig{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:6px 6px 0 rgba(28,43,37,.12)}
+.hero-fig{border:1.5px solid var(--ink);border-radius:var(--radius);background:var(--card);overflow:hidden;box-shadow:6px 6px 0 var(--shadow)}
 .hero-fig canvas{display:block;width:100%;height:320px}
 .hero-fig figcaption{padding:12px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
 .home-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:44px;border-top:1.5px solid var(--ink);padding-top:38px}
 .route-item{display:grid;grid-template-columns:86px 1fr auto;gap:18px;align-items:center;border-top:1px solid var(--line);padding:22px 4px;cursor:pointer;transition:background .15s}
 .route-item:first-child{border-top:none}
-.route-item:hover{background:rgba(28,43,37,.045)}
-.route-no{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:400;color:rgba(30,70,54,.28)}
+.route-item:hover{background:rgba(74,14,40,.045)}
+.route-no{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:400;color:rgba(0,123,93,.28)}
 .route-item h3{font-size:1.2rem;margin-bottom:4px}
 .route-item p{font-size:13.5px;color:var(--muted)}
 .route-go{width:38px;height:38px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--ink);transition:all .18s}
-.route-item:hover .route-go{background:var(--ink);color:var(--paper)}
+.route-item:hover .route-go{background:var(--ink);color:#fff}
 .side-stats{display:flex;flex-direction:column;gap:12px}
-.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px}
-.stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1}
+.stat{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);padding:14px 18px;box-shadow:0 2px 8px var(--shadow)}
+.stat .num{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;line-height:1;color:var(--ink)}
 .stat .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+/* PATCH v7: las fórmulas dentro de etiquetas en mayúsculas no deben transformarse */
+.stat .lbl .katex{ text-transform:none; letter-spacing:0; }
+/* PATCH v7: evita que las fórmulas KaTeX se partan en varias líneas dentro de las tablas */
+.tbl .katex{ white-space:nowrap; }
 
 /* ============================================================
    TEORÍA
 ============================================================ */
 .theory{display:grid;grid-template-columns:250px 1fr;gap:52px;align-items:start}
-.toc{position:sticky;top:150px;border-left:1.5px solid var(--ink);display:flex;flex-direction:column}
+.toc{position:sticky;top:170px;border-left:1.5px solid var(--ink);display:flex;flex-direction:column}
 .toc-title{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 0 10px 16px}
 .toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink);padding:9px 16px;font-size:13.5px;font-weight:500;border-left:3px solid transparent;margin-left:-1.5px;transition:all .15s}
 .toc a span{font-family:'Fraunces',serif;color:var(--terra);font-weight:600;min-width:30px}
-.toc a:hover{border-left-color:var(--pine);background:rgba(28,43,37,.05)}
+.toc a:hover{border-left-color:var(--pine);background:rgba(0,123,93,.06)}
 .sec{border-top:1px solid var(--line);padding:44px 0}
 .sec:first-child{border-top:none;padding-top:0}
-.sec-no{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:rgba(30,70,54,.22);line-height:1}
+.sec-no{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:rgba(0,123,93,.22);line-height:1}
 .sec h3{font-size:1.55rem;margin:6px 0 16px}
 .prose p{margin:0 0 14px;max-width:70ch}
 .prose ul,.prose ol{margin:0 0 14px 22px;max-width:70ch}
 .prose li{margin-bottom:6px}
-.def{background:#ecf1ea;border:1px solid rgba(30,70,54,.28);border-radius:0 10px 10px 0;border-left:4px solid var(--pine);padding:18px 22px;margin:20px 0}
+.def{background:rgba(0,123,93,.07);border:1px solid rgba(0,123,93,.28);border-radius:0 10px 10px 0;border-left:4px solid var(--pine);padding:18px 22px;margin:20px 0}
 .def .def-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--pine)}
 .def p{margin:6px 0 0}
-.ex{background:var(--card);border:1px solid var(--line-strong);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin:20px 0}
-.ex .ex-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a6d10}
+.ex{background:#fef9e7;border:1px solid rgba(201,168,76,.45);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:18px 22px;margin:20px 0}
+.ex .ex-tag{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#9a7d2e}
 .formula-hero{display:flex;justify-content:center;padding:16px 0;font-size:1.15rem}
 .tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
 .tbl th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--ink)}
 .tbl td{padding:9px 10px;border-bottom:1px solid var(--line)}
-.tbl tbody tr:hover{background:rgba(28,43,37,.04)}
+.tbl tbody tr:hover{background:rgba(74,14,40,.04)}
 .tbl td.center,.tbl th.center{text-align:center}
 .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid}
-.tag.d{color:var(--pine);border-color:rgba(30,70,54,.45);background:#ecf1ea}
-.tag.c{color:var(--terra);border-color:rgba(194,84,47,.45);background:var(--terra-soft)}
-.tag.g{color:#8a6d10;border-color:rgba(201,162,39,.5);background:#f6eecf}
+.tag.d{color:var(--pine);border-color:rgba(0,123,93,.45);background:var(--pine-light)}
+.tag.c{color:var(--terra);border-color:rgba(154,125,46,.45);background:var(--terra-soft)}
+.tag.g{color:#9a7d2e;border-color:rgba(201,168,76,.5);background:#f6eecf}
 .spec-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:18px;align-items:center;border-top:1px solid var(--line);padding:18px 6px;transition:background .15s}
-.spec-row:hover{background:rgba(28,43,37,.04)}
+.spec-row:hover{background:rgba(74,14,40,.04)}
 .spec-row:last-child{border-bottom:1px solid var(--line)}
 .spec-id{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .spec-id .no{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--muted)}
-.spec-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600}
+.spec-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--ink)}
 .spec-use{font-size:13px;color:var(--muted);margin-top:2px}
 .spec-math{text-align:right;font-size:1rem;overflow-x:auto}
 
@@ -185,7 +207,7 @@ nav.tabs::-webkit-scrollbar{display:none}
    PANELES / LABORATORIOS
 ============================================================ */
 .panel{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--radius);overflow:hidden}
-.panel-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.panel-head{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--line);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
 .panel-body{padding:20px 18px}
 .lab-grid{display:grid;grid-template-columns:350px 1fr;gap:28px;align-items:start}
 .sim-controls{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
@@ -194,7 +216,7 @@ nav.tabs::-webkit-scrollbar{display:none}
 .stat-2 .num{font-size:1.35rem}
 .conv{margin-top:18px}
 .conv-bar{height:8px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper);margin-top:6px}
-.conv-bar>div{height:100%;background:var(--terra);width:0%;transition:width .4s ease}
+.conv-bar>div{height:100%;background:var(--pine);width:0%;transition:width .4s ease}
 .note{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line-strong);margin-top:18px;padding-top:12px}
 .graph-frame canvas{display:block;width:100%;height:340px}
 .graph-cap{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
@@ -202,12 +224,12 @@ nav.tabs::-webkit-scrollbar{display:none}
 /* Resultados calculadora */
 .res-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding:10px 2px}
 .res-row:last-child{border-bottom:none}
-.res-label{font-size:13.5px;font-weight:600}
+.res-label{font-size:13.5px;font-weight:600;color:#2E1A26}
 .res-val{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--pine)}
 .calc-formula{border:1px dashed var(--line-strong);border-radius:8px;padding:12px 14px;margin-bottom:14px;text-align:center;overflow-x:auto}
 .calc-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:46px 20px;color:var(--muted);text-align:center}
 .calc-empty svg{width:30px;height:30px;stroke-width:1.5}
-.warn-box{border:1px solid rgba(194,84,47,.5);background:var(--terra-soft);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--terra);margin-bottom:12px}
+.warn-box{border:1px solid rgba(176,42,55,.5);background:var(--err-bg);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--err);margin-bottom:12px}
 
 /* ============================================================
    ACTIVIDADES
@@ -217,39 +239,39 @@ nav.tabs::-webkit-scrollbar{display:none}
 .act-block>.act-desc{color:var(--muted);max-width:70ch;margin-bottom:20px}
 .rub-row{display:grid;grid-template-columns:280px 1fr 60px;gap:16px;align-items:center;border-top:1px solid var(--line);padding:14px 4px}
 .rub-row:last-child{border-bottom:1px solid var(--line)}
-.rub-row .rub-name{font-weight:600;font-size:14.5px}
+.rub-row .rub-name{font-weight:600;font-size:14.5px;color:#2E1A26}
 .rub-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
 .rub-bar>div{height:100%;background:var(--pine)}
-.rub-pct{text-align:right;font-family:'Fraunces',serif;font-weight:600}
-details.sol{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);margin-bottom:14px;overflow:hidden}
-details.sol summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;font-weight:600;transition:background .15s}
+.rub-pct{text-align:right;font-family:'Fraunces',serif;font-weight:600;color:var(--ink)}
+details.sol{border:1px solid var(--line-strong);border-radius:10px;background:var(--card);margin-bottom:14px;overflow:hidden;box-shadow:0 2px 8px var(--shadow)}
+details.sol summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;font-weight:600;transition:background .15s;color:#2E1A26}
 details.sol summary::-webkit-details-marker{display:none}
-details.sol summary:hover{background:rgba(28,43,37,.04)}
+details.sol summary:hover{background:rgba(74,14,40,.04)}
 .sol-marker{flex:none;width:24px;height:24px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;transition:transform .2s;margin-top:1px}
-details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);color:var(--paper)}
+details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);color:#fff}
 .sol-body{border-top:1px dashed var(--line-strong);padding:16px 20px;font-size:14.5px}
 .sol-body p{margin-bottom:10px;max-width:75ch}
 .prob-tag{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:4px}
 .quiz-q{border-top:1px solid var(--line);padding:24px 4px}
 .quiz-q header{display:flex;gap:14px;margin-bottom:14px}
 .qnum{flex:none;font-family:'Fraunces',serif;font-weight:700;color:var(--terra);border:1.5px solid var(--terra);border-radius:8px;padding:2px 9px;height:fit-content}
-.quiz-q .q-text{font-weight:600;font-size:15.5px;padding-top:4px}
+.quiz-q .q-text{font-weight:600;font-size:15.5px;padding-top:4px;color:#2E1A26}
 .opts{display:grid;gap:9px;margin-left:56px}
-.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--card);transition:all .15s;font-size:14.5px}
+.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line-strong);border-radius:10px;padding:11px 14px;cursor:pointer;background:var(--card);transition:all .15s;font-size:14.5px;color:#2E1A26}
 .opt:hover{border-color:var(--pine)}
 .opt input{position:absolute;opacity:0;pointer-events:none}
 .opt-key{flex:none;width:26px;height:26px;border:1.5px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;transition:all .15s}
 .opt.is-correct{border-color:var(--pine);background:var(--ok-bg)}
-.opt.is-correct .opt-key{background:var(--pine);border-color:var(--pine);color:var(--paper)}
-.opt.is-wrong{border-color:var(--terra);background:var(--err-bg)}
-.opt.is-wrong .opt-key{background:var(--terra);border-color:var(--terra);color:var(--paper)}
+.opt.is-correct .opt-key{background:var(--pine);border-color:var(--pine);color:#fff}
+.opt.is-wrong{border-color:var(--err);background:var(--err-bg)}
+.opt.is-wrong .opt-key{background:var(--err);border-color:var(--err);color:#fff}
 .opt.locked{cursor:default}
 .explain{margin:12px 0 0 56px;font-size:13.5px;color:var(--muted);border-left:3px solid var(--gold);padding:8px 14px;background:var(--card)}
 .quiz-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px;border-top:1.5px solid var(--ink);padding-top:20px}
-.quiz-result{font-size:15px}
+.quiz-result{font-size:15px;color:#2E1A26}
 .quiz-result strong{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--pine);margin-right:8px}
 .task-panel{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
-.chk{display:flex;align-items:center;gap:11px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card);padding:10px 14px;margin-bottom:9px;cursor:pointer;transition:all .15s;font-size:14.5px}
+.chk{display:flex;align-items:center;gap:11px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card);padding:10px 14px;margin-bottom:9px;cursor:pointer;transition:all .15s;font-size:14.5px;color:#2E1A26}
 .chk:hover{border-color:var(--pine)}
 .chk input{width:16px;height:16px;accent-color:var(--pine)}
 .chk.done{background:var(--ok-bg);border-color:var(--pine)}
@@ -258,36 +280,36 @@ details[open].sol .sol-marker{transform:rotate(45deg);background:var(--ink);colo
    EDITOR DE REDACCIÓN
 ============================================================ */
 .ed-box{border:1.5px solid var(--ink);border-radius:10px;margin-top:18px;overflow:hidden;background:var(--card)}
-.ed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);background:#ecf1ea;flex-wrap:wrap}
+.ed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--line);background:#f6e3ea;flex-wrap:wrap}
 .ed-title{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--pine)}
 .ed-title svg{width:13px;height:13px}
 .ed-status{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
 .ed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
 .ed-status.saved{color:var(--pine);font-weight:600}
-.ed-status.saved .dot{background:#4a8a5c}
+.ed-status.saved .dot{background:#2f855a}
 .ed-grid{display:grid;grid-template-columns:1fr 330px}
 .ed-main{padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.ed-ta{width:100%;min-height:200px;resize:vertical;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink)}
-.ed-ta:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(30,70,54,.14)}
+.ed-ta{width:100%;min-height:200px;resize:vertical;font:inherit;font-size:14.5px;line-height:1.6;padding:12px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:#2E1A26}
+.ed-ta:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(0,123,93,.14)}
 .ed-preview-wrap{border:1px dashed var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper)}
-.ed-preview-head{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 12px;background:rgba(28,43,37,.04);border-bottom:1px dashed var(--line)}
+.ed-preview-head{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:6px 12px;background:rgba(74,14,40,.04);border-bottom:1px dashed var(--line)}
 .ed-preview{padding:12px 14px;font-size:14.5px;min-height:56px;overflow-x:auto}
 .ed-preview .katex-display{margin:6px 0}
 .ed-ph{color:var(--muted);font-size:13px}
-.ed-manual{border-left:1px solid var(--line);padding:12px 14px;background:rgba(28,43,37,.03);max-height:460px;overflow:auto}
+.ed-manual{border-left:1px solid var(--line);padding:12px 14px;background:rgba(74,14,40,.03);max-height:460px;overflow:auto}
 .ed-note{font-size:12px;color:var(--muted);margin-bottom:10px}
 .ed-note code{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px}
 .ed-cmd-title{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--terra);margin:12px 0 4px}
 .cmd-row{display:grid;grid-template-columns:minmax(0,1fr) auto 26px;align-items:center;gap:8px;padding:5px 0;border-bottom:1px dashed var(--line)}
-.cmd-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--ink);overflow-x:auto;white-space:nowrap;display:block}
+.cmd-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#2E1A26;overflow-x:auto;white-space:nowrap;display:block}
 .cmd-help{display:block;font-size:10.5px;color:var(--muted);font-family:'Instrument Sans'}
 .cmd-view{font-size:13px;text-align:right;max-width:130px;overflow-x:auto;padding:2px 0}
 .cmd-add{width:26px;height:26px;border:1px solid var(--line-strong);border-radius:6px;background:var(--card);display:grid;place-items:center;font-weight:700;color:var(--pine);transition:all .15s;font-size:14px;flex:none}
-.cmd-add:hover{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+.cmd-add:hover{background:var(--pine);color:#fff;border-color:var(--pine)}
 .ed-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px dashed var(--line-strong);flex-wrap:wrap}
 .ed-count{font-size:12px;color:var(--muted)}
 details.mini-check{border:1px dashed var(--line-strong);border-radius:8px;background:var(--terra-soft);margin-top:14px}
-details.mini-check summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;list-style:none}
+details.mini-check summary{padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;list-style:none;color:#2E1A26}
 details.mini-check summary::-webkit-details-marker{display:none}
 details.mini-check summary:hover{color:var(--terra)}
 details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-top:8px;font-size:13.5px}
@@ -297,29 +319,29 @@ details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-to
 ============================================================ */
 .avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
 .del-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;transition:all .15s}
-.del-btn:hover{border-color:var(--terra);color:var(--terra)}
-.del-btn.confirm{background:var(--terra);border-color:var(--terra);color:#fff}
-.boleta-card{position:relative;max-width:700px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 rgba(28,43,37,.12);overflow:hidden}
+.del-btn:hover{border-color:var(--err);color:var(--err)}
+.del-btn.confirm{background:var(--err);border-color:var(--err);color:#fff}
+.boleta-card{position:relative;max-width:700px;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:8px 8px 0 var(--shadow);overflow:hidden}
 .b-head{display:flex;align-items:center;gap:16px;padding:22px 24px;border-bottom:1.5px solid var(--ink)}
 .b-head .avatar{width:52px;height:52px;font-size:17px;border:1.5px solid var(--ink)}
 .b-head>div{flex:1;min-width:0}
 .b-title{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--terra);margin-bottom:3px}
-.b-name{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;line-height:1.15}
+.b-name{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;line-height:1.15;color:var(--ink)}
 .b-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
-.b-seal{flex:none;width:76px;height:76px;border:2px solid var(--terra);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.85;line-height:1.25}
+.b-seal{flex:none;width:76px;height:76px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--terra);transform:rotate(-8deg);opacity:.9;line-height:1.25}
 .b-seal span{font-size:7.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .b-seal strong{font-family:'Fraunces',serif;font-size:1.05rem}
 .b-body{padding:8px 24px 18px}
 .b-row{display:grid;grid-template-columns:1fr 150px 92px;gap:14px;align-items:center;border-top:1px solid var(--line);padding:13px 0}
 .b-row:first-child{border-top:none}
-.b-rubname{font-weight:600;font-size:14.5px}
+.b-rubname{font-weight:600;font-size:14.5px;color:#2E1A26}
 .b-rubdet{font-size:12px;color:var(--muted);margin-top:1px}
 .b-bar{height:10px;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden;background:var(--paper)}
 .b-bar>div{height:100%;background:var(--pine);transition:width .4s ease}
-.b-pts{text-align:right;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+.b-pts{text-align:right;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;color:var(--ink)}
 .b-pts small{font-weight:400;color:var(--muted);font-size:.75em}
-.b-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#ecf1ea;padding:16px 24px}
-.b-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem}
+.b-total{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:2px solid var(--ink);background:#f6e3ea;padding:16px 24px}
+.b-total-lbl{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem;color:var(--ink)}
 .b-total-det{font-size:11.5px;color:var(--muted);margin-top:2px}
 .b-score{display:flex;align-items:baseline;gap:6px}
 .b-score .big{font-family:'Fraunces',serif;font-size:3rem;font-weight:700;color:var(--pine);line-height:1}
@@ -328,19 +350,42 @@ details.mini-check .sol-body{border-top:1px dashed var(--line-strong);padding-to
 .boleta-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:700px}
 
 /* ============================================================
+   PATCH v4: MODAL — muestra generada del modo IC-t
+============================================================ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(46,26,38,.55);backdrop-filter:blur(3px);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-card{background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);max-width:640px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:10px 10px 0 var(--shadow);animation:toastIn .25s ease}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1.5px solid var(--ink);background:#f6e3ea}
+.modal-title{font-family:'Fraunces',serif;font-weight:700;color:var(--ink);font-size:1rem}
+.modal-close{width:32px;height:32px;border:1.5px solid var(--ink);border-radius:50%;background:var(--card);font-size:18px;font-weight:700;color:var(--ink);line-height:1;flex:none}
+.modal-close:hover{background:var(--ink);color:#fff}
+.modal-body{padding:16px 18px;overflow-y:auto}
+.smp-lead{font-size:13.5px;color:var(--muted);margin-bottom:8px}
+.smp-box{border:1px dashed var(--line-strong);border-radius:8px;padding:10px 12px;margin-bottom:6px;max-height:170px;overflow-y:auto}
+.smp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.smp-chip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;border:1px solid var(--line-strong);border-radius:6px;padding:2px 8px;background:var(--paper)}
+.smp-step{border-top:1px dashed var(--line-strong);padding:9px 0;display:flex;justify-content:space-between;gap:14px;align-items:baseline}
+.smp-step:first-of-type{border-top:none}
+.smp-step .lbl{font-size:13.5px;font-weight:600}
+.smp-step .val{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600;color:var(--pine);white-space:nowrap}
+.smp-verdict{margin-top:12px;border-radius:8px;padding:11px 14px;font-size:14px;border:1px solid}
+.smp-verdict.ok{background:var(--ok-bg);border-color:var(--pine)}
+.smp-verdict.bad{background:var(--err-bg);border-color:var(--err)}
+.smp-z{margin-top:10px;font-size:13px;color:var(--muted)}
+
+/* ============================================================
    TOASTS / FOOTER
 ============================================================ */
 #toasts{position:fixed;bottom:22px;right:22px;z-index:100;display:flex;flex-direction:column;gap:10px;max-width:340px}
-.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(28,43,37,.28);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:10px;padding:12px 16px;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(74,14,40,.3);animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2)}
 .toast svg{flex:none;width:17px;height:17px}
 .toast.ok svg{color:#8fd0a5}
 .toast.err svg{color:#f0a284}
 .toast.out{animation:toastOut .3s ease forwards}
 @keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastOut{to{opacity:0;transform:translateX(20px)}}
-footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
-.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-.foot-row strong{color:var(--ink)}
+footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38px;margin-top:20px}
+.foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.72)}
+.foot-row strong{color:#fff}
 
 /* ============================================================
    RESPONSIVE
@@ -379,6 +424,9 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <span class="brand-ico"><i data-lucide="sigma"></i></span>
       <span>Estadística Inferencial<small>Aula interactiva — Dr. Adrián Cerda</small></span>
     </div>
+    <div class="topbar-right">
+      <img src="logo-UP.png" alt="Logo Universidad Panamericana" class="topbar-logo">
+    </div>
   </div>
   <div class="wrap">
     <nav class="tabs" id="mainNav">
@@ -398,16 +446,16 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
 <section class="view" id="v-inicio">
   <div class="wrap hero">
     <div>
-      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP · Larsen &amp; Marx, Capítulo 5</p>
+      <p class="overline">Estadística Inferencial · Ciencias Empresariales — UP </p>
       <h1>Estimación: de la muestra al <em>parámetro</em></h1>
-      <p class="lead">La inferencia empieza aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
+      <p class="lead">La inferencia estadística realmente empieza aquí: los tipos de estimadores y sus propiedades, la máxima verosimilitud, y los intervalos de confianza —para medias y proporciones, en una o dos muestras— son las herramientas clave que cuantifican con honestidad la incertidumbre de toda decisión empresarial.</p>
       <div class="hero-actions">
         <button class="btn" data-view="teoria"><i data-lucide="book-open"></i>Entrar a la teoría</button>
         <button class="btn ghost" data-view="simulador"><i data-lucide="flask-conical"></i>Probar el simulador</button>
       </div>
       <dl class="meta-grid">
         <div><dt>Unidad</dt><dd>V — Estimación</dd></div>
-        <div><dt>Sesiones</dt><dd>4 · teórico-prácticas</dd></div>
+        <div><dt>Sesiones</dt><dd>teórico-prácticas</dd></div>
         <div><dt>Evaluación</dt><dd>Quiz + tareas + laboratorio</dd></div>
         <div><dt>Requisitos</dt><dd>Variables aleatorias y distribuciones (Caps. 3–4)</dd></div>
       </dl>
@@ -428,7 +476,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       </div>
       <div class="route-item" data-view="simulador">
         <span class="route-no">02</span>
-        <div><h3>Laboratorio de simulación</h3><p>Genera miles de muestras y observa dos ideas clave: la distribución muestral del estimador y la cobertura real de los intervalos de confianza.</p></div>
+        <div><h3>Laboratorio de simulación</h3><p>Genera miles de muestras y observa las ideas clave: la distribución muestral del estimador y la cobertura real de los intervalos —con Z y σ conocida, y con t y s cuando σ se desconoce. Inspecciona la muestra detrás de cada intervalo.</p></div>
         <span class="route-go"><i data-lucide="arrow-right"></i></span>
       </div>
       <div class="route-item" data-view="actividades">
@@ -448,7 +496,8 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
         <div class="stat"><div class="num" id="statNota">—</div><div class="lbl">Tu nota (sobre 10)</div></div>
         <div class="stat"><div class="num">14</div><div class="lbl">Fórmulas en catálogo</div></div>
         <div class="stat"><div class="num">7</div><div class="lbl">Preguntas del quiz</div></div>
-        <div class="stat"><div class="num">17</div><div class="lbl">Ejercicios y problemas</div></div>
+        <!-- PATCH v6: 7 guiados + 4 refuerzos + 8 tarea = 19 -->
+        <div class="stat"><div class="num">19</div><div class="lbl">Ejercicios y problemas</div></div>
       </div>
     </aside>
   </div>
@@ -477,7 +526,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <div class="prose">
 
         <div class="def" style="border-left-color:var(--gold)">
-          <span class="def-tag" style="color:#8a6d10">Correspondencia con el programa</span>
+          <span class="def-tag" style="color:#9a7d2e">Correspondencia con el programa</span>
           <p><strong>2.1 Tipos de estimadores</strong> → 5.1 y 5.2 · <strong>2.2 Propiedades</strong> → 5.1 · <strong>2.3 Estimación puntual</strong> → 5.1 y 5.2 · <strong>2.4 Estimación por intervalo</strong> → 5.3 · <strong>2.5 IC para una y dos muestras</strong> → 5.3 y 5.4 · <strong>2.6 IC para la proporción</strong> → 5.3 y 5.5.</p>
         </div>
 
@@ -489,26 +538,28 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
             <span class="def-tag">Definición</span>
             <p>Un <strong>estimador</strong> es una función de la muestra, \( \hat\theta = g(X_1,\dots,X_n) \), empleada para aproximar un parámetro desconocido \( \theta \). El <strong>estimado</strong> es el valor numérico que toma el estimador al observarse una muestra concreta.</p>
           </div>
-          <p><strong>Tipos de estimadores.</strong> Conviene distinguir dos clasificaciones complementarias:</p>
+          <p><strong>Tipos de estimadores.</strong> Conviene distinguirlos en dos grandes clases:</p>
           <ul>
-            <li><strong>Por el resultado que producen:</strong> <em>puntuales</em>, que entregan un solo número (\( \bar X \) para \( \mu \)), y <em>por intervalo</em>, que entregan un rango con un nivel de confianza asociado (secciones 5.3–5.5). La estimación puntual responde «¿cuánto?»; la intervalar, «¿entre cuánto, con qué garantía?».</li>
-            <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em> —sección 5.2, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión, unidad posterior.</li>
+            <li><strong>Por el resultado que producen:</strong> <em>puntuales</em>, que entregan un solo número (\( \bar X \) para \( \mu \)), y <em>por intervalo</em>, que entregan un rango de valores con un nivel de confianza asociado. La estimación puntual responde «¿cuánto?»; la intervalar, «¿entre cuánto, y con qué garantía?».</li>
+            <li><strong>Por el método de construcción:</strong> <em>método de momentos</em> —igualar los momentos muestrales a los poblacionales, simple pero a veces poco eficiente—, <em>máxima verosimilitud</em>, el principio más potente— y <em>mínimos cuadrados</em> —base de la regresión lineal, unidad que veremos más adelante.</li>
           </ul>
-          <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas:</p>
+          <p>Evaluar un procedimiento de estimación exige estudiar su comportamiento <em>en muestreos repetidos</em>. Las cuatro propiedades canónicas son:</p>
+          <!-- PATCH v7: reparto de columnas para que las fórmulas del criterio no se partan en dos líneas -->
           <table class="tbl">
+            <colgroup><col style="width:17%"><col style="width:34%"><col style="width:49%"></colgroup>
             <thead><tr><th>Propiedad</th><th>Criterio</th><th>Lectura</th></tr></thead>
             <tbody>
-              <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>En promedio dispara al centro: no sobre- ni subestima sistemáticamente.</td></tr>
-              <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Misma diana, menor dispersión. Se mide con el error estándar.</td></tr>
-              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados.</td></tr>
-              <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se concentra alrededor del parámetro.</td></tr>
+              <tr><td><strong>Insesgamiento</strong></td><td>\( E(\hat\theta) = \theta \)</td><td>El promedio de todas sus posibles muestras coincide exactamente con el parámetro: no sobre- ni subestima el dato real en promedio.</td></tr>
+              <tr><td><strong>Eficiencia</strong></td><td>Menor varianza entre insesgados</td><td>Tiene la menor dispersión entre todos los estimadores insesgados posibles, garantizando mayor precisión. Se mide con el error estándar.</td></tr>
+              <tr><td><strong>Error cuadrático medio</strong></td><td>\( \mathrm{MSE} = \mathrm{Var} + [\text{sesgo}]^2 \)</td><td>Penaliza a la vez imprecisión y sesgo; permite comparar estimadores sesgados bajo la premisa de que un estimador ideal tiene sesgo cero y varianza mínima.</td></tr>
+              <tr><td><strong>Consistencia</strong></td><td>\( \hat\theta \xrightarrow{P} \theta \) cuando \( n\to\infty \)</td><td>Con más datos, la estimación se acerca al verdadero valor del parámetro y el error tiende a cero.</td></tr>
             </tbody>
           </table>
-          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar —el «medidor de precisión»— son:</p>
+          <p>Los dos estimadores más importantes de la estadística aplicada son la <strong>media muestral</strong> \( \bar X \) para \( \mu \) y la <strong>proporción muestral</strong> \( \hat p = X/n \) para \( p \), ambos insesgados y consistentes. Sus errores estándar — o «medidores de precisión» — son:</p>
           <table class="tbl">
             <thead><tr><th>Parámetro</th><th>Estimador</th><th>Error estándar</th></tr></thead>
             <tbody>
-              <tr><td>\(\mu\) (media poblacional)</td><td>\(\bar X\)</td><td>\( \sigma/\sqrt{n} \) &nbsp;(con \( \sigma \) desconocida, \( s/\sqrt{n} \))</td></tr>
+              <tr><td>\(\mu\) (media poblacional)</td><td>\(\bar X\)</td><td>\( \sigma/\sqrt{n} \) &nbsp;(y con \( \sigma \) desconocida, \( s/\sqrt{n} \))</td></tr>
               <tr><td>\(p\) (proporción)</td><td>\(\hat p = X/n\)</td><td>\( \sqrt{p\,q/n} \)</td></tr>
             </tbody>
           </table>
@@ -525,24 +576,53 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <h3>El método de máxima verosimilitud</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \( L(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \). El <strong>estimador de máxima verosimilitud</strong> (MLE) es el valor \( \hat\theta \) que maximiza \( L(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
+            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es $$ V(\theta) = \prod_{i=1}^{n} f(x_i;\theta)$$ El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( V(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
-          <p>El procedimiento estándar de derivación:</p>
+          <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>). No obstante nosotros utilizaremos EMV.</p>
+          <!-- PATCH v6: procedimiento ampliado a los seis pasos -->
+          <p>El método se aplica siempre con la misma lógica — cambian la distribución y el parámetro, nunca el procedimiento:</p>
           <ol>
-            <li>Plantear \( L(\theta) \) como producto de las densidades o fmp de los datos.</li>
-            <li>Tomar logaritmo: \( \ln L(\theta) \) (mismo máximo, cálculo mucho más fácil).</li>
-            <li>Derivar respecto a \( \theta \), igualar a cero y despejar \( \hat\theta \).</li>
-            <li>Verificar que es un máximo (segunda derivada negativa o argumento directo).</li>
+            <li><strong>Identificar</strong> la distribución de los datos y el parámetro desconocido \( \theta \).</li>
+            <li><strong>Construir</strong> \( V(\theta) \) como producto de las densidades o fmp de los datos.</li>
+            <li><strong>Tomar logaritmo</strong>: \( \ell(\theta)=\ln V(\theta) \) — mismo máximo, cálculo mucho más fácil (reemplaza un producto por una suma).</li>
+            <li><strong>Derivar</strong> respecto a \( \theta \).</li>
+            <li><strong>Igualar a cero</strong> y despejar \( \hat\theta \).</li>
+            <li><strong>Verificar</strong> que es un máximo (segunda derivada negativa).</li>
           </ol>
           <div class="ex">
-            <span class="ex-tag">Ejemplo — sucursal bancaria (finanzas)</span>
-            <p>El número de llegadas de clientes por hora a una sucursal sigue una distribución Poisson con media \( \lambda \) desconocida. En seis horas se registran 14, 11, 17, 12, 15 y 11 llegadas. La verosimilitud es \( L(\lambda) = \prod e^{-\lambda}\lambda^{x_i}/x_i! \), de modo que</p>
-            <p>\( \ln L = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \sum\ln x_i! \quad\Longrightarrow\quad \frac{d\ln L}{d\lambda} = -n + \frac{\sum x_i}{\lambda} = 0 \)</p>
+            <span class="ex-tag">Ejemplo 1 — sucursal bancaria (finanzas, Poisson)</span>
+            <p>El número de llegadas de clientes por hora a una sucursal sigue una distribución Poisson con media \( \lambda \) desconocida. En seis horas se registran 14, 11, 17, 12, 15 y 11 llegadas. La verosimilitud es \( V(\lambda) = \prod e^{-\lambda}\lambda^{x_i}/x_i! \), de modo que</p>
+            <p>\( \ln V = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \sum\ln x_i! \quad\Longrightarrow\quad \frac{d\ln L}{d\lambda} = -n + \frac{\sum x_i}{\lambda} = 0 \)</p>
             <p>\( \Rightarrow\; \hat\lambda = \bar x = \tfrac{80}{6} \approx 13.3 \) clientes por hora. El promedio muestral —el mismo estimador intuitivo— resulta ser el de máxima verosimilitud.</p>
           </div>
-          <p>La tabla siguiente resume los MLE que más se usan en la práctica empresarial:</p>
+          <!-- PATCH v6: Ejemplo 2 (Bernoulli) -->
+          <div class="ex">
+            <span class="ex-tag">Ejemplo 2 — aceptación de una promoción (marketing, Bernoulli)</span>
+            <p>Se pregunta a \( n=10 \) clientes si aceptarían una nueva promoción: \( X_i=1 \) si acepta y \( 0 \) si no. Los resultados fueron \( 1,\,0,\,1,\,1,\,0,\,1,\,0,\,1,\,1,\,0 \) — seis aceptaciones. Cada \( X_i\sim\mathrm{Bernoulli}(p) \) con \( P(X_i=x_i)=p^{x_i}(1-p)^{1-x_i} \), y el parámetro desconocido es \( \theta=p \).</p>
+            <p><strong>1–2.</strong> \( V(p)=\displaystyle\prod_{i=1}^{10}p^{x_i}(1-p)^{1-x_i}=p^{\sum x_i}(1-p)^{\,n-\sum x_i}=p^{6}(1-p)^{4}. \)</p>
+            <p><strong>3.</strong> \( \ell(p)=6\ln p+4\ln(1-p) \) — el producto se convirtió en una suma.</p>
+            <p><strong>4–5.</strong> \( \dfrac{d\ell}{dp}=\dfrac{6}{p}-\dfrac{4}{1-p}=0 \;\Rightarrow\; 6(1-p)=4p \;\Rightarrow\; 6=10p \;\Rightarrow\; \hat p_{MV}=0.6. \)</p>
+            <p><strong>6.</strong> \( \ell''(p)=-\dfrac{6}{p^{2}}-\dfrac{4}{(1-p)^{2}}<0 \) para \( 0<p<1 \): es un máximo. Con base en la muestra, la proporción estimada de clientes que aceptarían la promoción es del <strong>60%</strong>.</p>
+            <p>Resultado general para muestras Bernoulli: \( \hat p_{MV}=\bar X=\dfrac{\sum X_i}{n} \) — la proporción muestral (F3) es también el estimador de máxima verosimilitud. Practícalo con otros datos en el <a href="#" data-view="actividades">Ejercicio 6</a>.</p>
+          </div>
+          <!-- PATCH v6: Ejemplo 3 (Normal con ambos parámetros) -->
+          <div class="ex">
+            <span class="ex-tag">Ejemplo 3 — demanda con media y varianza desconocidas (operaciones, Normal)</span>
+            <p>Cuando la demanda diaria de un producto se modela \( X_i\sim N(\mu,\sigma^2) \) y <em>ambos</em> parámetros son desconocidos, el método produce un <strong>sistema de ecuaciones</strong> — una por parámetro. Con \( V(\mu,\sigma^2)=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-(x_i-\mu)^2/(2\sigma^2)} \), el logaritmo es:</p>
+            <div class="formula-hero">\( \displaystyle \ell(\mu,\sigma^2)=-\frac{n}{2}\ln(2\pi)-\frac{n}{2}\ln(\sigma^2)-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i-\mu)^2. \)</div>
+            <p><strong>Derivada respecto a \( \mu \):</strong> &nbsp; \( \dfrac{\partial\ell}{\partial\mu}=\dfrac{1}{\sigma^2}\sum(x_i-\mu)=0 \;\Rightarrow\; \hat\mu_{MV}=\bar X. \)</p>
+            <p><strong>Derivada respecto a \( \sigma^2 \):</strong> &nbsp; \( \dfrac{\partial\ell}{\partial\sigma^2}=-\dfrac{n}{2\sigma^2}+\dfrac{\sum(x_i-\mu)^2}{2(\sigma^2)^{2}}=0 \;\Rightarrow\; \hat\sigma^{2}_{MV}=\dfrac{1}{n}\sum_{i=1}^{n}(x_i-\bar x)^2. \)</p>
+            <p><strong>Contraste pedagógico:</strong> el EMV de la varianza usa divisor \( n \), mientras que la varianza muestral insesgada \( s^2 \) de la Sección 5.1 usa \( n-1 \). La máxima verosimilitud maximiza la compatibilidad con los datos observados; no garantiza insesgamiento — son criterios distintos. Resolverás este sistema con datos concretos en el <a href="#" data-view="actividades">Ejercicio 7</a>.</p>
+          </div>
+          <!-- PATCH v6: idea clave de cierre -->
+          <div class="def">
+            <span class="def-tag">Idea clave</span>
+            <p>La máxima verosimilitud no pregunta qué parámetro es «más probable» antes de observar los datos: pregunta <strong>qué valor del parámetro hace que los datos efectivamente observados sean los más compatibles con el modelo</strong>. Esa misma lógica  $$datos \to L(\theta) \to \ln L(\theta) \to \ell'(\theta)=0 \to \hat\theta_{MV} $$  es la que reaparece en los tres ejemplos anteriores, cualquiera que sea la distribución.</p>
+          </div>
+          <!-- PATCH v6: la tabla como resumen de los tres ejemplos -->
+          <p>La tabla siguiente resume los EMV que más se usan en la práctica empresarial — los tres ejemplos anteriores ilustran sus filas:</p>
           <table class="tbl">
-            <thead><tr><th>Distribución</th><th>Parámetro</th><th>Estimador MLE</th></tr></thead>
+            <thead><tr><th>Distribución</th><th>Parámetro</th><th>Estimador EMV</th></tr></thead>
             <tbody>
               <tr><td>Bernoulli / Binomial</td><td>\(p\)</td><td>\( \hat p = x/n \)</td></tr>
               <tr><td>Poisson</td><td>\(\lambda\)</td><td>\( \hat\lambda = \bar x \)</td></tr>
@@ -558,15 +638,15 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <h3>Intervalos de confianza para una muestra</h3>
           <div class="def">
             <span class="def-tag">Definición — estimación por intervalo</span>
-            <p>Un <strong>intervalo de confianza</strong> del \(100(1-\alpha)\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro en \( 1-\alpha \) de ellas. Antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
+            <p>Un <strong>intervalo de confianza</strong> del \((1-\alpha)\times 100\%\) para \( \mu \) es un procedimiento que, aplicado a muestras repetidas, captura al parámetro deseado en \( 1-\alpha \) de ellas. En otras palabras, antes de observar la muestra, el intervalo aleatorio \( \big[\bar X - E,\ \bar X + E\big] \) contiene a \( \mu \) con probabilidad \( 1-\alpha \).</p>
           </div>
-          <p><strong>Interpretación correcta.</strong> «Con 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendría a \( \mu \). No significa que \( \mu \) «mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
-          <p><strong>Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
+          <p><strong>Interpretación correcta.</strong> «Con un 95% de confianza» significa: si repitiéramos el muestreo y la construcción del intervalo muchísimas veces, cerca del 95% de los intervalos así construidos contendrían a \( \mu \). No significa que \( \mu \) «se mueva» y caiga dentro del intervalo calculado: el parámetro es fijo; <em>lo aleatorio es el intervalo</em>. El simulador de esta unidad hace visible exactamente esta idea.</p>
+          <p><strong>Datos: Media, \( \sigma \) conocida.</strong> Si la población es normal, o \( n \) es grande (TCL), entonces \( \bar X \sim N(\mu, \sigma^2/n) \):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt n}, \qquad E = z_{\alpha/2}\frac{\sigma}{\sqrt n}. \)</div>
           <p>El valor \( E \) se llama <strong>error máximo de estimación</strong>: el margen que, con nivel \( 1-\alpha \), separa a la estimación del parámetro.</p>
-          <p><strong>Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño:</p>
+          <p><strong>Datos: Media, \( \sigma \) desconocida.</strong> Se sustituye por \( s \) y el pivote sigue la <strong>t de Student</strong> con \( \nu = n-1 \) grados de libertad — exige población aproximadamente normal, sobre todo con \(n\) pequeño (el modo «IC-t» del <a href="#" data-view="simulador">simulador</a> muestra empíricamente qué ocurre con poblaciones asimétricas cuando se ignora esta condición):</p>
           <div class="formula-hero">\( \displaystyle \bar x \pm t_{\alpha/2,\,n-1}\,\frac{s}{\sqrt n}. \)</div>
-          <p><strong>Proporción (2.6).</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \):</p>
+          <p><strong>IC para una proporción.</strong> Para muestras grandes, con condiciones \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \), el intervalo es:</p>
           <div class="formula-hero">\( \displaystyle \hat p \pm z_{\alpha/2}\sqrt{\frac{\hat p\,\hat q}{n}}. \)</div>
           <div class="ex">
             <span class="ex-tag">Ejemplo — fondo de inversión (finanzas)</span>
@@ -588,10 +668,10 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <h3>Intervalos de confianza para dos muestras</h3>
           <p>Comparar dos poblaciones —dos sucursales, dos versiones de una campaña, antes y después de una intervención— sigue el mismo esquema: estimador de la diferencia \( \pm \) valor crítico \( \times \) error estándar de la diferencia. Lo que cambia es la forma del error estándar y la distribución del pivote.</p>
 
-          <p><strong>Diferencia de medias, \( \sigma_1, \sigma_2 \) conocidas.</strong> Pivote normal estándar:</p>
+          <p><strong>Datos: Diferencia de medias, \( \sigma_1, \sigma_2 \) conocidas.</strong> Pivote normal estándar:</p>
           <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}. \)</div>
 
-          <p><strong>Diferencia de medias, varianzas desconocidas.</strong> Si se pueden asumir iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \):</p>
+          <p><strong>Datos: Diferencia de medias, varianzas desconocidas.</strong> Si se pueden asumir iguales, se agrupa la información de ambas muestras en \( s_p^2 = \dfrac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1+n_2-2} \):</p>
           <div class="formula-hero">\( \displaystyle (\bar x_1 - \bar x_2) \pm t_{\alpha/2,\,\nu}\,s_p\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}, \qquad \nu = n_1+n_2-2. \)</div>
           <p>Si las varianzas no pueden asumirse iguales, la alternativa es <strong>Welch–Satterthwaite</strong>: mismo numerador con \( \sqrt{s_1^2/n_1 + s_2^2/n_2} \) y grados de libertad \( \nu = \dfrac{(s_1^2/n_1 + s_2^2/n_2)^2}{\dfrac{(s_1^2/n_1)^2}{n_1-1} + \dfrac{(s_2^2/n_2)^2}{n_2-1}} \).</p>
 
@@ -627,12 +707,12 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <h3>Tamaño de muestra: cuántos datos se necesitan</h3>
           <p>Despejando \( n \) del error máximo \( E \) se obtienen las dos fórmulas de planeación más usadas en investigación de mercados y auditoría:</p>
           <ul>
-            <li>Para estimar una <strong>media</strong> con error máximo \( E \): \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
-            <li>Para estimar una <strong>proporción</strong>: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\,\hat q = 0.25 \), el caso más conservador.</li>
+            <li>Para estimar una <strong>media</strong> con error máximo \( E \) el tamaño de muestra es: \( \; n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</li>
+            <li>Para estimar una <strong>proporción</strong> el tamaño es: \( \; n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \). Sin estudios previos se usa \( \hat p\,\hat q = 0.25 \), que se convierte en el caso más conservador.</li>
           </ul>
           <div class="ex">
             <span class="ex-tag">Ejemplo — piloto de encuesta (marketing)</span>
-            <p>¿Cuántos clientes encuestar para un margen de \( \pm 5 \) puntos al 95%? Sin información previa (\( \hat p\,\hat q = 0.25 \)):</p>
+            <p>¿Cuántos clientes se deben encuestar para un margen de \( \pm 5 \) puntos al 95%? Sin información previa (\( \hat p\,\hat q = 0.25 \)):</p>
             <p>\( n = \dfrac{1.96^{2}\times 0.25}{0.05^{2}} = \dfrac{0.9604}{0.0025} = 384.2 \;\Rightarrow\; \mathbf{385} \) encuestados.</p>
             <p>Con un piloto que indicara \( \hat p = 0.30 \), bastarían \( \tfrac{1.96^2 \times 0.21}{0.0025} = 322.7 \Rightarrow 323 \). El redondeo es <em>siempre hacia arriba</em>: \( n \) es un número de personas.</p>
           </div>
@@ -642,76 +722,76 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
         <article class="sec" id="t56">
           <div class="sec-no">5.6</div>
           <h3>Catálogo de estimadores e intervalos</h3>
-          <p>Las catorce fórmulas de la unidad en una sola vista, agrupadas por papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo —una y dos muestras— en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
+          <p>A continuación se dan las catorce fórmulas de la unidad en una sola vista, agrupadas por papel: <span class="tag d">puntual / MLE</span>, <span class="tag c">intervalo</span> y <span class="tag g">tamaño</span>. Prueba cada intervalo —una y dos muestras— en la <a href="#" data-view="calculadora">calculadora de la unidad</a>.</p>
 
           <div style="margin-top:22px">
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">E1</span></div>
+              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">F1</span></div>
               <div><div class="spec-name">Media poblacional \( \mu \)</div><div class="spec-use">Estimador natural insesgado; su precisión se mide con el error estándar.</div></div>
               <div class="spec-math">\( \hat\mu = \bar X, \quad \mathrm{EE} = \dfrac{\sigma}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">E2</span></div>
+              <div class="spec-id"><span class="tag d">Puntual</span><span class="no">F2</span></div>
               <div><div class="spec-name">Proporción \( p \)</div><div class="spec-use">Éxitos sobre ensayos: intención de compra, satisfacción, tasa de clics.</div></div>
               <div class="spec-math">\( \hat p = \dfrac{X}{n}, \quad \mathrm{EE} = \sqrt{\dfrac{p\,q}{n}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E3</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F3</span></div>
               <div><div class="spec-name">Bernoulli / Binomial</div><div class="spec-use">Parámetro de éxito estimado por la proporción observada.</div></div>
               <div class="spec-math">\( \hat p = \dfrac{x}{n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E4</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F4</span></div>
               <div><div class="spec-name">Poisson</div><div class="spec-use">Llegadas por hora, fallas por lote, reclamos por día.</div></div>
               <div class="spec-math">\( \hat\lambda = \bar x \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag d">MLE</span><span class="no">E5</span></div>
+              <div class="spec-id"><span class="tag d">MLE</span><span class="no">F5</span></div>
               <div><div class="spec-name">Exponencial</div><div class="spec-use">Tiempos entre eventos; el recíproco de la vida media.</div></div>
               <div class="spec-math">\( \hat\lambda = \dfrac{1}{\bar x} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E6</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F6</span></div>
               <div><div class="spec-name">IC para \( \mu \), \( \sigma \) conocida</div><div class="spec-use">Población normal o \( n \) grande; pivote normal estándar.</div></div>
               <div class="spec-math">\( \bar x \pm z_{\alpha/2}\,\dfrac{\sigma}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E7</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F7</span></div>
               <div><div class="spec-name">IC para \( \mu \), \( \sigma \) desconocida</div><div class="spec-use">Sustituir \( s \) y usar t de Student con \( n-1 \) gl.</div></div>
               <div class="spec-math">\( \bar x \pm t_{\alpha/2,\,n-1}\,\dfrac{s}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">E8</span></div>
+              <div class="spec-id"><span class="tag c">IC · 1 muestra</span><span class="no">F8</span></div>
               <div><div class="spec-name">IC para \( p \)</div><div class="spec-use">Muestras grandes: \( n\hat p \ge 5 \) y \( n\hat q \ge 5 \).</div></div>
               <div class="spec-math">\( \hat p \pm z_{\alpha/2}\sqrt{\dfrac{\hat p\,\hat q}{n}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E9</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F9</span></div>
               <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), \( \sigma \) conocidas</div><div class="spec-use">Comparación de dos procesos con varianzas poblacionales conocidas.</div></div>
               <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm z_{\alpha/2}\sqrt{\dfrac{\sigma_1^2}{n_1}+\dfrac{\sigma_2^2}{n_2}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E10</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F10</span></div>
               <div><div class="spec-name">IC para \( \mu_1-\mu_2 \), t</div><div class="spec-use">Varianzas iguales: t agrupada con \(s_p\). Si no: Welch con gl ajustados.</div></div>
               <div class="spec-math">\( (\bar x_1{-}\bar x_2) \pm t_{\alpha/2,\nu}\,s_p\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}},\ \nu{=}n_1{+}n_2{-}2 \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · pareado</span><span class="no">E11</span></div>
+              <div class="spec-id"><span class="tag c">IC · pareado</span><span class="no">F11</span></div>
               <div><div class="spec-name">IC para \( \mu_d \) (antes/después)</div><div class="spec-use">Misma unidad medida dos veces: t sobre las diferencias \(d_i\).</div></div>
               <div class="spec-math">\( \bar d \pm t_{\alpha/2,\,n-1}\,\dfrac{s_d}{\sqrt n} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">E12</span></div>
+              <div class="spec-id"><span class="tag c">IC · 2 muestras</span><span class="no">F12</span></div>
               <div><div class="spec-name">IC para \( p_1-p_2 \)</div><div class="spec-use">A/B testing. SE <em>no agrupada</em>; éxitos esperados \( \ge 5 \).</div></div>
               <div class="spec-math">\( (\hat p_1{-}\hat p_2) \pm z_{\alpha/2}\sqrt{\dfrac{\hat p_1\hat q_1}{n_1}+\dfrac{\hat p_2\hat q_2}{n_2}} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E13</span></div>
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">F13</span></div>
               <div><div class="spec-name">\( n \) para estimar \( \mu \)</div><div class="spec-use">Planeación: error máximo \( E \) con nivel \( 1-\alpha \).</div></div>
               <div class="spec-math">\( n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^{2} \)</div>
             </div>
             <div class="spec-row">
-              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">E14</span></div>
+              <div class="spec-id"><span class="tag g">Tamaño</span><span class="no">F14</span></div>
               <div><div class="spec-name">\( n \) para estimar \( p \)</div><div class="spec-use">Sin datos previos usar \( \hat p\,\hat q = 0.25 \) (conservador).</div></div>
               <div class="spec-math">\( n = \dfrac{z_{\alpha/2}^{2}\,\hat p\,\hat q}{E^{2}} \)</div>
             </div>
@@ -729,7 +809,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
     <div class="view-head">
       <p class="overline">Laboratorio de simulación · Actividad práctica</p>
       <h2>La estimación en acción: muestras, estimadores e intervalos</h2>
-      <p class="sub">Dos experimentos complementarios: <strong>① la distribución muestral de \(\bar X\)</strong> —cómo se comporta el estimador en muestreos repetidos— y <strong>② la cobertura de intervalos</strong> —qué significa realmente «95% de confianza». Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
+      <p class="sub">Aquí tienes tres experimentos complementarios: <strong>① la distribución muestral de \(\bar{X}\)</strong> —cómo se comporta el estimador en muestreos repetidos—, <strong>② la cobertura de IC con Z y σ conocida</strong> —qué significa realmente «95% de confianza»— y <strong>③ la cobertura de IC con t y s (σ desconocida)</strong> —qué ocurre cuando la población es asimétrica y n es pequeño, con la muestra de cada intervalo visible—. Genera cientos de ejecuciones y compara lo empírico con lo teórico.</p>
     </div>
 
     <div class="lab-grid">
@@ -746,8 +826,10 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           </div>
 
           <div class="mode-row">
-            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución muestral de X̄</button>
-            <button class="btn sm ghost" id="mCover"><i data-lucide="move-horizontal"></i>Cobertura de IC</button>
+            <!-- PATCH v7: el macron unicode se reemplaza por LaTeX renderizado -->
+            <button class="btn sm" id="mDist"><i data-lucide="bar-chart-3"></i>Distribución de \( \bar{X} \)</button>
+            <button class="btn sm ghost" id="mCover"><i data-lucide="move-horizontal"></i>IC-Z (σ conocida)</button>
+            <button class="btn sm ghost" id="mT"><i data-lucide="percent"></i>IC-t (σ desconocida)</button>
           </div>
 
           <!-- Modo A: distribución muestral -->
@@ -757,6 +839,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
               <select id="simN">
                 <option value="1">n = 1 (sin promediar)</option>
                 <option value="5">n = 5</option>
+                <option value="10">n = 10</option>
                 <option value="30" selected>n = 30</option>
                 <option value="100">n = 100</option>
               </select>
@@ -769,14 +852,15 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
             </div>
             <div class="stat-2">
               <div class="stat"><div class="num mono" id="dN">0</div><div class="lbl">Muestras generadas</div></div>
-              <div class="stat"><div class="num mono" id="dMean">—</div><div class="lbl">Promedio de las x̄</div></div>
-              <div class="stat"><div class="num mono" id="dSE">—</div><div class="lbl">EE teórico σ/√n</div></div>
-              <div class="stat"><div class="num mono" id="dSD">—</div><div class="lbl">Desv. empírica de x̄</div></div>
+              <!-- PATCH v7: etiquetas con LaTeX renderizado (antes macron unicode) -->
+              <div class="stat"><div class="num mono" id="dMean">—</div><div class="lbl">Promedio de las \( \bar{x} \)</div></div>
+              <div class="stat"><div class="num mono" id="dSE">—</div><div class="lbl">EE teórico \( \sigma/\sqrt{n} \)</div></div>
+              <div class="stat"><div class="num mono" id="dSD">—</div><div class="lbl">Desv. empírica de \( \bar{x} \)</div></div>
             </div>
             <p class="note" id="noteDist">El estimador \(\bar X\) es <strong>insesgado</strong>: el centro de las estimaciones coincide con \( \mu \) (μ aparece como guía en la gráfica). Su dispersión —el <strong>error estándar</strong> \( \sigma/\sqrt n \)— se reduce al aumentar \( n \): esa es la <strong>consistencia</strong>. Cambia \( n \) y compara.</p>
           </div>
 
-          <!-- Modo B: cobertura -->
+          <!-- Modo B: cobertura con Z (σ conocida) -->
           <div id="coverBlock" hidden>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
               <div class="field">
@@ -790,6 +874,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
               <div class="field">
                 <label for="simCn">Tamaño de muestra n</label>
                 <select id="simCn">
+                  <option value="10">n = 10</option>
                   <option value="15">n = 15</option>
                   <option value="30" selected>n = 30</option>
                   <option value="60">n = 60</option>
@@ -808,7 +893,49 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
               <div class="stat"><div class="num mono" id="cPct">—</div><div class="lbl">% de captura observado</div></div>
               <div class="stat"><div class="num mono" id="cNom">95%</div><div class="lbl">Nivel nominal</div></div>
             </div>
-            <p class="note" id="noteCover">Cada intervalo se construye con una <strong>nueva muestra aleatoria</strong>. El % de captura debe acercarse al nivel nominal conforme crece el número de intervalos: esa es la interpretación frecuentista de la confianza. Los intervalos que <em>fallan</em> se pintan en naranja: con 95% esperas que fallen cerca de 1 de cada 20.</p>
+            <p class="note" id="noteCover">Cada intervalo usa \( \bar x \pm z_{\alpha/2}\,\sigma/\sqrt n \) — la fórmula <strong>F6</strong> con la \( \sigma \) <strong>verdadera</strong> de la población elegida. El % de captura debe acercarse al nivel nominal conforme crece el número de intervalos: esa es la interpretación frecuentista de la confianza. Los intervalos que <em>fallan</em> se pintan en naranja: con 95% esperas que fallen cerca de 1 de cada 20.</p>
+          </div>
+
+          <!-- Modo C: cobertura con t y s (σ desconocida) -->
+          <div id="tBlock" hidden>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+              <div class="field">
+                <label for="simTlevel">Nivel de confianza</label>
+                <select id="simTlevel">
+                  <option value="0.90">90%</option>
+                  <option value="0.95" selected>95%</option>
+                  <option value="0.99">99%</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="simTn">Tamaño de muestra n</label>
+                <select id="simTn">
+                  <option value="5">n = 5</option>
+                  <option value="10" selected>n = 10</option>
+                  <option value="15">n = 15</option>
+                  <option value="30">n = 30</option>
+                  <option value="60">n = 60</option>
+                </select>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn" id="btnT1"><i data-lucide="play"></i>+1 intervalo</button>
+              <button class="btn ghost" id="btnT50"><i data-lucide="plus"></i>50</button>
+              <button class="btn ghost" id="btnT200"><i data-lucide="plus"></i>200</button>
+              <button class="btn ghost" id="btnT500"><i data-lucide="plus"></i>500</button>
+              <button class="btn ghost" id="btnTLast" disabled><i data-lucide="eye"></i>Ver última muestra</button>
+              <button class="btn ghost" id="btnTReset"><i data-lucide="rotate-ccw"></i>Reiniciar</button>
+            </div>
+            <div class="stat-2">
+              <div class="stat"><div class="num mono" id="tN">0</div><div class="lbl">Intervalos generados</div></div>
+              <div class="stat"><div class="num mono" id="tCap">0</div><div class="lbl">Capturan a μ (IC-t)</div></div>
+              <div class="stat"><div class="num mono" id="tPct">—</div><div class="lbl">% de captura t</div></div>
+              <div class="stat"><div class="num mono" id="tNom">95%</div><div class="lbl">Nivel nominal</div></div>
+              <div class="stat"><div class="num mono" id="tSides">—</div><div class="lbl">Fallas ↑ / ↓</div></div>
+              <div class="stat"><div class="num mono" id="tZpct">—</div><div class="lbl">% captura Z (mismas muestras)</div></div>
+            </div>
+            <p class="note" id="noteT">Cada intervalo usa \( \bar x \pm t_{\alpha/2,\,n-1}\, s/\sqrt n \) — la fórmula <strong>F7</strong>: \( \sigma \) se desconoce y se sustituye por <strong>s</strong>, que cambia en cada muestra. Con población <em>simétrica</em> (normal) el IC-t es exacto: cobertura ≈ nominal y fallas repartidas en ambos lados. Con población <em>asimétrica</em> (exponencial) y \( n \) pequeño, la cobertura real cae <strong>por debajo</strong> del nominal y las fallas se amontonan en un solo lado. La última tarjeta construye el IC-Z (σ conocida) sobre <em>las mismas muestras</em>: la brecha entre ambos porcentajes mide el costo de estimar \( \sigma \) con \( s \).</p>
+            <p class="note" style="border-top:none;margin-top:6px;padding-top:0"><strong>Para ver la muestra:</strong> pulsa <strong>+1 intervalo</strong> y se abrirá una ventana con los \( n \) valores generados y el cálculo completo de \( \bar x \), \( s \) y el intervalo. También puedes hacer <strong>clic sobre cualquier fila de la gráfica</strong> para inspeccionar esa muestra, o usar el botón <strong>Ver última muestra</strong>.</p>
           </div>
 
           <p class="note">Cada ejecución (muestra o intervalo) se acumula a tu boleta: llevas <strong class="mono" id="simEver">0</strong> (1,000 o más alcanzan el 100% del rubro de laboratorio, que vale <strong>15%</strong>).</p>
@@ -820,6 +947,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
         <canvas id="simCanvas"></canvas>
         <div class="graph-cap" id="capDist">Barras: frecuencia observada de \( \bar x \). Curva naranja: modelo teórico de \( \bar X \) — exacta para la normal y la exponencial; aproximada por el TCL para la uniforme.</div>
         <div class="graph-cap" id="capCover" hidden>Segmentos horizontales: intervalos de confianza (el más reciente arriba). Punto: \( \bar x \) de cada muestra. Línea vertical: el parámetro \( \mu \) verdadero. Verde = captura, naranja = fallo.</div>
+        <div class="graph-cap" id="capT" hidden>Segmentos: intervalos t construidos con la \( s \) de cada muestra (el más reciente arriba). Línea vertical: \( \mu \) verdadero. Verde = captura; naranja = fallo. Con poblaciones asimétricas y n pequeña, los fallos naranjas se agrupan del mismo lado. <strong>Haz clic sobre cualquier fila para abrir la muestra que generó ese intervalo.</strong></div>
       </div>
     </div>
   </div>
@@ -915,7 +1043,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <p class="act-desc">Intenta resolverlos por escrito antes de desplegar la solución. En clase se revisará el procedimiento, no solo el resultado. Al terminar cada uno, márcalo como resuelto para que sume en tu boleta.</p>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · IC para μ con σ conocida — banca (finanzas)</span>El saldo promedio de tarjetas de crédito de una banca múltiple tiene \( \sigma = \$4{,}200 \), conocido de reportes regulatorios. Una muestra aleatoria de 49 clientes arroja \( \bar x = \$18{,}750 \). Construye el IC del 95% para \( \mu \) y decide si la gerencia puede afirmar que el saldo medio supera \$17,500.</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 1 · IC para μ con σ conocida — banca (finanzas)</span>El saldo promedio de tarjetas de crédito de una banca múltiple tiene \( \sigma = \$4{,}200 \), conocido de reportes regulatorios. Una muestra aleatoria de 49 clientes arroja \( \bar x = \$18{,}750 \). Construye el IC del 95% para \( \mu \) y decide si la gerencia puede afirmar que el saldo medio supera $17,500.</span></summary>
         <div class="sol-body">
           <p>\( \sigma \) conocida y \( n=49 \) grande ⇒ intervalo Z: &nbsp; \( E = z_{0.025}\,\dfrac{\sigma}{\sqrt n} = 1.96\cdot\dfrac{4200}{7} = 1{,}176 \).</p>
           <p>\( \text{IC}_{95\%} = 18{,}750 \pm 1{,}176 = (\$17{,}574,\ \$19{,}926). \)</p>
@@ -966,6 +1094,28 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
           <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e5"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
         </div>
       </details>
+
+      <!-- PATCH v6: Ejercicio 6 guiado (Bernoulli), análogo del Ejemplo 2 de la teoría -->
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 6 · MLE para Bernoulli — respuesta a una campaña (marketing)</span>Una tienda en línea envía una campaña promocional a 20 clientes y 7 de ellos realizan una compra. Supón que cada cliente responde de forma independiente con probabilidad de compra \( p \). (a) Identifica la distribución y plantea la verosimilitud \( L(p) \) y su logaritmo. (b) Deriva el MLE de \( p \) y verifica con la segunda derivada que es un máximo. (c) Interpreta la tasa de respuesta estimada.</span></summary>
+        <div class="sol-body">
+          <p><strong>(a)</strong> Cada \( X_i\sim\mathrm{Bernoulli}(p) \). Con 7 compras en 20 envíos (\( \sum x_i=7,\ n=20 \)): \( L(p)=\displaystyle\prod_{i=1}^{20}p^{x_i}(1-p)^{1-x_i}=p^{7}(1-p)^{13} \), de modo que \( \ell(p)=7\ln p+13\ln(1-p) \).</p>
+          <p><strong>(b)</strong> \( \dfrac{d\ell}{dp}=\dfrac{7}{p}-\dfrac{13}{1-p}=0 \;\Rightarrow\; 7(1-p)=13p \;\Rightarrow\; 7=20p \;\Rightarrow\; \hat p_{MV}=\dfrac{7}{20}=0.35. \) Verificación: \( \ell''(p)=-\dfrac{7}{p^{2}}-\dfrac{13}{(1-p)^{2}}<0 \) para \( 0<p<1 \) — es un máximo.</p>
+          <p><strong>(c)</strong> La tasa de respuesta estimada de la campaña es del <strong>35%</strong>. De nuevo \( \hat p_{MV}=\bar X=x/n \): el mismo patrón del Ejemplo 2 de la teoría, ahora con datos propios.</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e6"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
+
+      <!-- PATCH v6: Ejercicio 7 guiado (Normal bivariada), análogo del Ejemplo 3 de la teoría -->
+      <details class="sol">
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · MLE Normal con ambos parámetros desconocidos — tiempos de entrega (logística)</span>Una empresa logística supone que los tiempos de entrega siguen \( N(\mu,\sigma^2) \), con \( \mu \) y \( \sigma^2 \) desconocidos. Se observan: 8, 10, 9, 12, 11 y 10 horas. (a) Plantea el sistema de ecuaciones de verosimilitud y obtén los estimadores \( \hat\mu_{MV} \) y \( \hat\sigma^2_{MV} \). (b) Calcula ambos con los datos. (c) Compara \( \hat\sigma^2_{MV} \) con la varianza muestral \( s^2 \) (divisor \( n-1 \)) y comenta la diferencia.</span></summary>
+        <div class="sol-body">
+          <p><strong>(a)</strong> Con \( \ell(\mu,\sigma^2)=-\dfrac{n}{2}\ln(2\pi)-\dfrac{n}{2}\ln\sigma^2-\dfrac{1}{2\sigma^2}\sum(x_i-\mu)^2 \), el sistema es: \( \dfrac{\partial\ell}{\partial\mu}=0 \Rightarrow \hat\mu_{MV}=\bar X \); &nbsp; \( \dfrac{\partial\ell}{\partial\sigma^2}=0 \Rightarrow \hat\sigma^2_{MV}=\dfrac{1}{n}\sum(x_i-\bar x)^2 \).</p>
+          <p><strong>(b)</strong> \( \bar x=\dfrac{8+10+9+12+11+10}{6}=\dfrac{60}{6}=10 \). Desviaciones: \( -2,\,0,\,-1,\,2,\,1,\,0 \) ⇒ \( \sum(x_i-\bar x)^2=4+0+1+4+1+0=10 \). Por tanto \( \hat\mu_{MV}=10 \) horas y \( \hat\sigma^2_{MV}=\dfrac{10}{6}\approx 1.667 \) (con \( \hat\sigma_{MV}\approx 1.291 \) h).</p>
+          <p><strong>(c)</strong> La varianza muestral insesgada es \( s^2=\dfrac{10}{5}=2 \). El MLE (divisor \( n \)) queda por debajo: es ligeramente <em>sesgado</em> a la baja aunque maximice la verosimilitud. Como \( \hat\sigma^2_{MV}=\frac{n-1}{n}\,s^2 \), la diferencia \( \frac{n}{n-1} \) se desvanece con \( n \) grande — otro reflejo de la consistencia (Sección 5.1).</p>
+          <label class="chk chk-ej" style="margin-top:14px"><input type="checkbox" data-ej="e7"><span>Ya resolví este ejercicio y verifiqué mi resultado</span></label>
+        </div>
+      </details>
     </div>
 
     <!-- Refuerzo con redacción -->
@@ -973,8 +1123,9 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       <h3>Refuerzo: redacta tu solución</h3>
       <p class="act-desc">Cuatro problemas adicionales —uno por tema— <strong>sin solución visible</strong>: tú escribes el procedimiento completo en el editor con fórmulas en LaTeX y vista previa instantánea. Tu texto se guarda automáticamente en este navegador. Estas redacciones <em>no alteran tu nota automática</em>, pero forman parte de tu trabajo y se revisarán en clase.</p>
 
+      <!-- PATCH v6: refuerzos renumerados como R1–R4 (los IDs internos e5–e8 no cambian) -->
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 5 · Refuerzo — propiedades de estimadores</span>El gasto por cliente en un supermercado es normal con \( \sigma = \$12 \) y media \( \mu \) desconocida. Se toman 9 compras. Compárense los estimadores \( \hat\theta_1 = \bar X \) y \( \hat\theta_2 = \tfrac{X_1+X_2}{2} \). (a) Verifica que ambos son insesgados. (b) Compara su precisión mediante los errores estándar. (c) Si alguien propone \( \hat\theta_3 = 0.8\,\bar X \), calcula su sesgo y su MSE (usa \( \mu = 50 \)) y concluye si conviene.</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio R1 · Refuerzo — propiedades de estimadores</span>El gasto por cliente en un supermercado es normal con \( \sigma = \$12 \) y media \( \mu \) desconocida. Se toman 9 compras. Compárense los estimadores \( \hat\theta_1 = \bar X \) y \( \hat\theta_2 = \tfrac{X_1+X_2}{2} \). (a) Verifica que ambos son insesgados. (b) Compara su precisión mediante los errores estándar. (c) Si alguien propone \( \hat\theta_3 = 0.8\,\bar X \), calcula su sesgo y su MSE (usa \( \mu = 50 \)) y concluye si conviene.</span></summary>
         <div class="sol-body">
           <p>Incluye en tu redacción: la definición de insesgamiento aplicada a cada estimador, el cálculo del error estándar de cada uno, y la fórmula \( \mathrm{MSE} = \mathrm{Var} + \text{sesgo}^2 \) para el inciso (c).</p>
           <div class="ed-box" data-ed="e5"></div>
@@ -989,7 +1140,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       </details>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 6 · Refuerzo — MLE exponencial</span>El tiempo entre fallas de terminales de autoservicio (horas) sigue una exponencial con media \( 1/\lambda \) desconocida. Se observan: 2.0, 3.5, 1.2, 4.8, 2.5, 1.5, 3.0 y 4.0 horas. (a) Plantea la verosimilitud y deriva el MLE de \( \lambda \). (b) Calcula \( \hat\lambda \) y la vida media estimada. (c) Con ese estimado, ¿cuál es la probabilidad de que un terminal funcione más de 3 horas sin fallar?</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio R2 · Refuerzo — MLE exponencial</span>El tiempo entre fallas de terminales de autoservicio (horas) sigue una exponencial con media \( 1/\lambda \) desconocida. Se observan: 2.0, 3.5, 1.2, 4.8, 2.5, 1.5, 3.0 y 4.0 horas. (a) Plantea la verosimilitud y deriva el MLE de \( \lambda \). (b) Calcula \( \hat\lambda \) y la vida media estimada. (c) Con ese estimado, ¿cuál es la probabilidad de que un terminal funcione más de 3 horas sin fallar?</span></summary>
         <div class="sol-body">
           <p>Recuerda: \( L(\lambda) = \lambda^n e^{-\lambda\sum x_i} \); deriva \( \ln L \) e iguala a cero. En (c), la función de supervivencia exponencial es \( P(X &gt; t) = e^{-\lambda t} \).</p>
           <div class="ed-box" data-ed="e6"></div>
@@ -1004,7 +1155,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       </details>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 7 · Refuerzo — IC para dos proporciones (marketing)</span>Una tienda en línea compara dos plataformas de pago midiendo la tasa de transacciones fallidas: plataforma 1 registra 118 fallas en 500 transacciones; plataforma 2, 85 fallas en 500. (a) Verifica las condiciones del intervalo. (b) Construye el IC del 95% para \( p_1 - p_2 \). (c) Interpreta: ¿hay evidencia de que las plataformas difieren en confiabilidad?</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio R3 · Refuerzo — IC para dos proporciones (marketing)</span>Una tienda en línea compara dos plataformas de pago midiendo la tasa de transacciones fallidas: plataforma 1 registra 118 fallas en 500 transacciones; plataforma 2, 85 fallas en 500. (a) Verifica las condiciones del intervalo. (b) Construye el IC del 95% para \( p_1 - p_2 \). (c) Interpreta: ¿hay evidencia de que las plataformas difieren en confiabilidad?</span></summary>
         <div class="sol-body">
           <p>En (a) revisa éxitos y fracasos esperados \( \ge 5 \) en ambas muestras. En (b) usa el IC con SE <em>no agrupada</em>: \( (\hat p_1 - \hat p_2) \pm z_{\alpha/2}\sqrt{\hat p_1\hat q_1/n_1 + \hat p_2\hat q_2/n_2} \). En (c), decide observando si el intervalo contiene al 0.</p>
           <div class="ed-box" data-ed="e7"></div>
@@ -1019,7 +1170,7 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
       </details>
 
       <details class="sol">
-        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio 8 · Refuerzo — tamaño de muestra (auditoría de marketing)</span>Se quiere estimar la proporción de clientes que respondería a una nueva campaña, con un margen de error máximo de 4 puntos porcentuales y 95% de confianza. (a) Un estudio piloto arrojó \( \hat p = 0.36 \): ¿cuántos clientes encuestar? (b) Sin información previa, ¿cuántos? (c) Comenta la diferencia de costo entre ambas decisiones.</span></summary>
+        <summary><span class="sol-marker">+</span><span><span class="prob-tag">Ejercicio R4 · Refuerzo — tamaño de muestra (auditoría de marketing)</span>Se quiere estimar la proporción de clientes que respondería a una nueva campaña, con un margen de error máximo de 4 puntos porcentuales y 95% de confianza. (a) Un estudio piloto arrojó \( \hat p = 0.36 \): ¿cuántos clientes encuestar? (b) Sin información previa, ¿cuántos? (c) Comenta la diferencia de costo entre ambas decisiones.</span></summary>
         <div class="sol-body">
           <p>Aplica \( n = z_{\alpha/2}^2\,\hat p\,\hat q / E^2 \) en (a) y la versión conservadora \( \hat p\hat q = 0.25 \) en (b). Redondea <em>siempre hacia arriba</em>: \( n \) es un número entero de personas.</p>
           <div class="ed-box" data-ed="e8"></div>
@@ -1157,6 +1308,17 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
   </div>
 </footer>
 
+<!-- PATCH v4: ventana emergente con la muestra generada (modo IC-t) -->
+<div id="sampleModal" class="modal-backdrop" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="modal-title" id="smpTitle">Muestra generada</span>
+      <button type="button" class="modal-close" id="btnSmpClose" title="Cerrar (Esc)">×</button>
+    </div>
+    <div class="modal-body" id="smpBody"></div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -1164,12 +1326,17 @@ footer{border-top:2px solid var(--ink);padding:30px 0 40px;margin-top:20px}
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
+/* Marcador de versión: verifica en consola que este archivo cargó */
+/* PATCH v7: símbolos renderizados — X̄ en canvas (barra trazada), LaTeX en botones/tarjetas/
+   calculadora (etiquetas y resultados), colgroup en la tabla 5.1 y quiz P1 con escapes correctos */
+console.log('%c✔ Cap. 5 Estimación — v7 (símbolos renderizados corregidos)','color:#4A0E28;font-weight:bold');
+
 /* ============================================================
    UTILIDADES
 ============================================================ */
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const INK='#1c2b25', PINE='#1e4636', TERRA='#c2542f', PAPER='#fffdf8';
+const INK='#4A0E28', PINE='#007B5D', TERRA='#b02a37', PAPER='#ffffff';
 
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtP(v){ if(!isFinite(v)) return '—'; if(v!==0 && Math.abs(v)<1e-6) return v.toExponential(3); return String(parseFloat(v.toFixed(6))); }
@@ -1292,15 +1459,15 @@ function yTicks(ctx,m,yMax){
   ctx.font='11px Instrument Sans'; ctx.textAlign='right';
   for(let v=s; v<=yMax; v+=s){
     const y=m.t+m.ph-(v/yMax)*m.ph;
-    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4);
+    ctx.strokeStyle='rgba(74,14,40,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(74,14,40,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4);
   }
 }
 function xTicks(ctx,m,lo,hi){
   const s=niceStep(hi-lo,5);
   ctx.font='11px Instrument Sans'; ctx.textAlign='center';
   for(let v=Math.ceil(lo/s)*s; v<=hi; v+=s){
-    ctx.fillStyle='rgba(28,43,37,.7)'; ctx.fillText(fmtNum(v), m.l+(v-lo)/(hi-lo)*m.pw, m.t+m.ph+17);
+    ctx.fillStyle='rgba(74,14,40,.7)'; ctx.fillText(fmtNum(v), m.l+(v-lo)/(hi-lo)*m.pw, m.t+m.ph+17);
   }
 }
 function drawPDF(cv, pdf, lo, hi, shades){
@@ -1315,7 +1482,7 @@ function drawPDF(cv, pdf, lo, hi, shades){
     ctx.beginPath(); ctx.moveTo(X(a), Y(0));
     for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N; if(x<a) continue; if(x>b) break; ctx.lineTo(X(x), Y(pdf(x))); }
     ctx.lineTo(X(Math.min(b,hi)), Y(0)); ctx.closePath();
-    ctx.fillStyle='rgba(194,84,47,.22)'; ctx.fill();
+    ctx.fillStyle='rgba(176,42,55,.22)'; ctx.fill();
   });
   (shades||[]).flat().forEach(x=>{
     if(x==null||x<=lo||x>=hi) return;
@@ -1332,8 +1499,8 @@ function drawPDF(cv, pdf, lo, hi, shades){
   ctx.beginPath(); ctx.moveTo(m.l,m.t-8); ctx.lineTo(m.l,m.t+m.ph); ctx.lineTo(m.l+m.pw+8,m.t+m.ph); ctx.stroke();
   const s=niceStep(yMax,4); ctx.font='11px Instrument Sans'; ctx.textAlign='right';
   for(let v=s; v<=yMax; v+=s){ const y=Y(v);
-    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
+    ctx.strokeStyle='rgba(74,14,40,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(74,14,40,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
 }
 function drawNCurve(cv, f, xlo, xhi, x0, cap){
   const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
@@ -1344,8 +1511,8 @@ function drawNCurve(cv, f, xlo, xhi, x0, cap){
   axes(ctx,m); xTicks(ctx,m,xlo,xhi);
   const sy=niceStep(yMax,4); ctx.font='11px Instrument Sans'; ctx.textAlign='right';
   for(let v=sy;v<=yMax;v+=sy){ const y=Y(v);
-    ctx.strokeStyle='rgba(28,43,37,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle='rgba(28,43,37,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
+    ctx.strokeStyle='rgba(74,14,40,.12)'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(m.l,y); ctx.lineTo(m.l+m.pw,y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(74,14,40,.6)'; ctx.fillText(fmtNum(v), m.l-7, y+4); }
   ctx.strokeStyle=INK; ctx.lineWidth=2; ctx.beginPath();
   pts.forEach(([x,y],i)=> i? ctx.lineTo(X(x),Y(y)) : ctx.moveTo(X(x),Y(y)));
   ctx.stroke();
@@ -1358,6 +1525,22 @@ function drawNCurve(cv, f, xlo, xhi, x0, cap){
 /* ============================================================
    HERO: distribución muestral + IC del 95% (animado)
 ============================================================ */
+/* PATCH v7: dibuja X̄/x̄ en canvas trazando la barra manualmente
+   (el carácter macron unicode no se renderiza bien con esta fuente) */
+function drawXBar(ctx, pre, ch, post, x, y, align='center'){
+  ctx.save(); ctx.textAlign='left';
+  const w1=ctx.measureText(pre).width, w2=ctx.measureText(ch).width, w3=ctx.measureText(post).width;
+  const start = align==='center'? x-(w1+w2+w3)/2 : x;
+  ctx.fillText(pre, start, y);
+  const cx=start+w1;
+  ctx.fillText(ch, cx, y);
+  const fm=ctx.font.match(/(\d+(?:\.\d+)?)px/);
+  const asc= fm? parseFloat(fm[1])*0.72 : 9;
+  ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(cx+.5, y-asc); ctx.lineTo(cx+w2-.5, y-asc); ctx.stroke();
+  ctx.fillText(post, cx+w2, y);
+  ctx.restore();
+}
 let heroAnim=null;
 function drawHero(t){
   const cv=$('#heroCanvas'); if(!cv || cv.offsetParent===null) return;
@@ -1372,13 +1555,14 @@ function drawHero(t){
     const steps=140;
     for(let i=0;i<=steps;i++){ const z=-half+2*half*i/steps; ctx.lineTo(X(z),Y(0.3989*Math.exp(-z*z/2))); }
     ctx.lineTo(X(half),Y(0)); ctx.closePath();
-    ctx.fillStyle='rgba(30,70,54,.18)'; ctx.fill();
+    ctx.fillStyle='rgba(0,123,93,.18)'; ctx.fill();
     ctx.strokeStyle=TERRA; ctx.lineWidth=1.6; ctx.setLineDash([4,3]);
     [-half,half].forEach(z=>{ ctx.beginPath(); ctx.moveTo(X(z),Y(0)); ctx.lineTo(X(z),Y(0.3989*Math.exp(-z*z/2))); ctx.stroke(); });
     ctx.setLineDash([]);
     ctx.fillStyle=TERRA; ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='center';
-    if(fs>0.35) ctx.fillText('x̄ − E', X(-half), Y(0)+16);
-    if(fs>0.35) ctx.fillText('x̄ + E', X( half), Y(0)+16);
+    /* PATCH v7: x̄ − E / x̄ + E con la barra trazada */
+    if(fs>0.35){ drawXBar(ctx,'','x',' − E', X(-half), Y(0)+16);
+                 drawXBar(ctx,'','x',' + E', X( half), Y(0)+16); }
   }
   const fc=Math.min(1,t/0.65);
   ctx.strokeStyle=INK; ctx.lineWidth=2.4; ctx.beginPath();
@@ -1392,9 +1576,10 @@ function drawHero(t){
   ctx.font='700 12px Instrument Sans'; ctx.textAlign='center';
   ctx.fillText('μ', X(0), Y(0)-10);
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
-  ctx.fillStyle='rgba(28,43,37,.85)';
-  ctx.fillText('Distribución muestral de X̄ ~ N(μ, σ²/n)', m.l, m.t-8);
-  if(fs>0.2){ ctx.fillStyle='rgba(194,84,47,.9)'; ctx.textAlign='right';
+  ctx.fillStyle='rgba(74,14,40,.85)';
+  /* PATCH v7: título del hero con la barra de X̄ trazada */
+  drawXBar(ctx, 'Distribución muestral de ', 'X', ' ~ N(μ, σ²/n)', m.l, m.t-8, 'left');
+  if(fs>0.2){ ctx.fillStyle='rgba(176,42,55,.9)'; ctx.textAlign='right';
     ctx.fillText('intervalo central del 95%', w-m.r, m.t-8); }
 }
 function animateHero(){
@@ -1408,7 +1593,7 @@ function animateHero(){
 }
 
 /* ============================================================
-   SIMULADOR: distribución muestral + cobertura de IC
+   SIMULADOR: distribución muestral + cobertura Z + cobertura t
 ============================================================ */
 const POBLA={
   normal:{ mu:50, sd:12, kind:'normal',
@@ -1418,9 +1603,12 @@ const POBLA={
   expon:{ mu:4, sd:4, kind:'expon',
     gen:()=>-4*Math.log(1-Math.random()) }
 };
+const POP_NAME={normal:'Normal(μ=50, σ=12)', uniform:'Uniforme(30, 70)', expon:'Exponencial(μ=4)'};
 let simMode='dist';
 const simD={vals:[], sum:0, sumSq:0, total:0};
 const simC={list:[], total:0, cap:0};
+const simT={list:[], total:0, cap:0, up:0, down:0, zCap:0};
+let tDrawInfo=null;
 
 const curPop = ()=> POBLA[$('#simPop').value];
 function bumpRolls(k){
@@ -1431,13 +1619,18 @@ function setMode(m){
   simMode=m;
   $('#mDist').classList.toggle('ghost', m!=='dist');
   $('#mCover').classList.toggle('ghost', m!=='cover');
+  $('#mT').classList.toggle('ghost', m!=='t');
   $('#distBlock').hidden  = m!=='dist';
   $('#coverBlock').hidden = m!=='cover';
+  $('#tBlock').hidden     = m!=='t';
   $('#capDist').hidden  = m!=='dist';
   $('#capCover').hidden = m!=='cover';
+  $('#capT').hidden     = m!=='t';
   $('#simHead').innerHTML = m==='dist'
     ? '<i data-lucide="bar-chart-3"></i>Distribución muestral del estimador'
-    : '<i data-lucide="move-horizontal"></i>Cobertura de intervalos de confianza';
+    : m==='cover'
+    ? '<i data-lucide="move-horizontal"></i>Cobertura de IC con Z (σ conocida)'
+    : '<i data-lucide="percent"></i>Cobertura de IC con t y s (σ desconocida)';
   refreshIcons(); drawSim();
 }
 function sampleMean(n, p){ let s=0; for(let i=0;i<n;i++) s+=p.gen(); return s/n; }
@@ -1451,6 +1644,8 @@ function resetDist(){
   simD.vals.length=0; simD.sum=0; simD.sumSq=0; simD.total=0; updateDistStats(); drawSim();
 }
 function updateDistStats(){
+  const n=+$('#simN').value;
+  $('#dSE').textContent=(curPop().sd/Math.sqrt(n)).toFixed(3);
   $('#dN').textContent=simD.total.toLocaleString('es-MX');
   if(!simD.total){ $('#dMean').textContent='—'; $('#dSD').textContent='—'; return; }
   const mean=simD.sum/simD.total;
@@ -1475,6 +1670,101 @@ function updateCoverStats(){
   $('#cPct').textContent=simC.total? (100*simC.cap/simC.total).toFixed(1)+'%' : '—';
   $('#cNom').textContent=Math.round(100*+$('#simLevel').value)+'%';
 }
+/* ===== Modo C: IC con t y s (σ desconocida), fórmula F7 ===== */
+function addT(k){
+  const p=curPop(), n=+$('#simTn').value, lev=+$('#simTlevel').value;
+  const tq=tOf(lev, n-1), z=zOf(lev), SEsig=p.sd/Math.sqrt(n);
+  let last=null;
+  for(let i=0;i<k;i++){
+    const data=[]; let s=0, s2=0;
+    for(let j=0;j<n;j++){ const x=p.gen(); data.push(x); s+=x; s2+=x*x; }
+    const xb=s/n;
+    const ssq=Math.max(0, s2-n*xb*xb);
+    const sv=Math.sqrt(ssq/(n-1));
+    const SEs=sv/Math.sqrt(n);
+    const lo=xb-tq*SEs, hi=xb+tq*SEs;
+    const ok=lo<=p.mu && p.mu<=hi;
+    const side= lo>p.mu? 'up' : (hi<p.mu? 'down' : null);
+    if(side==='up') simT.up++; else if(side==='down') simT.down++;
+    const zok = xb-z*SEsig<=p.mu && p.mu<=xb+z*SEsig;
+    if(zok) simT.zCap++;
+    const rec={idx:simT.total+1, lo,hi,x:xb,ok, side, data, s:sv, ssq, lev, tq, z, zok};
+    simT.list.push(rec); simT.total++; if(ok) simT.cap++;
+    if(simT.list.length>300) simT.list[simT.list.length-301].data=null;
+    last=rec;
+  }
+  bumpRolls(k); updateTStats(); drawSim();
+  if(k===1) showSampleModal(last);
+}
+function resetT(){
+  simT.list.length=0; simT.total=0; simT.cap=0; simT.up=0; simT.down=0; simT.zCap=0;
+  tDrawInfo=null; updateTStats(); drawSim();
+}
+function updateTStats(){
+  $('#tN').textContent=simT.total.toLocaleString('es-MX');
+  $('#tCap').textContent=simT.cap.toLocaleString('es-MX');
+  $('#tPct').textContent=simT.total? (100*simT.cap/simT.total).toFixed(1)+'%' : '—';
+  $('#tNom').textContent=Math.round(100*+$('#simTlevel').value)+'%';
+  $('#tSides').textContent=simT.total? simT.up+' ↑ / '+simT.down+' ↓' : '—';
+  $('#tZpct').textContent=simT.total? (100*simT.zCap/simT.total).toFixed(1)+'%' : '—';
+  $('#btnTLast').disabled = !simT.total;
+}
+
+/* ===== PATCH v4/v5: MODAL — la muestra que generó un intervalo ===== */
+function showSampleModal(rec){
+  if(!rec){ toast('No hay intervalo que inspeccionar.','err'); return; }
+  if(!rec.data){ toast('La muestra de ese intervalo ya no está en memoria (se conservan las 300 más recientes).','err'); return; }
+  const p=curPop(), n=rec.data.length;
+  const SEsig=p.sd/Math.sqrt(n);
+  const zLo=rec.x-rec.z*SEsig, zHi=rec.x+rec.z*SEsig;
+  $('#smpTitle').textContent=`Muestra n=${n} · intervalo t #${rec.idx} · ${POP_NAME[$('#simPop').value]}`;
+  const chips=rec.data.map((v,i)=>`<span class="smp-chip" title="x${i+1}">${fmt(v)}</span>`).join('');
+  const verdict= rec.ok
+    ? `<div class="smp-verdict ok">✔ <strong>El intervalo captura a μ = ${fmt(p.mu)}</strong>: lo ≤ μ ≤ hi. En la gráfica es verde.</div>`
+    : `<div class="smp-verdict bad">✘ <strong>No captura a μ</strong>: ${rec.side==='up'
+        ? `todo el intervalo quedó por <em>encima</em> de μ (lo = ${fmt(rec.lo)} &gt; μ)`
+        : `todo el intervalo quedó por <em>debajo</em> de μ (hi = ${fmt(rec.hi)} &lt; μ)`}. En la gráfica es naranja${rec.side==='down'?' — este es el tipo de fallo que domina con poblaciones asimétricas y n pequeño':''}.</div>`;
+  const zline= rec.zok
+    ? `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y <strong>sí captura</strong> a μ — la diferencia proviene únicamente de estimar σ con s.`
+    : `Contraste: con la σ verdadera, el IC-Z sobre la <em>misma</em> muestra es [${fmt(zLo)}, ${fmt(zHi)}] y tampoco captura — en este caso el fallo no proviene de usar s.`;
+  /* PATCH v5: String.raw conserva los backslashes — KaTeX sí recibe \( \), \bar, \tfrac, \sqrt, etc. */
+  $('#smpBody').innerHTML = String.raw`
+    <p class="smp-lead">Estos son los ${n} valores aleatorios generados; el intervalo se construye <strong>solo</strong> con ellos (más el nivel de confianza ${Math.round(100*rec.lev)}%).</p>
+    <div class="smp-box"><div class="smp-chips">${chips}</div></div>
+    <div class="smp-step">
+      <span class="lbl">1 · Media muestral \( \bar{x}=\tfrac{1}{${n}}\sum x_i \)</span>
+      <span class="val">\( \bar{x} = ${fmt(rec.x)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">2 · Suma de cuadrados \( \sum (x_i-\bar{x})^2 \)</span>
+      <span class="val">\( ${fmt(rec.ssq)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">3 · Desviación muestral \( s=\sqrt{\tfrac{${fmt(rec.ssq)}}{${n-1}}} \)</span>
+      <span class="val">\( s = ${fmt(rec.s)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">4 · Error estándar estimado \( SE=\tfrac{s}{\sqrt{${n}}} \)</span>
+      <span class="val">\( SE = ${fmt(rec.s/Math.sqrt(n))} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">5 · Valor crítico al ${Math.round(100*rec.lev)}%: \( t_{\alpha/2,\;${n-1}} \)</span>
+      <span class="val">\( t = ${rec.tq.toFixed(3)} \)</span>
+    </div>
+    <div class="smp-step">
+      <span class="lbl">6 · Intervalo de confianza \( \bar{x} \pm t\cdot SE \)</span>
+      <span class="val">\( \left[\, ${fmt(rec.lo)},\; ${fmt(rec.hi)} \,\right] \)</span>
+    </div>
+    ${verdict}
+    <p class="smp-z">${zline}</p>`;
+  $('#sampleModal').hidden=false;
+  try{ renderMathInElement($('#smpBody'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+}
+function closeSampleModal(){ $('#sampleModal').hidden=true; }
+ $('#btnSmpClose').addEventListener('click', closeSampleModal);
+ $('#sampleModal').addEventListener('click', e=>{ if(e.target===$('#sampleModal')) closeSampleModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !$('#sampleModal').hidden) closeSampleModal(); });
+
 function theoPdf(p,n,x){
   const SE=p.sd/Math.sqrt(n);
   if(p.kind==='normal') return normPdf(x,p.mu,SE);
@@ -1493,6 +1783,7 @@ function drawDist(){
   if(p.kind==='expon'&&n===1){ rlo=0; rhi=p.mu+4.2*p.sd; }
   else if(p.kind==='uniform'&&n===1){ rlo=p.lo; rhi=p.hi; }
   else { rlo=p.mu-4.2*SE; rhi=p.mu+4.2*SE; }
+  if(p.kind==='expon') rlo=Math.max(0,rlo);
   const B=44, bw=(rhi-rlo)/B, counts=Array(B).fill(0);
   let outside=0;
   for(const v of simD.vals){ const b=Math.floor((v-rlo)/bw); if(b<0||b>=B) outside++; else counts[b]++; }
@@ -1502,7 +1793,7 @@ function drawDist(){
   counts.forEach((c,i)=>{
     if(!c) return;
     const bh=(c/yMax)*m.ph;
-    ctx.fillStyle='rgba(30,70,54,.78)';
+    ctx.fillStyle='rgba(0,123,93,.78)';
     ctx.fillRect(m.l+i*slot+(slot-bar)/2, m.t+m.ph-bh, bar, bh);
   });
   if(simD.total>0){
@@ -1519,55 +1810,73 @@ function drawDist(){
   ctx.beginPath(); ctx.moveTo(m.l+(p.mu-rlo)/(rhi-rlo)*m.pw, m.t+6);
   ctx.lineTo(m.l+(p.mu-rlo)/(rhi-rlo)*m.pw, m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
-  ctx.fillStyle='rgba(30,70,54,.9)'; ctx.fillRect(m.l+6, m.t-8, 10, 10);
-  ctx.fillStyle=INK; ctx.fillText('frecuencia observada de x̄', m.l+21, m.t+1);
+  ctx.fillStyle='rgba(0,123,93,.9)'; ctx.fillRect(m.l+6, m.t-8, 10, 10);
+  /* PATCH v7: leyenda del histograma con la barra de x̄ trazada */
+  ctx.fillStyle=INK; drawXBar(ctx, 'frecuencia observada de ', 'x', '', m.l+21, m.t+1, 'left');
   ctx.strokeStyle=TERRA; ctx.lineWidth=2.2;
   ctx.beginPath(); ctx.moveTo(m.l+196, m.t-3); ctx.lineTo(m.l+212, m.t-3); ctx.stroke();
   ctx.fillStyle=INK; ctx.fillText('modelo teórico', m.l+218, m.t+1);
-  if(outside>0){ ctx.fillStyle='rgba(28,43,37,.55)'; ctx.textAlign='right';
+  if(outside>0){ ctx.fillStyle='rgba(74,14,40,.55)'; ctx.textAlign='right';
     ctx.fillText(outside.toLocaleString('es-MX')+' fuera de rango', w-m.r-4, m.t+1); }
   if(!simD.total){
-    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(74,14,40,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
     ctx.fillText('Genera muestras para construir el histograma', m.l+m.pw/2, m.t+m.ph/2);
   }
 }
-function drawCover(){
-  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return;
-  const p=curPop(), n=+$('#simCn').value, SE=p.sd/Math.sqrt(n);
+/* núcleo de dibujo compartido por los dos modos de cobertura (devuelve el layout) */
+function drawIntervalChart(list, mu, span){
+  const cv=$('#simCanvas'); if(!cv||cv.offsetParent===null) return null;
   const {ctx,w,h}=setupCanvas(cv); const m=makeMargins(w,h);
-  const span=8*SE;
-  const X=x=>m.l+((x-(p.mu-span))/(2*span))*m.pw;
-  axes(ctx,m); xTicks(ctx,m,p.mu-span,p.mu+span);
+  const X=x=>m.l+((x-(mu-span))/(2*span))*m.pw;
+  axes(ctx,m); xTicks(ctx,m,mu-span,mu+span);
   ctx.strokeStyle=INK; ctx.setLineDash([5,4]); ctx.lineWidth=1.6;
-  ctx.beginPath(); ctx.moveTo(X(p.mu), m.t+2); ctx.lineTo(X(p.mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(X(mu), m.t+2); ctx.lineTo(X(mu), m.t+m.ph); ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle=INK; ctx.font='700 11.5px Instrument Sans'; ctx.textAlign='center';
-  ctx.fillText('μ = '+fmt(p.mu), X(p.mu), m.t+m.ph+30>h? m.t+m.ph+16 : m.t-6);
-  const list=simC.list.slice(-60);
+  ctx.fillText('μ = '+fmt(mu), X(mu), m.t+m.ph+30>h? m.t+m.ph+16 : m.t-6);
+  const rowH=Math.min(13,(m.ph-24)/Math.max(1,list.length));
   if(!list.length){
-    ctx.fillStyle='rgba(28,43,37,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(74,14,40,.5)'; ctx.font='600 13px Instrument Sans'; ctx.textAlign='center';
     ctx.fillText('Genera intervalos para ver su cobertura', m.l+m.pw/2, m.t+m.ph/2);
-    return;
+    return {m,rowH,y0:m.t+12,list};
   }
-  const rowH=Math.min(13,(m.ph-24)/list.length);
   list.forEach((it,i)=>{
     const y=m.t+12+i*rowH;
-    ctx.strokeStyle= it.ok? 'rgba(30,70,54,.85)' : TERRA;
+    ctx.strokeStyle= it.ok? 'rgba(0,123,93,.85)' : TERRA;
     ctx.lineWidth=2.4;
     ctx.beginPath(); ctx.moveTo(X(it.lo),y); ctx.lineTo(X(it.hi),y); ctx.stroke();
     ctx.fillStyle=INK; ctx.beginPath(); ctx.arc(X(it.x),y,2.2,0,7); ctx.fill();
   });
   ctx.font='600 11.5px Instrument Sans'; ctx.textAlign='left';
-  ctx.strokeStyle='rgba(30,70,54,.85)'; ctx.lineWidth=2.4;
+  ctx.strokeStyle='rgba(0,123,93,.85)'; ctx.lineWidth=2.4;
   ctx.beginPath(); ctx.moveTo(m.l+6, m.t-3); ctx.lineTo(m.l+22, m.t-3); ctx.stroke();
   ctx.fillStyle=INK; ctx.fillText('captura μ', m.l+27, m.t+1);
   ctx.strokeStyle=TERRA;
   ctx.beginPath(); ctx.moveTo(m.l+92, m.t-3); ctx.lineTo(m.l+108, m.t-3); ctx.stroke();
   ctx.fillStyle=INK; ctx.fillText('no captura', m.l+113, m.t+1);
+  return {m,rowH,y0:m.t+12,list};
 }
-function drawSim(){ simMode==='dist'? drawDist() : drawCover(); }
+function drawCover(){
+  const p=curPop(), n=+$('#simCn').value, SE=p.sd/Math.sqrt(n);
+  drawIntervalChart(simC.list.slice(-60).reverse(), p.mu, 8*SE);
+}
+function drawT(){
+  const p=curPop(), n=+$('#simTn').value, SE=p.sd/Math.sqrt(n);
+  let span=4*SE;
+  const list=simT.list.slice(-60).reverse();
+  for(const it of list){ span=Math.max(span, Math.abs(it.hi-p.mu), Math.abs(p.mu-it.lo)); }
+  tDrawInfo=drawIntervalChart(list, p.mu, span*1.05);
+}
+function drawSim(){
+  const cv=$('#simCanvas');
+  if(cv) cv.style.cursor = simMode==='t' ? 'pointer' : 'default';
+  if(simMode==='dist') drawDist();
+  else if(simMode==='cover') drawCover();
+  else drawT();
+}
 
  $('#mDist').addEventListener('click',()=>setMode('dist'));
  $('#mCover').addEventListener('click',()=>setMode('cover'));
+ $('#mT').addEventListener('click',()=>setMode('t'));
  $('#btnD1').addEventListener('click',()=>addDist(1));
  $('#btnD100').addEventListener('click',()=>addDist(100));
  $('#btnD1000').addEventListener('click',()=>addDist(1000));
@@ -1576,44 +1885,66 @@ function drawSim(){ simMode==='dist'? drawDist() : drawCover(); }
  $('#btnC50').addEventListener('click',()=>addCover(50));
  $('#btnC200').addEventListener('click',()=>addCover(200));
  $('#btnCReset').addEventListener('click',()=>{ resetCover(); toast('Intervalos reiniciados (tu acumulado se conserva).'); });
- $('#simPop').addEventListener('change',()=>{ resetDist(); resetCover(); toast('Población cambiada: acumulados del simulador reiniciados.'); });
+ $('#btnT1').addEventListener('click',()=>addT(1));
+ $('#btnT50').addEventListener('click',()=>addT(50));
+ $('#btnT200').addEventListener('click',()=>addT(200));
+ $('#btnT500').addEventListener('click',()=>addT(500));
+ $('#btnTReset').addEventListener('click',()=>{ resetT(); toast('Intervalos t reiniciados (tu acumulado se conserva).'); });
+ $('#btnTLast').addEventListener('click', ()=>{
+  if(!simT.total){ toast('Aún no hay intervalos: genera al menos uno.','err'); return; }
+  showSampleModal(simT.list[simT.list.length-1]);
+ });
+ $('#simCanvas').addEventListener('click', e=>{
+  if(simMode!=='t'||!tDrawInfo||!tDrawInfo.list.length) return;
+  const cv=$('#simCanvas'), r=cv.getBoundingClientRect();
+  const x=e.clientX-r.left, y=e.clientY-r.top;
+  const {m,rowH,y0,list}=tDrawInfo;
+  if(x<m.l||x>m.l+m.pw) return;
+  const i=Math.floor((y-y0)/rowH);
+  if(i<0||i>=list.length) return;
+  showSampleModal(list[i]);
+ });
+ $('#simPop').addEventListener('change',()=>{ closeSampleModal(); resetDist(); resetCover(); resetT(); toast('Población cambiada: acumulados del simulador reiniciados.'); });
  $('#simN').addEventListener('change', resetDist);
  $('#simCn').addEventListener('change', resetCover);
  $('#simLevel').addEventListener('change', ()=>{ updateCoverStats(); resetCover(); });
+ $('#simTn').addEventListener('change', resetT);
+ $('#simTlevel').addEventListener('change', resetT);
 
 /* ============================================================
    CALCULADORA DE INTERVALOS Y TAMAÑOS (una y dos muestras)
 ============================================================ */
+/* PATCH v7: las etiquetas con símbolos usan LaTeX \( ... \) (con \\ en JS) */
 const PDEFS={
   mediaZ:[
-    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:18750},
+    {k:'xb',label:'\\( \\bar{x} \\) — media muestral',min:-1e7,max:1e7,step:0.1,val:18750},
     {k:'sg',label:'σ — desviación estándar poblacional (conocida)',min:1e-6,max:1e7,step:1,val:4200},
     {k:'n',label:'n — tamaño de muestra',min:2,max:100000,step:1,val:49}],
   mediaT:[
-    {k:'xb',label:'x̄ — media muestral',min:-1e7,max:1e7,step:0.1,val:7.4},
+    {k:'xb',label:'\\( \\bar{x} \\) — media muestral',min:-1e7,max:1e7,step:0.1,val:7.4},
     {k:'s',label:'s — desviación estándar muestral',min:1e-6,max:1e7,step:0.1,val:1.8},
     {k:'n',label:'n — tamaño de muestra',min:2,max:2000,step:1,val:16}],
   prop:[
     {k:'x',label:'x — número de éxitos en la muestra',min:0,max:1e7,step:1,val:232},
     {k:'n',label:'n — tamaño de la muestra',min:5,max:1e7,step:1,val:400}],
   media2Z:[
-    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:4.2},
+    {k:'xb1',label:'\\( \\bar{x}_1 \\) — media muestral 1',min:-1e7,max:1e7,step:0.1,val:4.2},
     {k:'sg1',label:'σ₁ — desv. estándar poblacional 1',min:1e-6,max:1e7,step:0.1,val:1.2},
     {k:'n1',label:'n₁ — tamaño 1',min:2,max:100000,step:1,val:15},
-    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:5.4},
+    {k:'xb2',label:'\\( \\bar{x}_2 \\) — media muestral 2',min:-1e7,max:1e7,step:0.1,val:5.4},
     {k:'sg2',label:'σ₂ — desv. estándar poblacional 2',min:1e-6,max:1e7,step:0.1,val:1.5},
     {k:'n2',label:'n₂ — tamaño 2',min:2,max:100000,step:1,val:12}],
   media2T:[
-    {k:'xb1',label:'x̄₁ — media muestral 1',min:-1e7,max:1e7,step:0.1,val:2.8},
+    {k:'xb1',label:'\\( \\bar{x}_1 \\) — media muestral 1',min:-1e7,max:1e7,step:0.1,val:2.8},
     {k:'s1',label:'s₁ — desviación muestral 1',min:1e-6,max:1e7,step:0.1,val:0.6},
     {k:'n1',label:'n₁ — tamaño 1',min:2,max:5000,step:1,val:10},
-    {k:'xb2',label:'x̄₂ — media muestral 2',min:-1e7,max:1e7,step:0.1,val:2.1},
+    {k:'xb2',label:'\\( \\bar{x}_2 \\) — media muestral 2',min:-1e7,max:1e7,step:0.1,val:2.1},
     {k:'s2',label:'s₂ — desviación muestral 2',min:1e-6,max:1e7,step:0.1,val:0.5},
     {k:'n2',label:'n₂ — tamaño 2',min:2,max:5000,step:1,val:10},
     {k:'pool',type:'check',label:'Asumir varianzas iguales (t agrupada); desmarcar usa Welch',val:true}],
   pareada:[
-    {k:'dbar',label:'d̄ — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:1.8},
-    {k:'sd',label:'s_d — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:1.2},
+    {k:'dbar',label:'\\( \\bar{d} \\) — promedio de las diferencias',min:-1e7,max:1e7,step:0.01,val:1.8},
+    {k:'sd',label:'\\( s_d \\) — desviación de las diferencias',min:1e-6,max:1e7,step:0.1,val:1.2},
     {k:'n',label:'n — número de pares',min:2,max:5000,step:1,val:9}],
   prop2:[
     {k:'x1',label:'x₁ — éxitos grupo 1',min:0,max:1e7,step:1,val:96},
@@ -1625,7 +1956,7 @@ const PDEFS={
     {k:'sg',label:'σ — desviación estándar poblacional',min:1e-6,max:1e7,step:1,val:4200}],
   nprop:[
     {k:'E',label:'E — error máximo admisible (proporción)',min:0.001,max:0.5,step:0.01,val:0.03},
-    {k:'p',label:'p̂ — proporción esperada (usa 0.5 si no hay datos)',min:0,max:1,step:0.01,val:0.5}]
+    {k:'p',label:'\\( \\hat{p} \\) — proporción esperada (usa 0.5 si no hay datos)',min:0,max:1,step:0.01,val:0.5}]
 };
 const CALC_NAMES={mediaZ:'IC media (σ conocida)',mediaT:'IC media (σ desconocida)',
   prop:'IC proporción',media2Z:'IC diferencia de medias (Z)',media2T:'IC diferencia de medias (t)',
@@ -1643,6 +1974,10 @@ function buildParams(){
       <input id="cp_${p.k}" type="number" step="${p.step}" min="${p.min}" max="${p.max}" value="${p.val}">
     </div>`;
   }).join('');
+  /* PATCH v7: renderizar el LaTeX de las etiquetas generadas dinámicamente */
+  if(typeof renderMathInElement==='function'){
+    try{ renderMathInElement(box,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
+  }
 }
  $('#calcDist').addEventListener('change',()=>{
   buildParams();
@@ -1684,7 +2019,8 @@ function computeCalc(key,v,lev){
     const {x,n}=v, ph=x/n;
     if(ph<=0||ph>=1) throw 'Con 0 o todos los éxitos el intervalo aproximado no es válido: ajusta los datos.';
     const SE=Math.sqrt(ph*(1-ph)/n), E=z*SE, L=ph-E, U=ph+E;
-    R.push(['Proporción muestral p̂',ph],['Valor crítico z',z],['Error máximo E',E],['Límite inferior',L],['Límite superior',U]);
+    /* PATCH v7: etiquetas de resultados con LaTeX */
+    R.push(['Proporción muestral \\( \\hat{p} \\)',ph],['Valor crítico z',z],['Error máximo E',E],['Límite inferior',L],['Límite superior',U]);
     const ok = n*ph>=5 && n*(1-ph)>=5;
     const warn = ok? null : '⚠ La condición n·p̂ ≥ 5 y n·q̂ ≥ 5 NO se cumple: el intervalo normal aproximado puede ser poco confiable; considera más datos o un método exacto.';
     const lo=Math.max(0,ph-4.2*SE), hi=Math.min(1,ph+4.2*SE);
@@ -1695,7 +2031,7 @@ function computeCalc(key,v,lev){
   if(key==='media2Z'){
     const {xb1,sg1,n1,xb2,sg2,n2}=v;
     const dif=xb1-xb2, SE=Math.sqrt(sg1*sg1/n1+sg2*sg2/n2), E=z*SE, L=dif-E, U=dif+E;
-    R.push(['Diferencia x̄₁ − x̄₂',dif],['Valor crítico z',z],['Error máximo E',E],
+    R.push(['Diferencia \\( \\bar{x}_1-\\bar{x}_2 \\)',dif],['Valor crítico z',z],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     return {results:R,
@@ -1725,7 +2061,7 @@ function computeCalc(key,v,lev){
   }
   if(key==='pareada'){
     const {dbar,sd,n}=v, nu=n-1, SE=sd/Math.sqrt(n), t=tOf(lev,nu), E=t*SE, L=dbar-E, U=dbar+E;
-    R.push(['Diferencia media d̄',dbar],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
+    R.push(['Diferencia media \\( \\bar{d} \\)',dbar],[`Valor crítico t (${nu} gl)`,t],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     return {results:R,
@@ -1736,7 +2072,7 @@ function computeCalc(key,v,lev){
     const {x1,n1,x2,n2}=v, p1=x1/n1, p2=x2/n2;
     if((p1<=0&&p2<=0)||(p1>=1&&p2>=1)) throw 'Las proporciones muestrales deben estar estrictamente entre 0 y 1.';
     const dif=p1-p2, SE=Math.sqrt(p1*(1-p1)/n1+p2*(1-p2)/n2), E=z*SE, L=dif-E, U=dif+E;
-    R.push(['p̂₁',p1],['p̂₂',p2],['Diferencia p̂₁ − p̂₂',dif],['Valor crítico z',z],['Error máximo E',E],
+    R.push(['\\( \\hat{p}_1 \\)',p1],['\\( \\hat{p}_2 \\)',p2],['Diferencia \\( \\hat{p}_1-\\hat{p}_2 \\)',dif],['Valor crítico z',z],['Error máximo E',E],
            ['Límite inferior',L],['Límite superior',U],
            ['¿Contiene al 0? (prueba bilateral)',contieneCero(L,U),1]);
     const ok = n1*p1>=5&&n1*(1-p1)>=5&&n2*p2>=5&&n2*(1-p2)>=5;
@@ -1759,7 +2095,7 @@ function computeCalc(key,v,lev){
     const {E,p}=v;
     if(p<=0||p>=1) throw 'Usa una proporción estrictamente entre 0 y 1 (0.5 si no hay datos previos).';
     const n0=z*z*p*(1-p)/(E*E);
-    R.push(['Valor crítico z',z],['p̂·q̂ usado',p*(1-p)],['n exacto',n0],['n recomendado',Math.ceil(n0)]);
+    R.push(['Valor crítico z',z],['\\( \\hat{p}\\,\\hat{q} \\) usado',p*(1-p)],['n exacto',n0],['n recomendado',Math.ceil(n0)]);
     const E0=E;
     return {results:R,
       tex:`n=\\dfrac{z_{\\alpha/2}^{2}\\,\\hat{p}\\hat{q}}{E^{2}} = \\dfrac{${z.toFixed(3)}^{2}\\cdot ${fmt(p)}\\cdot ${fmt(1-p)}}{${fmt(E)}^{2}}`,
@@ -1782,6 +2118,8 @@ let calcState=null;
       <div class="res-row"><span class="res-label">${lab}</span>
       <span class="res-val mono">${isTxt? esc(val) : fmtP(val)}</span></div>`).join('');
   try{ katex.render(out.tex, $('#calcTex'), {throwOnError:false}); }catch(e){ $('#calcTex').textContent=''; }
+  /* PATCH v7: renderizar el LaTeX de las etiquetas de resultados */
+  try{ renderMathInElement($('#calcResults'),{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false}); }catch(e){}
   out.draw();
   toast(`${CALC_NAMES[key]} calculado.`);
 });
@@ -1792,7 +2130,8 @@ buildParams();
    QUIZ (guarda el mejor intento para la boleta)
 ============================================================ */
 const QUIZ=[
- {q:'Un estimador \(\\hat\\theta\) es insesgado si…',
+ /* PATCH v7: escapes corregidos en P1 (antes JS comía los backslashes) */
+ {q:'Un estimador \\(\\hat{\\theta}\\) es insesgado si…',
   opts:['\\(\\hat\\theta = \\theta\\) en cada muestra','\\(E(\\hat\\theta) = \\theta\\)','\\(\\mathrm{Var}(\\hat\\theta) = 0\\)','Su MSE es mínimo'],
   ans:1, why:'Insesgado significa que <em>en promedio, sobre muestras repetidas</em>, el estimador acierta al parámetro: \\(E(\\hat\\theta)=\\theta\\). Nada garantiza acertar en cada muestra concreta.'},
  {q:'La interpretación correcta de un «IC del 95% para μ» es…',
@@ -1891,7 +2230,8 @@ let progToastTimer=null;
 /* ============================================================
    EJERCICIOS GUIADOS: casillas "ya lo resolví"
 ============================================================ */
-const EJ_KEYS=['e1','e2','e3','e4','e5'];
+/* PATCH v6: EJ_KEYS incluye e6 y e7 */
+const EJ_KEYS=['e1','e2','e3','e4','e5','e6','e7'];
 function syncEjChecks(){
   const EJ=act()[CURSO].ej;
   $$('#ejBlock .chk-ej input').forEach(cb=>{
@@ -1944,7 +2284,8 @@ const NOTE_STRUCT = String.raw`<strong>Estructura sugerida del ensayo:</strong> 
 function buildEditors(){
   $$('.ed-box').forEach(box=>{
     const k=box.dataset.ed;
-    box.innerHTML=`
+    /* PATCH v5: String.raw conserva los backslashes del placeholder */
+    box.innerHTML=String.raw`
       <div class="ed-toolbar">
         <span class="ed-title"><i data-lucide="pencil"></i>Tu procedimiento y solución</span>
         <span class="ed-status" id="st_${k}"><span class="dot"></span>Sin guardar</span>
@@ -1955,7 +2296,7 @@ function buildEditors(){
             placeholder="Datos → estimador → cálculo → interpretación.&#10;Ej.: Como σ es conocida y n grande, uso Z:&#10;\( \bar{x} \pm z_{\alpha/2}\,\frac{\sigma}{\sqrt{n}} = 18750 \pm 1.96\cdot 600 \)&#10;y concluyo que…"></textarea>
           <div class="ed-preview-wrap">
             <div class="ed-preview-head">Vista previa · así se leerá tu solución</div>
-            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \\( … \\) se renderizan.</em></div>
+            <div class="ed-preview" id="pv_${k}"><em class="ed-ph">La vista previa aparecerá aquí; las fórmulas entre \( … \) se renderizan.</em></div>
           </div>
         </div>
         <aside class="ed-manual" data-for="${k}"></aside>
@@ -2084,8 +2425,8 @@ function resetRedacs(){
 /* ============================================================
    REGISTRO INDIVIDUAL + BOLETA DE RESULTADOS
 ============================================================ */
-const AV_COLORS=[['#e4ecdf','#1e4636'],['#f3e0d6','#8a3d1e'],['#f2e8c9','#7a6210'],
-                 ['#e2e8dd','#3c5a3c'],['#ead9e0','#7a3550'],['#dde7ea','#22505c']];
+const AV_COLORS=[['#D4EDDA','#005F47'],['#E8D5A3','#7a6210'],['#f6e3ea','#8E2144'],
+                 ['#dcebe4','#2f855a'],['#f0dbe1','#6B1229'],['#f6e6ec','#7A1E3F']];
 function initials(name){
   const p=name.trim().split(/\s+/);
   return ((p[0]?.[0]||'')+(p[1]?.[0]||p[0]?.[1]||'')).toUpperCase();
@@ -2184,7 +2525,7 @@ function setFormMode(edit){
   }
   localStorage.removeItem(LS_EST); localStorage.removeItem(LS_ACT);
   $('#formEst').reset(); setFormMode(false);
-  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetDist(); resetCover();
+  renderBoleta(); syncEjChecks(); renderTaskList(); resetRedacs(); resetDist(); resetCover(); resetT();
   toast('Registro y avance borrados de este navegador.');
 });
 
@@ -2217,6 +2558,8 @@ buildEditors();
 initRedacs();
 renderTaskList();
 syncEjChecks();
+ $('#simEver').textContent=(act()[CURSO].sim.rolls||0).toLocaleString('es-MX');
+updateTStats();
 renderBoleta();
 setMode('dist');
 animateHero();
