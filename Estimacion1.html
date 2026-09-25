@@ -576,7 +576,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <h3>El método de máxima verosimilitud</h3>
           <div class="def">
             <span class="def-tag">Definición</span>
-            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es \[ V(\theta) = \prod_{i=1}^{n} f(x_i;\theta) \] El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( V(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
+            <p>Dada una muestra aleatoria \( x_1,\dots,x_n \) de una distribución \( f(x;\theta) \), la <strong>función de verosimilitud</strong> es $$ V(\theta) = \prod_{i=1}^{n} f(x_i;\theta)$$ El <strong>estimador de máxima verosimilitud</strong> (EMV) es el valor \( \hat\theta \) que maximiza \( V(\theta) \): el parámetro bajo el cual los datos observados son <em>más probables</em>.</p>
           </div>
           <p><em>Nota:</em> La abreviación más usual es <strong>MLE</strong> por sus siglas en inglés (<em>Maximum Likelihood Estimator</em>). No obstante nosotros utilizaremos EMV.</p>
           <!-- PATCH v6: procedimiento ampliado a los seis pasos -->
@@ -617,7 +617,7 @@ footer{background:var(--ink);border-top:4px solid var(--gold);padding:30px 0 38p
           <!-- PATCH v6: idea clave de cierre -->
           <div class="def">
             <span class="def-tag">Idea clave</span>
-            <p>La máxima verosimilitud no pregunta qué parámetro es «más probable» antes de observar los datos: pregunta <strong>qué valor del parámetro hace que los datos efectivamente observados sean los más compatibles con el modelo</strong>. Esa misma lógica — datos \( \to L(\theta) \to \ln L(\theta) \to \ell'(\theta)=0 \to \hat\theta_{MV} \) — es la que reaparece en los tres ejemplos anteriores, cualquiera que sea la distribución.</p>
+            <p>La máxima verosimilitud no pregunta qué parámetro es «más probable» antes de observar los datos: pregunta <strong>qué valor del parámetro hace que los datos efectivamente observados sean los más compatibles con el modelo</strong>. Esa misma lógica  $$datos \to L(\theta) \to \ln L(\theta) \to \ell'(\theta)=0 \to \hat\theta_{MV} $$  es la que reaparece en los tres ejemplos anteriores, cualquiera que sea la distribución.</p>
           </div>
           <!-- PATCH v6: la tabla como resumen de los tres ejemplos -->
           <p>La tabla siguiente resume los EMV que más se usan en la práctica empresarial — los tres ejemplos anteriores ilustran sus filas:</p>
